@@ -18,6 +18,19 @@ from pathfinding.finder.a_star import AStarFinder
 class person():
     
     def __init__(self, params):
+        '''
+        
+
+        Parameters
+        ----------
+        params : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        '''
         self.age = random.randint(params['Minimum Age'], params['Maximum Age'])
 
         if random.random() > 0.5:
@@ -40,7 +53,7 @@ class person():
 
 
         # Position variables
-        self.desk_location = (4,10)
+        self.desk_location = [4,10]
         self.task_location = self.desk_location.copy()
 
         self.current_location = self.desk_location.copy()
@@ -51,7 +64,7 @@ class person():
         self.doing_task = True
 
         self.desk_location = [4,1]
-        self.task = get_task()
+        # self.task = get_task()
         self.current_location = self.desk_location.copy()
         
         
@@ -81,14 +94,11 @@ class person():
 class office():
     
      def __init__(self):
-         self.grid = [[1 for i in range(0,10)] for i in range (0,10)]
-         self.coffee = [3,8]
-         self.printer = [1,6]
+         self.grid = [[1 for i in range(0,100)] for i in range (0,100)]
+         self.coffee = [30,80]
+         self.printer = [30,60]
         
-
-
 office = office()
-
 
         # Test
         # self.task = get_task()

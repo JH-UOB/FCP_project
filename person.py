@@ -2,7 +2,10 @@
 """
 Created on Sun Mar 28 16:31:32 2021
 
-@author: james
+Authors: James Hawke, Adam Honnywill
+Description:
+    Defines a person with constant and variable attributes used to model movement, interactions and Covid-19
+    transmission.
 """
 
 import numpy as np
@@ -27,16 +30,18 @@ class person():
             self.social_distancing = True
         else:
             self.social_distancing = False
+
+        # Position variables
         self.desk_location = (4,10)
         self.task_location = self.desk_location.copy()
         self.current_location = self.desk_location.copy()
+
+        # Task variables
         self.task_duration = random.randint(1, 10)
         self.task_progress = 0
         self.doing_task = True
-        self.desk_location = (4,10)
-        
-        self.current_location = self.desk_location.copy()
-        
+
+        # Test
         # self.task = get_task()
 params = {'Maximum Age' : 65,
           'Minimum Age' : 18,

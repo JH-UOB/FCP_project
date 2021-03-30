@@ -8,18 +8,17 @@ Description:
     transmission.
 """
 
-import numpy as np
 import random
-import itertools
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
 
-class person():
+
+class Person:
     
-    def __init__(self, params):
-        '''
-        
+    def __init__(self, id, desks, params):
+        """
+
 
         Parameters
         ----------
@@ -30,7 +29,9 @@ class person():
         -------
         None.
 
-        '''
+        """
+        self.id = id
+
         self.age = random.randint(params['Minimum Age'], params['Maximum Age'])
 
         if random.random() > 0.5:
@@ -48,66 +49,42 @@ class person():
         else:
             self.social_distancing = False
 
-        self.desk_location = [4,8]
-        self.task_location = self.desk_location
-
-
         # Position variables
-        self.desk_location = [4,10]
-        self.task_location = self.desk_location.copy()
-
+        self.desk_location = [desks[1][id-1], desks[0][id-1]]  # Desk coordinates
+        self.task_location = self.desk_location.copy()  # Initialise person at their desk
         self.current_location = self.desk_location.copy()
 
         # Task variables
-        self.task_duration = random.randint(1, 10)
+        self.task_duration = random.randint(1, 10) # How long person should stay at desk initially
         self.task_progress = 0
         self.doing_task = True
 
-        self.desk_location = [4,1]
+        # self.desk_location = [4,1]
         # self.task = get_task()
         self.current_location = self.desk_location.copy()
-        
-        
-        
-    def get_task(self,locations):
+
+    def get_task(self, locations):
     
         if self.current_location == self.desk_location:
-            task_location = locations[random.randint(0,len(locations))]
+            self.task_location = locations[random.randint(0,len(locations))]
             self.task_duration = random.randint(1, 10)
         else:
-            task_location = self.desk_location
+            self.task_location = self.desk_location
             self.task_duration = random.randint(1, 10)
-            
-        return(task_location)
-        
 
     def get_path(self, office):
-        grid = Grid(matrix=office.grid)
+        grid = Grid(matrix=office.get_pathfinding_array())
         start = grid.node(self.current_location[0], self.current_location[1])
-        end = grid.node(office.printer[0], office.printer[1])
+        end = grid.node(office.microwave[1][0], office.microwave[0][0]) # can change location manually for now
+        # end = grid.node(self.task_location[0], self.task_location[1]) # variable task location, untested
         finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
         path, runs = finder.find_path(start, end, grid)
-        print('operations:', runs, 'path length:', len(path))
+        print('operations:', runs, 'path length:', len(path), 'path coordinates:', path)
         print(grid.grid_str(path=path, start=start, end=end))
+        return path
 
-        
-class office():
-    
-     def __init__(self):
-         self.grid = [[1 for i in range(0,100)] for i in range (0,100)]
-         self.coffee = [30,80]
-         self.printer = [30,60]
-        
-office = office()
+    def move(self, path):
+        self.current_location = path[1]
 
-        # Test
-        # self.task = get_task()
-
-params = {'Maximum Age' : 65,
-          'Minimum Age' : 18,
-          'Mask adherance' : 0.8,
-          'Social distancing adherance' : 0.5}    
-jim = person(params)
-jim.get_path(office)
-
+    # def update(self): to be used potentially to move simulation functionality here
 

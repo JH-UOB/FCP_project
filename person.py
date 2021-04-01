@@ -12,7 +12,8 @@ import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid
 from pathfinding.finder.a_star import AStarFinder
-
+from scipy.spatial import distance
+import itertools
 
 class Person:
     
@@ -63,10 +64,10 @@ class Person:
             self.task_duration = random.randint(1, 10)
         else:
             self.task_location = self.desk_location
-            self.task_duration = random.randint(1, 10)
+            self.task_duration = random.randint(10, 50)
 
-    def get_path(self, office):
-        grid = Grid(matrix=office.pathfinding_array)
+    def get_path(self, array):
+        grid = Grid(matrix=array)
 
         start = grid.node(self.current_location[1], self.current_location[0])
         end = grid.node(self.task_location[1], self.task_location[0])  # variable task location, untested

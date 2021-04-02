@@ -15,7 +15,6 @@ class Office:
         self.people_locations = []  # to be populated
         
         
-        
     def adj_finder(self, matrix, position, interactions=False):
         adj = []
 

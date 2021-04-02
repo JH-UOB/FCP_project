@@ -55,7 +55,7 @@ class Person:
         self.current_location = self.desk_location
 
         # Task properties
-        self.task_duration = random.randint(1, 10) # How long person should stay at desk initially
+        self.task_duration = random.randint(1, 50) # How long person should stay at desk initially
         self.task_progress = 0
         # self.doing_task = True  # unused
 

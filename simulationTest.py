@@ -28,6 +28,8 @@ def instantiate_people(params, office):
     for ID in range(1, number_of_people + 1):
         people.append(Person(ID, office.desk_locations, params))  # change to desk
         office.people_locations.append(people[ID - 1].current_location)
+        set_array_value(people[ID-1].current_location[0], people[ID-1].current_location[1], office.pathfinding_array, - ID)
+
     office.people = people
     return people
 
@@ -118,8 +120,6 @@ def run_simulation(params, office, people):
         display_frames.append(office.display_array)
         people_frames.append(people)
         plot_figure(time, office)
-
-
 
 
 if __name__ == "__main__":

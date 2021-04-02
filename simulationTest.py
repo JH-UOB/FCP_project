@@ -3,6 +3,7 @@ import timeit
 import random
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
+from joblib import Parallel, delayed
 from person import Person
 from office import Office
 
@@ -35,21 +36,24 @@ def update_location(people, person, office):
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, 1)
 
     if person.social_distancing:
-        print(person.current_location)
-        office.fill_social_distancing_array(person.current_location, people)
+        office.fill_social_distancing_array(person.current_location, office.people_locations)
         path = person.get_path(office.social_dist_array)
         if len(path) > 0:
             person.move(path)
+            # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
         else:
             path = person.get_path(office.pathfinding_array)
             if len(path) > 0:
                 person.move(path)
+                # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
             else:
                 move_somewhere(person, office)
+                # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
     else:
         path = person.get_path(office.pathfinding_array)
     if len(path) > 0:
         person.move(path)
+        set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
     else:
         move_somewhere(person, office)
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
@@ -76,10 +80,10 @@ def record_interactions(office, people):
     interactions = []
     for person in people:
         interactions.extend(office.find_interactions(office.pathfinding_array, person.current_location))
-
     interactions.sort()
     interactions = list(interactions for interactions,_ in itertools.groupby(interactions))
     return interactions
+
 
 def plot_figure(time, office):
     plt.figure(time)

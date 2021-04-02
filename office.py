@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from scipy.spatial import distance
-import itertools
 
 class Office:
 
@@ -17,16 +16,16 @@ class Office:
 
     def adj_finder(self, matrix, position, interactions=False):
         adj = []
-        
+
         for dx in range(-1, 2):
             for dy in range(-1, 2):
                 rangeX = range(0, matrix.shape[0])  # X bounds
                 rangeY = range(0, matrix.shape[1])  # Y bounds
-                
+
                 (newX, newY) = (position[0]+dx, position[1]+dy)  # adjacent cell
-                
+
                 if (newX in rangeX) and (newY in rangeY) and (dx, dy) != (0, 0):
-                    if interactions: 
+                    if interactions:
                         if matrix[newX, newY] != 0:
                             adj.append((newX, newY))
                     else:
@@ -45,25 +44,31 @@ class Office:
         for cell in adj_cells:
             if matrix[cell] < 0:
                 interactions.append([max(matrix[person_loc], matrix[cell]),
-                                         min(matrix[person_loc], matrix[cell]), 
+                                         min(matrix[person_loc], matrix[cell]),
                                               distance.euclidean(person_loc, cell)])
         return interactions
-    
+
     def fill_social_distancing_array(self, current_person, people):
-        people.remove(current_person)
+
+        print(current_person)
+        print(people)
+        try:
+            people.remove(current_person)
+        except:
+            print('')
+        print(people)
         for i in range(len(people)):
-            bubble = self.adj_finder(self.pathfinding_array, location)
+            bubble = self.adj_finder(self.pathfinding_array, current_person)
             for location in bubble:
-                self.social_dist_array[people[i]] = 0
-        
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+                self.social_dist_array[location] = 0
+
+
+
+
+
+
+
+
+
+
+

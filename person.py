@@ -43,6 +43,11 @@ class Person:
             self.social_distancing = True
         else:
             self.social_distancing = False
+        if random.random() < 0.1:
+            self.infected = True
+            self.infected_time = 0
+        else:
+            self.infected = False
 
         # Position properties
         self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION

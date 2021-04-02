@@ -13,7 +13,9 @@ class Office:
                                        list(np.where(self.display_array == 'T'))[1]))
         self.social_dist_array = self.pathfinding_array.copy()
         self.people_locations = []  # to be populated
-
+        
+        
+        
     def adj_finder(self, matrix, position, interactions=False):
         adj = []
 

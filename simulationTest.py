@@ -11,7 +11,7 @@ def main():
     parameters = {'Maximum Age': 65,
                   'Minimum Age': 18,
                   'Mask Adherence': 0.8,
-                  'Social Distancing Adherence': 0, #This is broke, leave at 0
+                  'Social Distancing Adherence': 1, #This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
                   'Simulation Duration': 200}
@@ -27,7 +27,7 @@ def instantiate_people(params, office):
     people = []
     for ID in range(1, number_of_people + 1):
         people.append(Person(ID, office.desk_locations, params))  # change to desk
-        office.people_locations.append(people[ID - 1].current_location)
+        office.people_locations[ID] = (people[ID - 1].current_location)
         set_array_value(people[ID-1].current_location[0], people[ID-1].current_location[1], office.pathfinding_array, - ID)
 
     office.people = people
@@ -39,19 +39,16 @@ def update_location(people, person, office):
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, 1)
 
     if person.social_distancing:
-        office.fill_social_distancing_array(person.current_location, office.people_locations)
-        path = person.get_path(office.social_dist_array)
+        social_dist_array = office.fill_social_distancing_array(person.ID, office.people_locations)
+        path = person.get_path(social_dist_array)
         if len(path) > 0:
             person.move(path)
-            # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
         else:
             path = person.get_path(office.pathfinding_array)
             if len(path) > 0:
                 person.move(path)
-                # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
             else:
                 move_somewhere(person, office)
-                # set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
     else:
         path = person.get_path(office.pathfinding_array)
     if len(path) > 0:
@@ -60,7 +57,7 @@ def update_location(people, person, office):
     else:
         move_somewhere(person, office)
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
-
+    office.people_locations[person.ID] = person.current_location
 
 def set_array_value(x, y, array, value):
     array[x][y] = value

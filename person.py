@@ -66,7 +66,7 @@ class Person:
             self.task_duration = random.randint(1, 10)
         else:
             self.task_location = self.desk_location
-            self.task_duration = random.randint(30, 50)
+            self.task_duration = random.randint(50, 100)
 
     def get_path(self, array):
         grid = Grid(matrix=array)

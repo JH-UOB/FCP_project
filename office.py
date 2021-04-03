@@ -12,7 +12,7 @@ class Office:
         self.task_locations = list(zip(list(np.where(self.display_array == 'T'))[0],
                                        list(np.where(self.display_array == 'T'))[1]))
         self.social_dist_array = self.pathfinding_array.copy()
-        self.people_locations = []  # to be populated
+        self.people_locations = {}  # to be populated
         
         
     def adj_finder(self, matrix, position, interactions=False):
@@ -49,19 +49,16 @@ class Office:
                                               distance.euclidean(person_loc, cell)])
         return interactions
 
-    def fill_social_distancing_array(self, current_person, people):
-
-        print(current_person)
-        print(people)
-        try:
-            people.remove(current_person)
-        except:
-            print('')
-        print(people)
-        for i in range(len(people)):
-            bubble = self.adj_finder(self.pathfinding_array, current_person)
+    def fill_social_distancing_array(self, current_person_ID, people_locations):
+        people = list(people_locations.keys())
+        people.remove(current_person_ID)
+        social_dist_array = self.pathfinding_array.copy()
+        for person in people:
+            bubble = self.adj_finder(self.pathfinding_array, people_locations[person])
             for location in bubble:
-                self.social_dist_array[location] = 0
+                social_dist_array[location] = 0
+                
+        return social_dist_array
 
 
 

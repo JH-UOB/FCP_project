@@ -3,7 +3,7 @@ import timeit
 import random
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 from person import Person
 from office import Office
 
@@ -84,13 +84,16 @@ def record_interactions(office, people):
     interactions = list(interactions for interactions,_ in itertools.groupby(interactions))
     return interactions
 
-
 def plot_figure(time, office):
     plt.figure(time)
     plt.title(str(time))
     plt.imshow(office.pathfinding_array.tolist())
     plt.show()
 
+""" ALEX TRANSMISSION """
+
+def transmission(people, person,interactions):
+    pass
 
 def run_simulation(params, office, people):
     sim_duration = params['Simulation Duration']
@@ -113,10 +116,13 @@ def run_simulation(params, office, people):
         print(time)
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
+
+        """ Determine who is infected and update person class - Alex """
+        transmission(people, person,office.interactions)
         
         display_frames.append(office.display_array)
         people_frames.append(people)
-        plot_figure(time, office)
+        #plot_figure(time, office)
 
 
 if __name__ == "__main__":

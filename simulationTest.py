@@ -15,7 +15,7 @@ def main():
                   'Social Distancing Adherence': 1, #This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
-                  'Simulation Duration': 5}
+                  'Simulation Duration': 200}
 
     selected_office = Office()  # Initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # Initialise office space
@@ -126,7 +126,7 @@ def run_simulation(params, office, people):
 
         display_frames.append(office.display_array)
         people_frames.append(people)
-        plot_figure(time, office)
+        #plot_figure(time, office)
 
 
 if __name__ == "__main__":

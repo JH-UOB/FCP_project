@@ -120,9 +120,12 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
 
-        infection_debug = True # Used for testing, True will print data to log, False will pass function
-        """ update who is infected, found using office interactions """
-        updated_infected(people,person,office.interactions,infection_debug)
+        """ Infection & transmissibility """
+
+        infection_debug = False # Used for testing, True will print data to log, False will pass function
+        updated_infected(people,person,office.interactions,infection_debug) # Update who is infected
+
+        """ Infection & transmissibility """
 
         display_frames.append(office.display_array)
         people_frames.append(people)

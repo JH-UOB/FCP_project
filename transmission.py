@@ -20,14 +20,16 @@ def get_contagious_interactions(people,interactions):
 
     return(contagious_interactions)
 
+def get_infection_parameters(contagious_interactions,people):
+    #print(contagious_interactions)
+    pass
+
 def do_something(people,person,interactions):
 
     if len(interactions) > 0:
         contagious_interactions = get_contagious_interactions(people,interactions)
-        print(len(contagious_interactions))
-
-    else:
-        pass
+        if len(contagious_interactions) > 0:
+            get_infection_parameters(contagious_interactions, people)
 
 
 

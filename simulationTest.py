@@ -6,6 +6,7 @@ from scipy.spatial import distance
 #from joblib import Parallel, delayed
 from person import Person
 from office import Office
+import transmission
 
 def main():
     parameters = {'Maximum Age': 65,
@@ -92,8 +93,8 @@ def plot_figure(time, office):
 
 """ ALEX TRANSMISSION """
 
-def transmission(people, person,interactions):
-    pass
+def updated_infected(people,person,interactions):
+    transmission.do_something(people,person,interactions)
 
 def run_simulation(params, office, people):
     sim_duration = params['Simulation Duration']
@@ -117,12 +118,12 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
 
-        """ Determine who is infected and update person class - Alex """
-        transmission(people, person,office.interactions)
-        
+        """ update who is infected from office interactions """
+        updated_infected(people,person,office.interactions)
+
         display_frames.append(office.display_array)
         people_frames.append(people)
-        #plot_figure(time, office)
+        plot_figure(time, office)
 
 
 if __name__ == "__main__":

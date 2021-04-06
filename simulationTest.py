@@ -15,7 +15,7 @@ def main():
                   'Social Distancing Adherence': 1, #This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
-                  'Simulation Duration': 200}
+                  'Simulation Duration': 20}
 
     selected_office = Office()  # Initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # Initialise office space

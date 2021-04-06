@@ -15,8 +15,8 @@ def get_contagious_interactions(people,interactions):
         person_2_ID = abs(int(interactions[i][1])) - 1
 
         if people[person_1_ID].infected != people[person_2_ID].infected:
-            distance = interactions[i][2] #find distance apart if interaction is relevant
-            contagious_interactions.extend((person_1_ID,person_2_ID,distance))
+            contagious_interaction_IDs = [person_1_ID,person_2_ID]
+            contagious_interactions.append(contagious_interaction_IDs) #Create a list of lists for contagious interactions
 
     return(contagious_interactions)
 
@@ -24,9 +24,12 @@ def do_something(people,person,interactions):
 
     if len(interactions) > 0:
         contagious_interactions = get_contagious_interactions(people,interactions)
-        print(contagious_interactions)
+        print(len(contagious_interactions))
+
     else:
         pass
+
+
 
     """
     if len(interactions) > 0:

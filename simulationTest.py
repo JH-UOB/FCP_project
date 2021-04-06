@@ -22,6 +22,8 @@ def main():
     run_simulation(parameters, selected_office, selected_people)
     return selected_office
 
+    """ Used for testing, true will print data to log """
+    infection_debug = True
 
 def instantiate_people(params, office):
     number_of_people = params['Number of People']
@@ -93,8 +95,11 @@ def plot_figure(time, office):
 
 """ ALEX TRANSMISSION """
 
-def updated_infected(people,person,interactions):
-    transmission.do_something(people,person,interactions)
+def updated_infected(people,person,interactions,infection_debug):
+    if infection_debug:
+        transmission.do_something(people,person,interactions)
+    else:
+        pass
 
 def run_simulation(params, office, people):
     sim_duration = params['Simulation Duration']
@@ -118,8 +123,10 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
 
-        """ update who is infected from office interactions """
-        updated_infected(people,person,office.interactions)
+        """ Used for testing, true will print data to log, false will pass function """
+        infection_debug = False
+        """ update who is infected, found using office interactions """
+        updated_infected(people,person,office.interactions,infection_debug)
 
         display_frames.append(office.display_array)
         people_frames.append(people)

@@ -15,15 +15,12 @@ def main():
                   'Social Distancing Adherence': 1, #This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
-                  'Simulation Duration': 200}
+                  'Simulation Duration': 5}
 
     selected_office = Office()  # Initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # Initialise office space
     run_simulation(parameters, selected_office, selected_people)
     return selected_office
-
-    """ Used for testing, true will print data to log """
-    infection_debug = True
 
 def instantiate_people(params, office):
     number_of_people = params['Number of People']
@@ -123,8 +120,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
 
-        """ Used for testing, true will print data to log, false will pass function """
-        infection_debug = False
+        infection_debug = True # Used for testing, True will print data to log, False will pass function
         """ update who is infected, found using office interactions """
         updated_infected(people,person,office.interactions,infection_debug)
 

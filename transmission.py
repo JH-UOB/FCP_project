@@ -7,29 +7,45 @@ Description:
     Takes all relevant office interactions and determines if an infection of COVID-19 has taken place.
     The person class is updated to reflect any changes made.
 """
-def get_contagious_interactions(people,interactions):
+
+import random
+
+def get_contagious_interactions(people,person,interactions):
     contagious_interactions = []
+    """     contagious_interactions is a list of lists              """
+    """     Format: [Infected Person,Non-Infected Person,Distance]  """
 
     for i in range(0, len(interactions)):
-        person_1_ID = abs(int(interactions[i][0])) - 1  #Acquiring IDs for people involved in interaction i of current step
-        person_2_ID = abs(int(interactions[i][1])) - 1
+        person_1_ID = abs(int(interactions[i][0])) -1 #Acquiring IDs for people involved in interaction i of current step
+        person_2_ID = abs(int(interactions[i][1])) -1 #Question this -1 as unsure if mistake - 06.04.2021 - Alex
+        distance = interactions[i][2]
 
-        if people[person_1_ID].infected != people[person_2_ID].infected:
-            contagious_interaction_IDs = [person_1_ID,person_2_ID]
-            contagious_interactions.append(contagious_interaction_IDs) #Create a list of lists for contagious interactions
+        if people[person_1_ID].infected != people[person_2_ID].infected: #XOR GATE for contagious interaction
+            if people[person_1_ID].infected is True:
+                contagious_interaction_IDs = [person_1_ID,person_2_ID,distance]
+            else:
+                contagious_interaction_IDs = [person_2_ID, person_1_ID,distance]
+
+            contagious_interactions.append(contagious_interaction_IDs)
 
     return(contagious_interactions)
 
-def get_infection_parameters(contagious_interactions,people):
-    #print(contagious_interactions)
-    pass
+def determine_infection(contagious_interactions, people):
+    default_chance = 0.5
+
+    for n in range(0, len(contagious_interactions)):
+        infection_chance = random.randint(0, 1)
+
+        if infection_chance > default_chance:
+            print("Person: " + str(contagious_interactions[n][1]) + " is now infected")
 
 def do_something(people,person,interactions):
 
     if len(interactions) > 0:
-        contagious_interactions = get_contagious_interactions(people,interactions)
+        contagious_interactions = get_contagious_interactions(people,person,interactions)
         if len(contagious_interactions) > 0:
-            get_infection_parameters(contagious_interactions, people)
+            determine_infection(contagious_interactions, people)
+
 
 
 

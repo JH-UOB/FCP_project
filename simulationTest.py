@@ -15,7 +15,9 @@ def main():
                   'Social Distancing Adherence': 1, #This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
-                  'Simulation Duration': 20}
+                  'Simulation Duration': 200,
+                  'default_transmission_chance': 0.2
+                  }
 
     selected_office = Office()  # Initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # Initialise office space
@@ -92,11 +94,15 @@ def plot_figure(time, office):
 
 """ ALEX TRANSMISSION """
 
-def updated_infected(people,person,interactions,infection_debug):
-    if infection_debug:
-        transmission.do_something(people,person,interactions)
+def updated_infected(params,people,person,interactions,infection_debug):
+    if people[1].transmission_chance_initialised is False:
+        default_transmission_chance = params['default_transmission_chance']
+        transmission.update_transmission_chance(people,default_transmission_chance)
     else:
-        pass
+        if infection_debug:
+            transmission.do_something(people,person,interactions)
+        else:
+            pass
 
 def run_simulation(params, office, people):
     sim_duration = params['Simulation Duration']
@@ -122,8 +128,8 @@ def run_simulation(params, office, people):
 
         """ Infection & transmissibility """
 
-        infection_debug = False # Used for testing, True will print data to log, False will pass function
-        updated_infected(people,person,office.interactions,infection_debug) # Update who is infected
+        infection_debug = True # Used for testing, True will print data to log, False will pass function
+        updated_infected(params,people,person,office.interactions,infection_debug) # Update who is infected
 
         """ Infection & transmissibility """
 

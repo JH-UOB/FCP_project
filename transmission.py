@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Mar 28 16:31:32 2021
+Created on Tues Apr 6 12:25:03 2021
 
 Author: Alex Straw
 Description:
-    Takes all relevant office interactions and determines if an infection of COVID-19 has taken place.
-    The person class is updated to reflect any changes made.
+    This piece of code receives the 'people' object and interactions for a given step.
+    Contagious interactions where one individual has COVID-19 and the other does not are
+    extracted from this data.  An infection chance is calculated based off specific person
+    qualities such as 'mask adherence'.  A random number to see if the infection has occurred
+    from this calculated chance. Where an infection has taken place, a person's infection state is set to True.
 """
 
 import random
@@ -40,7 +43,7 @@ def determine_infection(contagious_interactions, people):
         if infection_chance > default_chance:
             people[non_infected_id].infected = True
 
-def get_total_infected(person,people):
+def get_total_infected(people):
     infected = 0
     for person in people:
         if person.infected:
@@ -55,7 +58,7 @@ def do_something(people,person,interactions):
         contagious_interactions = get_contagious_interactions(people,person,interactions)
         if len(contagious_interactions) > 0:
             determine_infection(contagious_interactions, people)
-            infected = get_total_infected(person,people)
+            infected = get_total_infected(people)
             print("total number of people: " + str(len(people)))
             print("total number infected: " + str(infected))
 

@@ -13,35 +13,38 @@ Description:
 
 import random
 
-def get_contagious_interactions(people,person,interactions):
+
+def get_contagious_interactions(people, person, interactions):
     contagious_interactions = []
     """     contagious_interactions is a list of lists              """
     """     Format: [Infected Person,Non-Infected Person,Distance]  """
 
     for i in range(0, len(interactions)):
-        person_1_ID = abs(int(interactions[i][0])) -1 #Acquiring IDs for people involved in interaction 'i' of step
-        person_2_ID = abs(int(interactions[i][1])) -1 #Question this -1 as unsure if mistake - 06.04.2021 - Alex
+        person_1_ID = abs(int(interactions[i][0])) - 1  # Acquiring IDs for people involved in interaction 'i' of step
+        person_2_ID = abs(int(interactions[i][1])) - 1  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
         distance = interactions[i][2]
 
-        if people[person_1_ID].infected != people[person_2_ID].infected: #XOR GATE for contagious interaction
+        if people[person_1_ID].infected != people[person_2_ID].infected:  # XOR GATE for contagious interaction
             if people[person_1_ID].infected is True:
-                contagious_interaction_IDs = [person_1_ID,person_2_ID,distance]
+                contagious_interaction_IDs = [person_1_ID, person_2_ID, distance]
             else:
-                contagious_interaction_IDs = [person_2_ID, person_1_ID,distance]
+                contagious_interaction_IDs = [person_2_ID, person_1_ID, distance]
 
             contagious_interactions.append(contagious_interaction_IDs)
 
-    return(contagious_interactions)
+    return (contagious_interactions)
+
 
 def determine_infection(contagious_interactions, people):
-    default_chance = 0.5
-
     for n in range(0, len(contagious_interactions)):
-        infection_chance = random.randint(0, 1)
-
+        transmission_random_number = random.uniform(0, 1)
         non_infected_id = abs(int(contagious_interactions[n][1]))
-        if infection_chance > default_chance:
+
+        interaction_transmission_chance = people[non_infected_id].transmission_chance
+
+        if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
+
 
 def get_total_infected(people):
     infected = 0
@@ -50,20 +53,35 @@ def get_total_infected(people):
             infected += 1
         else:
             pass
-    return(infected)
+    return (infected)
 
-def do_something(people,person,interactions):
 
+"""     update_transmission_chance should only be run once     """
+
+
+def update_transmission_chance(people,default_transmission_chance):
+    for ID in range(0, len(people)):
+        transmission_factor = 1
+        if people[ID].mask is False:
+            transmission_factor = transmission_factor * 2
+        else:
+            pass
+        if people[ID].social_distancing is False:  # Social Distancing adherence is broken (see simulationTest.py)
+            transmission_factor = transmission_factor * 1.34
+        else:
+            pass
+
+        people[ID].transmission_chance = default_transmission_chance * transmission_factor
+        people[ID].transmission_chance_initialised = True  # Every person must have their infection chance set
+
+def do_something(people, person, interactions):
     if len(interactions) > 0:
-        contagious_interactions = get_contagious_interactions(people,person,interactions)
+        contagious_interactions = get_contagious_interactions(people, person, interactions)
         if len(contagious_interactions) > 0:
             determine_infection(contagious_interactions, people)
             infected = get_total_infected(people)
-            print("total number of people: " + str(len(people)))
-            print("total number infected: " + str(infected))
-
-
-
-
-
-
+            # print("total number of people: " + str(len(people)))
+            # print("total number infected: " + str(infected))
+            # print("Percentage infected: " + str(100*(infected/len(people))) + "%")
+            infected_fraction = str(infected) + ' / ' + str(len(people))
+            print("Infected: " + infected_fraction)

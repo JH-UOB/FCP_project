@@ -16,7 +16,7 @@ def get_contagious_interactions(people,person,interactions):
     """     Format: [Infected Person,Non-Infected Person,Distance]  """
 
     for i in range(0, len(interactions)):
-        person_1_ID = abs(int(interactions[i][0])) -1 #Acquiring IDs for people involved in interaction i of current step
+        person_1_ID = abs(int(interactions[i][0])) -1 #Acquiring IDs for people involved in interaction 'i' of step
         person_2_ID = abs(int(interactions[i][1])) -1 #Question this -1 as unsure if mistake - 06.04.2021 - Alex
         distance = interactions[i][2]
 
@@ -36,8 +36,18 @@ def determine_infection(contagious_interactions, people):
     for n in range(0, len(contagious_interactions)):
         infection_chance = random.randint(0, 1)
 
+        non_infected_id = abs(int(contagious_interactions[n][1]))
         if infection_chance > default_chance:
-            print("Person: " + str(contagious_interactions[n][1]) + " is now infected")
+            people[non_infected_id].infected = True
+
+def get_total_infected(person,people):
+    infected = 0
+    for person in people:
+        if person.infected:
+            infected += 1
+        else:
+            pass
+    return(infected)
 
 def do_something(people,person,interactions):
 
@@ -45,6 +55,10 @@ def do_something(people,person,interactions):
         contagious_interactions = get_contagious_interactions(people,person,interactions)
         if len(contagious_interactions) > 0:
             determine_infection(contagious_interactions, people)
+            infected = get_total_infected(person,people)
+            print("total number of people: " + str(len(people)))
+            print("total number infected: " + str(infected))
+
 
 
 

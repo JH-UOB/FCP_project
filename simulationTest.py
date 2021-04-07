@@ -100,7 +100,7 @@ def updated_infected(params,people,person,interactions,infection_debug):
         transmission.update_transmission_chance(people,default_transmission_chance)
     else:
         if infection_debug:
-            transmission.do_something(people,person,interactions)
+            transmission.step_transmission(people,person,interactions)
         else:
             pass
 

@@ -74,14 +74,12 @@ def update_transmission_chance(people,default_transmission_chance):
         people[ID].transmission_chance = default_transmission_chance * transmission_factor
         people[ID].transmission_chance_initialised = True  # Every person must have their infection chance set
 
-def do_something(people, person, interactions):
+def step_transmission(people, person, interactions):
     if len(interactions) > 0:
         contagious_interactions = get_contagious_interactions(people, person, interactions)
         if len(contagious_interactions) > 0:
             determine_infection(contagious_interactions, people)
             infected = get_total_infected(people)
-            # print("total number of people: " + str(len(people)))
-            # print("total number infected: " + str(infected))
-            # print("Percentage infected: " + str(100*(infected/len(people))) + "%")
+
             infected_fraction = str(infected) + ' / ' + str(len(people))
             print("Infected: " + infected_fraction)

@@ -38,7 +38,7 @@ def get_contagious_interactions(people, person, interactions):
 
             contagious_interactions.append(contagious_interaction_IDs)
 
-    return (contagious_interactions)
+    return contagious_interactions
 
 
 """     determine_infection calculates whether an infection has taken place and updates the people class   """
@@ -65,7 +65,7 @@ def get_total_infected(people):
             infected += 1
         else:
             pass
-    return (infected)
+    return infected
 
 
 """     update_transmission_chance should only be run once     """

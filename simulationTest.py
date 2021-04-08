@@ -3,16 +3,17 @@ import timeit
 import random
 import matplotlib.pyplot as plt
 from scipy.spatial import distance
-#from joblib import Parallel, delayed
+# from joblib import Parallel, delayed
 from person import Person
 from office import Office
 import transmission
+
 
 def main():
     parameters = {'Maximum Age': 65,
                   'Minimum Age': 18,
                   'Mask Adherence': 0.8,
-                  'Social Distancing Adherence': 1, #This is broke, leave at 0
+                  'Social Distancing Adherence': 1,  # This is broke, leave at 0
                   'Number of Floors': 0.5,
                   'Number of People': 26,
                   'Simulation Duration': 200,
@@ -24,20 +25,21 @@ def main():
     run_simulation(parameters, selected_office, selected_people)
     return selected_office
 
+
 def instantiate_people(params, office):
     number_of_people = params['Number of People']
     people = []
     for ID in range(1, number_of_people + 1):
         people.append(Person(ID, office.desk_locations, params))  # change to desk
         office.people_locations[ID] = (people[ID - 1].current_location)
-        set_array_value(people[ID-1].current_location[0], people[ID-1].current_location[1], office.pathfinding_array, - ID)
+        set_array_value(people[ID - 1].current_location[0], people[ID - 1].current_location[1],
+                        office.pathfinding_array, - ID)
 
     office.people = people
     return people
 
 
 def update_location(people, person, office):
-
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, 1)
 
     if person.social_distancing:
@@ -61,30 +63,36 @@ def update_location(people, person, office):
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
     office.people_locations[person.ID] = person.current_location
 
+
 def set_array_value(x, y, array, value):
     array[x][y] = value
+
 
 def start_moving(people, person, office):
     person.task_progress = 0
     person.get_task(office.task_locations)
     update_location(people, person, office)
 
+
 def keep_moving(people, person, office):
     set_array_value(person.current_location[0], person.current_location[1], office.display_array, 1)
     update_location(people, person, office)
 
+
 def move_somewhere(person, office):
     avail_cells = office.adj_finder(office.pathfinding_array, person.current_location)
     set_array_value(person.current_location[0], person.current_location[1], office.display_array, 1)
-    person.current_location = avail_cells[random.randint(0,len(avail_cells)-1)]
+    person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
+
 
 def record_interactions(office, people):
     interactions = []
     for person in people:
         interactions.extend(office.find_interactions(office.pathfinding_array, person.current_location))
     interactions.sort()
-    interactions = list(interactions for interactions,_ in itertools.groupby(interactions))
+    interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
     return interactions
+
 
 def plot_figure(time, office):
     plt.figure(time)
@@ -92,17 +100,20 @@ def plot_figure(time, office):
     plt.imshow(office.pathfinding_array.tolist())
     plt.show()
 
+
 """ ALEX TRANSMISSION """
 
-def updated_infected(params,people,person,interactions,infection_debug):
-    if people[1].transmission_chance_initialised is False:
+
+def updated_infected(params, people, person, interactions, infection_debug):
+    if people[1].transmission_chance_initialised is False:  # Checks if transmission rates have been assigned
         default_transmission_chance = params['default_transmission_chance']
-        transmission.update_transmission_chance(people,default_transmission_chance)
+        transmission.update_transmission_chance(people, default_transmission_chance)  # Individual transmission rate
     else:
-        if infection_debug:
-            transmission.step_transmission(people,person,interactions)
+        if infection_debug:  # Temporary whilst several people are working on the code
+            transmission.step_transmission(people, person, interactions)  # Calls on transmission.py to update infected
         else:
             pass
+
 
 def run_simulation(params, office, people):
     sim_duration = params['Simulation Duration']
@@ -126,16 +137,16 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)
 
-        """ Infection & transmissibility """
+        """     Infection & transmissibility    """
 
-        infection_debug = True # Used for testing, True will print data to log, False will pass function
-        updated_infected(params,people,person,office.interactions,infection_debug) # Update who is infected
+        infection_debug = True  # Used for testing, True will print data to log, False will pass function
+        updated_infected(params, people, person, office.interactions, infection_debug)  # Update who is infected
 
-        """ Infection & transmissibility """
+
 
         display_frames.append(office.display_array)
         people_frames.append(people)
-        #plot_figure(time, office)
+        # plot_figure(time, office)
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@ Description:
     This piece of code receives the 'people' object and interactions for a given step.
     Contagious interactions where one individual has COVID-19 and the other does not are
     extracted from this data.  An infection chance is calculated based off specific person
-    qualities such as 'mask adherence'.  A random number to see if the infection has occurred
-    from this calculated chance. Where an infection has taken place, a person's infection state is set to True.
+    qualities such as 'mask adherence'.  A random number is used to see if the infection has occurred from
+    the transmission chance. Where an infection has taken place, a person's infection state is set to True.
 """
 
 import random

@@ -13,6 +13,12 @@ Description:
 
 import random
 
+# TO DO
+# When someone is infected they are not immediately infectious --> build this in
+# Tree diagram showing infection from one individual to the end
+# Once everyone is infected there is no need to continue the simulation
+# Modify how we access the class --> i.e Jane.age is better than people[number].age
+
 """
     get_contagious_interactions looks at all the interactions for the step.  It checks if individuals
     involved in interactions are infected with COVID-19.  If one person has COVID-19 and the other does

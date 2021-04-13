@@ -13,11 +13,11 @@ def main():
     parameters = {'Maximum Age': 65,
                   'Minimum Age': 18,
                   'Mask Adherence': 0.8,
-                  'Social Distancing Adherence': 1,  # This is broke, leave at 0
+                  'Social Distancing Adherence': 1,
                   'Number of Floors': 0.5,
-                  'Number of People': 26,
+                  'Number of People': 10,
                   'Simulation Duration': 200,
-                  'default_transmission_chance': 0.2
+                  'default_transmission_chance': 0.02
                   }
 
     selected_office = Office()  # Initialise office space
@@ -27,15 +27,21 @@ def main():
 
 
 def instantiate_people(params, office):
+    """Create people objects according to input parameters"""
     number_of_people = params['Number of People']
+    # Populate a list of people with Person objects each with a unique desk 
+    # location
     people = []
     for ID in range(1, number_of_people + 1):
-        people.append(Person(ID, office.desk_locations, params))  # change to desk
+        people.append(Person(ID, office.desk_locations, params))
+        # Update dictionary of people locations stored in Office object
         office.people_locations[ID] = (people[ID - 1].current_location)
-        set_array_value(people[ID - 1].current_location[0], people[ID - 1].current_location[1],
+        # Set person location in pathfinding array to be untraversable
+        set_array_value(people[ID - 1].current_location[0], 
+                        people[ID - 1].current_location[1],
                         office.pathfinding_array, - ID)
-
-    office.people = people
+    # Save list of people to office object
+    office.people = people.copy()
     return people
 
 
@@ -60,7 +66,9 @@ def update_location(people, person, office):
         set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
     else:
         move_somewhere(person, office)
-    set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, - person.ID)
+    set_array_value(person.current_location[0], 
+                    person.current_location[1], 
+                    office.pathfinding_array, - person.ID)
     office.people_locations[person.ID] = person.current_location
 
 
@@ -69,19 +77,24 @@ def set_array_value(x, y, array, value):
 
 
 def start_moving(people, person, office):
+    """Assign a task to a person and start moving"""
     person.task_progress = 0
+    # Assign a task
     person.get_task(office.task_locations)
-    update_location(people, person, office)
-
-
-def keep_moving(people, person, office):
-    set_array_value(person.current_location[0], person.current_location[1], office.display_array, 1)
+    # Begin movement along path
     update_location(people, person, office)
 
 
 def move_somewhere(person, office):
-    avail_cells = office.adj_finder(office.pathfinding_array, person.current_location)
-    set_array_value(person.current_location[0], person.current_location[1], office.display_array, 1)
+    """Move person somewhere to avoid blockages in narrow spaces"""
+    # Get available cells that can be moved into i.e. not a wall or another person
+    avail_cells = office.adj_finder(office.pathfinding_array, 
+                                    person.current_location)
+    # Set previous person location in pathfinding array to be traversable
+    set_array_value(person.current_location[0], 
+                    person.current_location[1], 
+                    office.display_array, 1)
+    # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
 
@@ -131,7 +144,7 @@ def run_simulation(params, office, people):
                     start_moving(people, person, office)
 
             else:  # between tasks, keep moving
-                keep_moving(people, person, office)
+                update_location(people, person, office)
 
         print(time)
         office.interactions = record_interactions(office, people)
@@ -146,7 +159,7 @@ def run_simulation(params, office, people):
 
         display_frames.append(office.display_array)
         people_frames.append(people)
-        # plot_figure(time, office)
+        plot_figure(time, office)
 
 
 if __name__ == "__main__":

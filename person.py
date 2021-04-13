@@ -65,7 +65,12 @@ class Person:
         # self.doing_task = True  # unused
 
     def get_task(self, locations):
-
+        """Assign a random task location and task duration. Possible task 
+            locations are determined by the selected office floorplan. If a 
+            person has just completed a task, they will return to their desk 
+            for a random duration. If they are at their desk, they will move 
+            to a task location.
+        """
         if self.current_location == self.desk_location:
             self.task_location = locations[random.randint(0, len(locations)-1)]
             self.task_duration = random.randint(1, 10)
@@ -75,7 +80,6 @@ class Person:
 
     def get_path(self, array):
         grid = Grid(matrix=array)
-
         start = grid.node(self.current_location[1], self.current_location[0])
         end = grid.node(self.task_location[1], self.task_location[0])  # variable task location, untested
         finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
@@ -86,5 +90,6 @@ class Person:
         return path
 
     def move(self, path):
+        """"Move person along their path"""
         self.current_location = (path[1][1], path[1][0])
 

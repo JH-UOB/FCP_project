@@ -5,14 +5,26 @@ from scipy.spatial import distance
 class Office:
 
     def __init__(self):
+        """
+        Generate an office object with desk and task locations dictated by an
+        excel input file.
+
+        """
+        # Create an array using the excel input file
         self.display_array = pd.read_excel('office_array.xls').values.transpose()
+        # Create pathfinding array denoting which cells are transversible.
         self.pathfinding_array = np.where(self.display_array != 0, 1, self.display_array)
+        # Find locations of tasks and desks
         self.desk_locations = list(zip(list(np.where(self.display_array == 'D'))[0],
                                        list(np.where(self.display_array == 'D'))[1]))
         self.task_locations = list(zip(list(np.where(self.display_array == 'T'))[0],
                                        list(np.where(self.display_array == 'T'))[1]))
+        # Create social distancing array from pathfinding array which will be
+        # used for people who have the social distancing attribute.
         self.social_dist_array = self.pathfinding_array.copy()
-        self.people_locations = {}  # to be populated
+        # Create people locations dictionary to be populated and updated as 
+        # people move.
+        self.people_locations = {}
         
         
     def adj_finder(self, matrix, position, interactions=False):

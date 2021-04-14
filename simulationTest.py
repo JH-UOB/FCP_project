@@ -1,3 +1,42 @@
+#!/usr/bin/env python3
+"""
+
+simulationTest.py
+Adam Honnywill
+James Hawke
+April 2021
+
+This script runs simulations of coronavirus transmission in an office to investigate the effects of various
+parameters, such as wearing or social distancing. The script may be used to:
+
+    1. Show an animation of the simulation on screen
+    2. Create a video of a simulation
+    3. Show a plot of different stages of the epidemic
+    4. Save a plot to a file
+
+This is done using code in this script, which uses uses classes in other scripts:
+
+    1. office.py            # to track the movement of people at any given time in the office space
+    2. person.py            # to instantiate people in the office
+    3. GUI.py               # to perform GUI based parameter input
+    4. transmission.py      # to update the infection status of people upon interaction
+
+The command line interface to the script makes allows for user input parameters to be input either from a GUI or a
+text file:
+
+    $ python simulationTest.py               # run simulation with with text file input parameters
+    $ python simulationTest.py --GUI         # run simulation with with GUI input parameters
+    $ python simulationTest.py --help        # show all command line options
+
+It is also possible to create a video of the animation (if you install
+ffmpeg):
+
+    $ python simulator.py --file=simulation.mp4
+
+NOTE: You need to install ffmpeg for the above to work. The ffmpeg program
+must also be on PATH.
+"""
+
 import itertools
 import timeit
 import random
@@ -10,6 +49,11 @@ import transmission
 
 
 def main():
+    """Command line entry point."""
+    #
+    # Load parameters from the argument specified source (the GUI or text file)
+    #   https://docs.python.org/3/library/argparse.html
+    #
     parameters = {'Maximum Age': 65,
                   'Minimum Age': 18,
                   'Mask Adherence': 0.8,
@@ -21,7 +65,7 @@ def main():
                   }
 
     selected_office = Office()  # Initialise office space
-    selected_people = instantiate_people(parameters, selected_office)  # Initialise office space
+    selected_people = instantiate_people(parameters, selected_office)  # Initialise people in office space
     run_simulation(parameters, selected_office, selected_people)
     return selected_office
 

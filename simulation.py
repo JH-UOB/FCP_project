@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 
-simulationTest.py
+simulation.py
 Adam Honnywill
 James Hawke
 April 2021
@@ -24,9 +24,9 @@ This is done using code in this script, which uses uses classes in other scripts
 The command line interface to the script makes allows for user input parameters to be input either from a GUI or a
 text file:
 
-    $ python simulationTest.py               # run simulation with with text file input parameters
-    $ python simulationTest.py --GUI         # run simulation with with GUI input parameters
-    $ python simulationTest.py --help        # show all command line options
+    $ python simulation.py               # run simulation with with text file input parameters
+    $ python simulation.py --GUI         # run simulation with with GUI input parameters
+    $ python simulation.py --help        # show all command line options
 
 It is also possible to create a video of the animation (if you install
 ffmpeg):

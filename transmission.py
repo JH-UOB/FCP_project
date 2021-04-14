@@ -84,7 +84,7 @@ def update_transmission_chance(people, default_transmission_chance):
             transmission_factor = transmission_factor * 2  # Found from literature (effect of wearing a mask)
         else:
             pass
-        if people[ID].social_distancing is False:  # Social Distancing adherence is broken (see simulationTest.py)
+        if people[ID].social_distancing is False:  # Social Distancing adherence is broken (see simulation.py)
             transmission_factor = transmission_factor * 1.34  # Found from literature (impact of social distancing)
         else:
             pass

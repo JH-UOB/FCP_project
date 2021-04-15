@@ -19,6 +19,8 @@ import random
 # Once everyone is infected there is no need to continue the simulation
 # Modify how we access the class --> i.e Jane.age is better than people[number].age
 
+# Only initial infected are infectious --> build this in
+
 """
     get_contagious_interactions looks at all the interactions for the step.  It checks if individuals
     involved in interactions are infected with COVID-19.  If one person has COVID-19 and the other does

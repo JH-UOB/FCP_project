@@ -211,9 +211,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
-        """     Infection & transmissibility    """
-
-        transmission.step_transmission(people, person, office.interactions)  # Update who is infected
+        transmission.step_transmission(people, person, office.interactions)  # TRANSMISSION - ALEX
 
         display_frames.append(office.display_array)  # record people locations in office
         people_frames.append(people)  # record status of people (included infection status)

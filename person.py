@@ -48,9 +48,7 @@ class Person:
             self.infected = False
 
         # Transmission Properties
-        self.transmission_chance_initialised = False  # Individual transmission is calculated once for class
-        self.transmission_chance = 0 # Default chance of transmission is updated by transmission.py
-        self.contagious = False # Needs to be implemented
+        self.contagious = False  # Needs to be implemented
 
         # Position properties
         self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION

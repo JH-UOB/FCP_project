@@ -58,7 +58,6 @@ def determine_infection(contagious_interactions, people):
         transmission_random_number = random.uniform(0, 1)
         non_infected_id = abs(int(contagious_interactions[n][1]))
 
-        print(contagious_interactions)
         interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
 
         if transmission_random_number < interaction_transmission_chance:
@@ -71,9 +70,9 @@ def get_transmission_chance(interaction, people):
     distance = interaction[2]
 
     if people[person_1_number].mask is True and people[person_2_number].mask is True:   # AND GATE (2 MASKS)
-        mask_transmission_chance = 0.25
-    elif people[person_1_number].mask != people[person_2_number].mask:                  # XOR GATE (1 MASK)
         mask_transmission_chance = 0.5
+    elif people[person_1_number].mask != people[person_2_number].mask:                  # XOR GATE (1 MASK)
+        mask_transmission_chance = 0.75
     else:                                                                               # (0 MASKS)
         mask_transmission_chance = 1
 

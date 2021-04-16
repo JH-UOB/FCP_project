@@ -12,6 +12,7 @@ Description:
 """
 
 import random
+import person
 
 # TO DO
 # When someone is infected they are not immediately infectious --> build this in
@@ -57,10 +58,38 @@ def determine_infection(contagious_interactions, people):
         transmission_random_number = random.uniform(0, 1)
         non_infected_id = abs(int(contagious_interactions[n][1]))
 
-        interaction_transmission_chance = people[non_infected_id].transmission_chance
+        print(contagious_interactions)
+        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
 
         if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
+
+
+def get_transmission_chance(interaction, people):
+    person_1_number = interaction[0]
+    person_2_number = interaction[1]
+    distance = interaction[2]
+
+    if people[person_1_number].mask is True and people[person_2_number].mask is True:   # AND GATE (2 MASKS)
+        mask_transmission_chance = 0.25
+    elif people[person_1_number].mask != people[person_2_number].mask:                  # XOR GATE (1 MASK)
+        mask_transmission_chance = 0.5
+    else:                                                                               # (0 MASKS)
+        mask_transmission_chance = 1
+
+    #  Infection rate is inversely proportional the square of the distance separating two individuals
+
+    if distance < 1:
+        distance_transmission_chance = 1
+    elif distance > 2:
+        distance_transmission_chance = 0.25
+    else:
+        distance_transmission_chance = 1 / (distance ** 2)
+
+    transmission_chance = mask_transmission_chance * distance_transmission_chance
+    print(transmission_chance)
+
+    return transmission_chance
 
 
 """     get_total_infected is used to loop through the people class and find the number of infected   """

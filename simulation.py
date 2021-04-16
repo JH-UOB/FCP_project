@@ -65,7 +65,6 @@ def main():
                   'Number of Floors': 0.5,
                   'Number of People': 10,
                   'Simulation Duration': 200,
-                  'default_transmission_chance': 0.02
                   }
 
     selected_office = Office()  # initialise office space
@@ -178,21 +177,17 @@ def plot_figure(time, office):
     plt.figure(time)
     plt.title(str(time))
     plt.imshow(office.pathfinding_array.tolist())
-    plt.show()
+    #plt.show()
 
 
 """ ALEX TRANSMISSION """
 
 
 def updated_infected(params, people, person, interactions, infection_debug):
-    if people[1].transmission_chance_initialised is False:  # Checks if transmission rates have been assigned
-        default_transmission_chance = params['default_transmission_chance']
-        transmission.update_transmission_chance(people, default_transmission_chance)  # Individual transmission rate
+    if infection_debug:  # Temporary whilst several people are working on the code
+        transmission.step_transmission(people, person, interactions)  # Calls on transmission.py to update infected
     else:
-        if infection_debug:  # Temporary whilst several people are working on the code
-            transmission.step_transmission(people, person, interactions)  # Calls on transmission.py to update infected
-        else:
-            pass
+        pass
 
 
 def run_simulation(params, office, people):

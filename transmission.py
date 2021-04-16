@@ -105,25 +105,6 @@ def get_total_infected(people):
     return infected
 
 
-"""     update_transmission_chance should only be run once     """
-
-
-def update_transmission_chance(people, default_transmission_chance):
-    for ID in range(0, len(people)):
-        transmission_factor = 1
-        if people[ID].mask is False:
-            transmission_factor = transmission_factor * 2  # Found from literature (effect of wearing a mask)
-        else:
-            pass
-        if people[ID].social_distancing is False:  # Social Distancing adherence is broken (see simulation.py)
-            transmission_factor = transmission_factor * 1.34  # Found from literature (impact of social distancing)
-        else:
-            pass
-
-        people[ID].transmission_chance = default_transmission_chance * transmission_factor
-        people[ID].transmission_chance_initialised = True  # Every person must have their infection chance set
-
-
 """     step_transmission checks if interactions have happened in the given step --> equiv to main   """
 
 

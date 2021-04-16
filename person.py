@@ -44,11 +44,12 @@ class Person:
         if random.random() < 0.25:  # should be parameterised
             self.infected = True
             self.infected_time = 0
+
+            self.contagious = True  # Those infected initially are contagious
         else:
             self.infected = False
 
-        # Transmission Properties
-        self.contagious = False  # Needs to be implemented
+            self.contagious = False
 
         # Position properties
         self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION

@@ -13,13 +13,8 @@ Description:
 import random
 
 # TO DO
-# When someone is infected they are not immediately infectious --> build this in
 # Tree diagram showing infection from one individual to the end
-# Once everyone is infected there is no need to continue the simulation
 # Modify how we access the class --> i.e Jane.age is better than people[number].age
-
-# Only initial infected are infectious --> build this in
-
 
 def get_type(boolean_array):
     if boolean_array[0] == boolean_array[0]:

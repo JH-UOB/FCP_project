@@ -21,13 +21,17 @@ import person
 
 # Only initial infected are infectious --> build this in
 
-"""
-    get_contagious_interactions looks at all the interactions for the step.  It checks if individuals
-    involved in interactions are infected with COVID-19.  If one person has COVID-19 and the other does
-    not, it is added to a new 'list of lists' named 'contagious_interactions'.  The format for this
-    array is: 
-                contagious_interactions --> [Infected Person,Non-Infected Person,Distance]
-"""
+
+def get_type(boolean_array):
+    if boolean_array[0] == boolean_array[0]:
+        if boolean_array[0] is True:
+            person_type = 1
+        else:
+            person_type = 3
+    else:
+        person_type = 2
+
+    return person_type
 
 
 def get_contagious_interactions(people, person, interactions):
@@ -38,12 +42,23 @@ def get_contagious_interactions(people, person, interactions):
         person_2_ID = abs(int(interactions[i][1])) - 1  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
         distance = interactions[i][2]
 
-        if people[person_1_ID].infected != people[person_2_ID].infected:  # XOR GATE for contagious interaction
-            if people[person_1_ID].infected is True:
-                contagious_interaction_IDs = [person_1_ID, person_2_ID, distance]
-            else:
-                contagious_interaction_IDs = [person_2_ID, person_1_ID, distance]
+        person_1_type = get_type([people[person_1_ID].infected, people[person_1_ID].contagious])
+        person_2_type = get_type([people[person_2_ID].infected, people[person_2_ID].contagious])
 
+        #  3 types of individuals:
+        #  Type 1: [infected = True, contagious = True]     --> All initial infected
+        #  Type 2: [infected = True, contagious = False]    --> Those infected during simulation.py
+        #  Type 3: [infected = False, contagious = False]   --> Those not infected
+        #  A contagious interaction is an interaction between a Type 1 and Type 3
+
+        # Room for optimisation here
+
+        if person_1_type == 1 and person_2_type == 3:
+            contagious_interaction_IDs = [person_1_ID, person_2_ID, distance]
+            contagious_interactions.append(contagious_interaction_IDs)
+
+        elif person_1_type == 3 and person_2_type == 1:
+            contagious_interaction_IDs = [person_2_ID, person_1_ID, distance]
             contagious_interactions.append(contagious_interaction_IDs)
 
     return contagious_interactions
@@ -51,28 +66,16 @@ def get_contagious_interactions(people, person, interactions):
 
 """     determine_infection calculates whether an infection has taken place and updates the people class   """
 
-
-def determine_infection(contagious_interactions, people):
-    for n in range(0, len(contagious_interactions)):
-        transmission_random_number = random.uniform(0, 1)
-        non_infected_id = abs(int(contagious_interactions[n][1]))
-
-        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
-
-        if transmission_random_number < interaction_transmission_chance:
-            people[non_infected_id].infected = True
-
-
 def get_transmission_chance(interaction, people):
     person_1_number = interaction[0]
     person_2_number = interaction[1]
     distance = interaction[2]
 
-    if people[person_1_number].mask is True and people[person_2_number].mask is True:   # AND GATE (2 MASKS)
+    if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
-    elif people[person_1_number].mask != people[person_2_number].mask:                  # XOR GATE (1 MASK)
+    elif people[person_1_number].mask != people[person_2_number].mask:  # XOR GATE (1 MASK)
         mask_transmission_chance = 0.75
-    else:                                                                               # (0 MASKS)
+    else:  # (0 MASKS)
         mask_transmission_chance = 1
 
     #  Infection rate is inversely proportional the square of the distance separating two individuals
@@ -85,9 +88,19 @@ def get_transmission_chance(interaction, people):
         distance_transmission_chance = 1 / (distance ** 2)
 
     transmission_chance = mask_transmission_chance * distance_transmission_chance
-    print(transmission_chance)
 
     return transmission_chance
+
+
+def determine_infection(contagious_interactions, people):
+    for n in range(0, len(contagious_interactions)):
+        transmission_random_number = random.uniform(0, 1)
+        non_infected_id = abs(int(contagious_interactions[n][1]))
+
+        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
+
+        if transmission_random_number < interaction_transmission_chance:
+            people[non_infected_id].infected = True
 
 
 """     get_total_infected is used to loop through the people class and find the number of infected   """

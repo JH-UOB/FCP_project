@@ -11,7 +11,6 @@ Description:
 """
 
 import random
-import person
 
 # TO DO
 # When someone is infected they are not immediately infectious --> build this in
@@ -66,6 +65,7 @@ def get_contagious_interactions(people, person, interactions):
 
 """     determine_infection calculates whether an infection has taken place and updates the people class   """
 
+
 def get_transmission_chance(interaction, people):
     person_1_number = interaction[0]
     person_2_number = interaction[1]
@@ -92,17 +92,6 @@ def get_transmission_chance(interaction, people):
     return transmission_chance
 
 
-def determine_infection(contagious_interactions, people):
-    for n in range(0, len(contagious_interactions)):
-        transmission_random_number = random.uniform(0, 1)
-        non_infected_id = abs(int(contagious_interactions[n][1]))
-
-        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
-
-        if transmission_random_number < interaction_transmission_chance:
-            people[non_infected_id].infected = True
-
-
 """     get_total_infected is used to loop through the people class and find the number of infected   """
 
 
@@ -116,6 +105,20 @@ def get_total_infected(people):
     return infected
 
 
+def determine_infection(contagious_interactions, people):
+    infection_occurred_step = False
+    for n in range(0, len(contagious_interactions)):
+        transmission_random_number = random.uniform(0, 1)
+        non_infected_id = abs(int(contagious_interactions[n][1]))
+
+        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
+
+        if transmission_random_number < interaction_transmission_chance:
+            people[non_infected_id].infected = True
+            infection_occurred_step = True
+    return(infection_occurred_step)
+
+
 """     step_transmission checks if interactions have happened in the given step --> equiv to main   """
 
 
@@ -123,8 +126,9 @@ def step_transmission(people, person, interactions):
     if len(interactions) > 0:  # Checking if any general interactions have happened in the step
         contagious_interactions = get_contagious_interactions(people, person, interactions)
         if len(contagious_interactions) > 0:  # Checking if any contagious interactions have happened in the step
-            determine_infection(contagious_interactions, people)
-            infected = get_total_infected(people)
+            infection_occurred_step = determine_infection(contagious_interactions, people)
 
-            infected_fraction = str(infected) + ' / ' + str(len(people))
-            print("Infected: " + infected_fraction)
+            if infection_occurred_step:
+                infected = get_total_infected(people)
+                infected_fraction = str(infected) + ' / ' + str(len(people))
+                print("Infected: " + infected_fraction)

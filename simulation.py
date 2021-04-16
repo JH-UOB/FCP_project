@@ -84,7 +84,7 @@ def instantiate_people(params, office):
         # Update dictionary of people locations stored in Office object
         office.people_locations[ID] = people[ID - 1].current_location
         # Set person location in pathfinding array to be not traversable
-        set_array_value(people[ID - 1].current_location[0], 
+        set_array_value(people[ID - 1].current_location[0],
                         people[ID - 1].current_location[1],
                         office.pathfinding_array, - ID)
     # Save list of people to office object
@@ -128,7 +128,7 @@ def update_location(person, office):
 
     # Update pathfinding array with person location for other people to navigate
     set_array_value(person.current_location[0],
-                    person.current_location[1], 
+                    person.current_location[1],
                     office.pathfinding_array, - person.ID)
     office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations?
 
@@ -150,11 +150,11 @@ def start_moving(person, office):
 def move_somewhere(person, office):
     """Move person somewhere adjacent to avoid blockages in narrow spaces"""
     # Get available, adjacent cells that can be moved into i.e. not a wall or another person
-    avail_cells = office.adj_finder(office.pathfinding_array, 
+    avail_cells = office.adj_finder(office.pathfinding_array,
                                     person.current_location)
     # Set current person location in pathfinding array to be traversable
-    set_array_value(person.current_location[0], 
-                    person.current_location[1], 
+    set_array_value(person.current_location[0],
+                    person.current_location[1],
                     office.display_array, 1)
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
@@ -177,17 +177,7 @@ def plot_figure(time, office):
     plt.figure(time)
     plt.title(str(time))
     plt.imshow(office.pathfinding_array.tolist())
-    #plt.show()
-
-
-""" ALEX TRANSMISSION """
-
-
-def updated_infected(params, people, person, interactions, infection_debug):
-    if infection_debug:  # Temporary whilst several people are working on the code
-        transmission.step_transmission(people, person, interactions)  # Calls on transmission.py to update infected
-    else:
-        pass
+    # plt.show()
 
 
 def run_simulation(params, office, people):
@@ -223,8 +213,7 @@ def run_simulation(params, office, people):
 
         """     Infection & transmissibility    """
 
-        infection_debug = True  # Used for testing, True will print data to log, False will pass function
-        updated_infected(params, people, person, office.interactions, infection_debug)  # Update who is infected
+        transmission.step_transmission(people, person, office.interactions)  # Update who is infected
 
         display_frames.append(office.display_array)  # record people locations in office
         people_frames.append(people)  # record status of people (included infection status)

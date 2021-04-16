@@ -41,7 +41,7 @@ class Person:
             self.social_distancing = True
         else:
             self.social_distancing = False
-        if random.random() < 0.25:  # should be parameterised
+        if random.random() < 0.4:  # should be parameterised
             self.infected = True
             self.infected_time = 0
 

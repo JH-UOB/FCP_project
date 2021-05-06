@@ -1,7 +1,17 @@
+"""
+
+GUI.py
+Designed and written by James Irvin
+May 2021
+
+This script contains a class that defines the GUI and plots the outputs of simulation.py as an animated office.
+
+Used by simulation.py.
+"""
+
+## Import modules
 from tkinter import *
 from tkinter import ttk
-
-## Matplotlib test
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 # Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
@@ -10,8 +20,36 @@ import numpy as np
 
 
 class GUI:
+    """This class is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input parameters using widgets.
+
+        The GUI is also used to present animated results from simulation.py as a matplotlib plot.
+
+        The following parameters can be changed within the "parameters" dictionary [widget]
+
+            "Number of people" - The number of people in the office [spin box]
+            "Maximum Age" - Maximum possible age of people in the office [slider]
+            "Minimum Age" - Minimum possible age of people in the office [slider]
+            "Mask Adherence" - Percentage of people who wear a face mask [slider]
+            "Social Distancing Adherence" - Percentage of people who adhere to social distancing measures [slider]
+            "Office Plan" - Which floor of the office is simulated from the 4 choices [Listbox]
+            "Simulation duration" - Number of movement interactions to model simulation over [slider]
+
+        Once the user has specified their parameters they  can begin the simulation by pressing the "Begin Simulation" button.
+
+        The simulated office space is then shown for each discrete time event.
+
+        """
 
     def __init__(self, root):
+
+        ##Initalisiing parameters
+        parameters = {'Maximum Age': 65,
+                      'Minimum Age': 18,
+                      'Mask Adherence': 0.8,
+                      'Social Distancing Adherence': 0.5,
+                      'Office Plan': (0,),
+                      'Number of People': 15,
+                      'Simulation Duration': 100}
 
         ## Main frame setup - GUI Controls
         root.title("COVID-19 MODELLING PARAMETERS")
@@ -27,7 +65,7 @@ class GUI:
 
         ## Setup figure withing canvas to plot onto
         figure_plot = Figure(figsize=(5, 4), dpi=100,)
-        t = np.arange(0, 3, .01)
+        t = np.arange(0, 1, .01)
         figure_plot.add_subplot().plot(t, 2 * np.sin(2 * np.pi * t))
         canvas = FigureCanvasTkAgg(figure_plot, master=figframe)
         canvas.get_tk_widget().grid(column=1, row=0, sticky='we')
@@ -41,14 +79,7 @@ class GUI:
             "key_press_event", lambda event: print(f"you pressed {event.key}")) # popups that show when you hover over a toolbar button
         canvas.mpl_connect("key_press_event", key_press_handler)
 
-        ##Initalisiing parameters
-        parameters = {'Maximum Age': 65,
-                      'Minimum Age': 18,
-                      'Mask Adherence': 0.8,
-                      'Social Distancing Adherence': 0.5,
-                      'Office Plan': (0,),
-                      'Number of People': 15,
-                      'Simulation Duration': 100}
+
 
         ## Label update functions
         def update_lbl_MaxAge(Max_Age):

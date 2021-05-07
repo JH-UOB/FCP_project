@@ -32,8 +32,8 @@ def get_contagious_interactions(people, person, interactions):
     contagious_interactions = []
 
     for i in range(0, len(interactions)):
-        person_1_ID = abs(int(interactions[i][0])) - 1  # Acquiring IDs for people involved in interaction 'i' of step
-        person_2_ID = abs(int(interactions[i][1])) - 1  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
+        person_1_ID = abs(int(interactions[i][0]))  # Acquiring IDs for people involved in interaction 'i' of step
+        person_2_ID = abs(int(interactions[i][1]))  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
         distance = interactions[i][2]
 
         person_1_type = get_type([people[person_1_ID].infected, people[person_1_ID].contagious])
@@ -93,7 +93,7 @@ def get_transmission_chance(interaction, people):
 def get_total_infected(people):
     infected = 0
     for person in people:
-        if person.infected:
+        if people[person].infected:
             infected += 1
         else:
             pass

@@ -52,20 +52,20 @@ from office import Office
 import transmission
 
 
-def main():
+def main(parameters):
     """Command line entry point."""
     #
     # Load parameters from the argument specified source (the GUI or text file)
     #   https://docs.python.org/3/library/argparse.html
     #
-    parameters = {'Maximum Age': 65,
-                  'Minimum Age': 18,
-                  'Mask Adherence': 0.8,
-                  'Social Distancing Adherence': 1,
-                  'Number of Floors': 0.5,
-                  'Number of People': 10,
-                  'Simulation Duration': 200,
-                  }
+    # parameters = {'Maximum Age': 65,
+    #               'Minimum Age': 18,
+    #               'Mask Adherence': 0.8,
+    #               'Social Distancing Adherence': 1,
+    #               'Number of Floors': 0.5,
+    #               'Number of People': 10,
+    #               'Simulation Duration': 50,
+    #               }
 
     selected_office = Office()  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
@@ -78,14 +78,14 @@ def instantiate_people(params, office):
     number_of_people = params['Number of People']
     # Populate a list of people with Person objects each with a unique desk 
     # location
-    people = []
+    people = {}
     for ID in range(1, number_of_people + 1):
-        people.append(Person(ID, office.desk_locations, params))
+        people[ID] = Person(ID, office.desk_locations, params)
         # Update dictionary of people locations stored in Office object
-        office.people_locations[ID] = people[ID - 1].current_location
+        office.people_locations[ID] = people[ID].current_location
         # Set person location in pathfinding array to be not traversable
-        set_array_value(people[ID - 1].current_location[0],
-                        people[ID - 1].current_location[1],
+        set_array_value(people[ID].current_location[0],
+                        people[ID].current_location[1],
                         office.pathfinding_array, - ID)
     # Save list of people to office object
     office.people = people.copy()
@@ -165,7 +165,7 @@ def record_interactions(office, people):
     interactions = []
     # Detect interactions between people
     for person in people:
-        interactions.extend(office.find_interactions(office.pathfinding_array, person.current_location))
+        interactions.extend(office.find_interactions(office.pathfinding_array, people[person].current_location))
     # Remove duplicate interactions
     interactions.sort()
     interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
@@ -197,21 +197,21 @@ def run_simulation(params, office, people):
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
-            if person.current_location == person.task_location:
-                if person.task_progress < person.task_duration:  # task incomplete, keep doing task
-                    person.task_progress += 1
+            if people[person].current_location == people[person].task_location:
+                if people[person].task_progress < people[person].task_duration:  # task incomplete, keep doing task
+                    people[person].task_progress += 1
 
                 else:  # task complete, find new task and start moving
-                    start_moving(person, office)
+                    start_moving(people[person], office)
 
             else:  # between tasks, keep moving
-                update_location(person, office)
+                update_location(people[person], office)
 
         print(time)  # for tracking progress
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
-        transmission.step_transmission(people, person, office.interactions)  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
 
         display_frames.append(office.display_array)  # record people locations in office
         people_frames.append(people)  # record status of people (included infection status)
@@ -220,6 +220,6 @@ def run_simulation(params, office, people):
 
 if __name__ == "__main__":
     start = timeit.default_timer()
-    office = main()
+    office = main(parameters)
     stop = timeit.default_timer()
     print('Time: ', stop - start)

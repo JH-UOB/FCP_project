@@ -17,7 +17,7 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
 import numpy as np
-
+import simulation
 
 class GUI:
     """This class is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input parameters using widgets.
@@ -135,8 +135,12 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            print(parameters)
-
+            
+            sim = simulation.main(parameters)
+            root.quit
+            # playback_animation()
+        
+        
 
         ### Labels and widgets
 
@@ -227,6 +231,11 @@ class GUI:
         for child in mainframe.winfo_children():
             child.grid_configure(padx=5, pady=5)
 
-root = Tk()
-GUI(root)
-root.mainloop()
+def main():
+    root = Tk()
+    GUI(root)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

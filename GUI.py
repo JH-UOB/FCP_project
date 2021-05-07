@@ -139,27 +139,27 @@ class GUI:
 
         def Begin_Sim():
             Begin_sim_button.state(['disabled'])
-            sim = simulation.main(parameters)
+            display_frames = simulation.main(parameters)
             # test_plot = Figure(figsize=(5, 4), dpi=100, )
             # new_plot = test_plot.add_subplot()
-            # new_plot.imshow(sim[1].tolist())
+            # new_plot.imshow(display_frames[1].tolist())
             # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
             # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
             # newcanvas.draw()
 
-            for i in sim:
-                print(i)
+            for i in display_frames:
                 test_plot = Figure(figsize=(5, 4), dpi=100, )
                 new_plot = test_plot.add_subplot()
-                new_plot.imshow(i.tolist())
+                new_plot.imshow(i)
                 newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
                 newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
                 newcanvas.draw()
-                time.sleep(0.1)
+                time.sleep(1/30)
+                figframe.update()
 
             Begin_sim_button.state(['!disabled'])
 
-            # for i in sim:
+            # for i in display_frames:
             #     test_plot = Figure(figsize=(5, 4), dpi=100, )
             #     y = np.random.random([10, 1])
             #     new_plot = test_plot.add_subplot()

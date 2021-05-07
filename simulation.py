@@ -172,10 +172,10 @@ def record_interactions(office, people):
 
 def plot_figure(time, office):
     """Plots the locations of people in the office as their locations are updated"""
-    plt.figure(time)
-    plt.title(str(time))
-    plt.imshow(office.pathfinding_array.tolist())
-    plt.show()
+    # plt.figure(time)
+    # plt.title(str(time))
+    # plt.imshow(office.pathfinding_array.tolist())
+    # plt.show()
 
 
 def run_simulation(params, office, people):
@@ -211,10 +211,10 @@ def run_simulation(params, office, people):
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
 
-        display_frames.append(office.pathfinding_array)  # record people locations in office
-        plot_figure(time, office)
-        people_frames.append(people)  # record status of people (included infection status)
-        plt.close()
+        display_frames.append(office.pathfinding_array.copy().tolist())  # record people locations in office
+        # plot_figure(time, office)
+        # people_frames.append(people)  # record status of people (included infection status)
+        # plt.close()
         # plot_figure(time, office)
 
     return display_frames

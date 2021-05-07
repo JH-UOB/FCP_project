@@ -16,8 +16,10 @@ from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationTool
 # Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import numpy as np
 import simulation
+import time
 
 class GUI:
     """This class is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input parameters using widgets.
@@ -49,7 +51,7 @@ class GUI:
                       'Social Distancing Adherence': 0.5,
                       'Office Plan': (0,),
                       'Number of People': 15,
-                      'Simulation Duration': 100}
+                      'Simulation Duration': 10}
 
         ## Main frame setup - GUI Controls
         root.title("COVID-19 MODELLING PARAMETERS")
@@ -64,9 +66,10 @@ class GUI:
 
 
         ## Setup figure withing canvas to plot onto
-        figure_plot = Figure(figsize=(5, 4), dpi=100,)
-        t = np.arange(0, 1, .01)
-        figure_plot.add_subplot().plot(t, 2 * np.sin(2 * np.pi * t))
+        figure_plot = Figure(figsize=(5, 4), dpi=100, )
+        y = np.random.random([10, 1])
+        office_plot = figure_plot.add_subplot()
+        office_plot.plot(y)
         canvas = FigureCanvasTkAgg(figure_plot, master=figframe)
         canvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         canvas.draw()
@@ -135,11 +138,36 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            
+            Begin_sim_button.state(['disabled'])
             sim = simulation.main(parameters)
-            root.quit
-            # playback_animation()
-        
+            # test_plot = Figure(figsize=(5, 4), dpi=100, )
+            # new_plot = test_plot.add_subplot()
+            # new_plot.imshow(sim[1].tolist())
+            # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            # newcanvas.draw()
+
+            for i in sim:
+                print(i)
+                test_plot = Figure(figsize=(5, 4), dpi=100, )
+                new_plot = test_plot.add_subplot()
+                new_plot.imshow(i.tolist())
+                newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+                newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+                newcanvas.draw()
+                time.sleep(0.1)
+
+            Begin_sim_button.state(['!disabled'])
+
+            # for i in sim:
+            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
+            #     y = np.random.random([10, 1])
+            #     new_plot = test_plot.add_subplot()
+            #     new_plot.plot(y)
+            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            #     newcanvas.draw()
+
         
 
         ### Labels and widgets
@@ -221,7 +249,7 @@ class GUI:
         ## Simulation Duration slider
         Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur, command=update_lbl_SimDur)
         Sim_Dur_Slider.grid(column=0, row=14, sticky='we')
-        Sim_Dur_Slider.set(100)
+        Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
         Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)

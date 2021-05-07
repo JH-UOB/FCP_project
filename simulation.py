@@ -45,8 +45,6 @@ import itertools
 import timeit
 import random
 import matplotlib.pyplot as plt
-# from scipy.spatial import distance
-# from joblib import Parallel, delayed
 from person import Person
 from office import Office
 import transmission
@@ -69,8 +67,8 @@ def main(parameters):
 
     selected_office = Office()  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
-    run_simulation(parameters, selected_office, selected_people)  # run the simulation
-    return selected_office
+    display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
+    return display_frames
 
 
 def instantiate_people(params, office):
@@ -177,7 +175,7 @@ def plot_figure(time, office):
     plt.figure(time)
     plt.title(str(time))
     plt.imshow(office.pathfinding_array.tolist())
-    # plt.show()
+    plt.show()
 
 
 def run_simulation(params, office, people):
@@ -213,9 +211,13 @@ def run_simulation(params, office, people):
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
 
-        display_frames.append(office.display_array)  # record people locations in office
-        people_frames.append(people)  # record status of people (included infection status)
+        display_frames.append(office.pathfinding_array)  # record people locations in office
         plot_figure(time, office)
+        people_frames.append(people)  # record status of people (included infection status)
+        plt.close()
+        # plot_figure(time, office)
+
+    return display_frames
 
 
 if __name__ == "__main__":

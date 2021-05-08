@@ -124,31 +124,76 @@ class GUI:
             Sim_Dur_label['text'] = "Simulation duration: " + str(Sim_Dur) + " iterations"
             parameters.update({"Simulation Duration": Sim_Dur})
 
-        def update_lb_office_plans(office_plans_var):
+        def update_lb_office_plans():
             office_plans_var = Office_Plans_Listbox.curselection()
-            parameters.update({"Office Plan": office_plans_var})
+            if office_plans_var != (): # This is a get-around to issue where listbox lamba function is called on both selection and deselection - In the case where nothing is selected "()" we do not want the value of office plan to be reassigned
+                print(Office_Plans_Listbox.curselection())
+                parameters.update({"Office Plan": office_plans_var})
+                desk_no = get_desk_no()
+                People_Val = int(Num_People.get())  # Fetch Number of people
+                Infected_People_Val = int(Inf_People.get())  # Fetch Number of infected people
+                if People_Val > desk_no: # If the number of people exceeds the number of desks for that office selection set the number of people to the number of desks
+                    Num_People.set(desk_no)
+                if Infected_People_Val > desk_no:
+                    Inf_People.set(desk_no)
+                Num_People.config(to=desk_no) # Limit max number of people based on number of desks
+                Inf_People.config(to=desk_no)
+
+
+        def get_desk_no():
+            # office_plans_var = Office_Plans_Listbox.curselection()
+            # parameters.update({"Office Plan": office_plans_var})
             office = Office(parameters['Office Plan'][0])
             desk_no = len(office.desk_locations)
-            test = 1
+            return desk_no
 
-        def update_lb_num_people(People_Val):
-            People_Val = int(Num_People.get())
+
+
+        def inc_lb_num_people():
+            # desk_no = get_desk_no()
+            # People_Val = int(Num_People.get()) # Fetch Number of people
+            # if People_Val < desk_no:
+            #     People_Val = People_Val+1 #Increase the number of people
+            # else:
+            #     Num_People.set(People_Val-1)
+            # parameters.update({"Number of People": People_Val})
+            # Inf_People.config(to=People_Val)
+
+            desk_no = get_desk_no()
+            if int(Num_People.get()) > desk_no:
+                Num_People.set(desk_no)
+            parameters.update({"Number of People": int(Num_People.get())})
+            Inf_People.config(to=int(Num_People.get()))
+
+        def dec_lb_num_people():
+            People_Val = int(Num_People.get()) # Fetch Number of people
+            Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
+            if People_Val != Infected_People_Val: #Decrease the number of people as long as it wouldnt result in the number of infected exceeding the number of people
+                People_Val = People_Val-1
             parameters.update({"Number of People": People_Val})
-            change_Infected_People_max_val(People_Val)
+            Inf_People.config(to=People_Val)
 
-        def update_lb_Inf_People(Infected_People_Val):
-            Infected_People_Val = int(Inf_People.get())
+        def inc_lb_Inf_People():
+            desk_no = get_desk_no()
+            People_Val = int(Num_People.get()) # Fetch Number of people
+            Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
+            if Infected_People_Val <= desk_no:
+                Infected_People_Val + 1
+            if Infected_People_Val != People_Val: #Increase the number of infeceted people as long as it wouldnt exceed the number of people
+                Infected_People_Val = Infected_People_Val + 1
             parameters.update({"Number of infected": Infected_People_Val})
-            change_Num_People_min_val(Infected_People_Val)
+            Num_People.config(from_=Infected_People_Val)
+
+        def dec_lb_Inf_People():
+            Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
+            if Infected_People_Val > 1:
+                Infected_People_Val = Infected_People_Val - 1 # Decrease the number of infected people
+            parameters.update({"Number of infected": Infected_People_Val})
+            Num_People.config(from_=Infected_People_Val)
 
         def switch_on_Begin_sim_button_state():
                 Begin_sim_button.state(['!disabled'])
 
-        def change_Infected_People_max_val(People_Val):
-            Inf_People.config(to=People_Val)
-
-        def change_Num_People_min_val(Infected_People_Val):
-            Num_People.config(from_=Infected_People_Val)
 
 
         def switch_off_Begin_sim_button_state():
@@ -180,23 +225,23 @@ class GUI:
             #
             # Begin_sim_button.state(['!disabled'])
 
-            Begin_sim_button.state(['disabled'])
-            display_frames = simulation.main(parameters)
-            # frame = 1
-
-            for i in display_frames:
-                test_plot = Figure(figsize=(5, 4), dpi=100, )
-                new_plot = test_plot.add_subplot()
-                # frame += 1
-                # new_plot.title(frame)
-                new_plot.imshow(i)
-                newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-                newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-                newcanvas.draw_idle()
-                time.sleep(1/30)
-                figframe.update()
-
-            Begin_sim_button.state(['!disabled'])
+            # Begin_sim_button.state(['disabled'])
+            # display_frames = simulation.main(parameters)
+            # # frame = 1
+            #
+            # for i in display_frames:
+            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
+            #     new_plot = test_plot.add_subplot()
+            #     # frame += 1
+            #     # new_plot.title(frame)
+            #     new_plot.imshow(i)
+            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            #     newcanvas.draw_idle()
+            #     time.sleep(1/30)
+            #     figframe.update()
+            #
+            # Begin_sim_button.state(['!disabled'])
 
 
         ### Labels and widgets
@@ -243,13 +288,16 @@ class GUI:
         Begin_sim_button.grid(column=0, row=17, sticky='we')
 
         ## Number of people spin box
+        # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
+        # desk_no = len(office.desk_locations) # Calculate the number of desks to set the maximum number of people
+        desk_no = get_desk_no()
         People_Val = IntVar()
         People_Val.set(parameters['Number of People'])  # set box to correct default value
-        Num_People = ttk.Spinbox(mainframe,from_ =parameters['Number of infected'], to=20, textvariable=People_Val)
+        Num_People = ttk.Spinbox(mainframe,from_ =parameters['Number of infected'], to=desk_no, textvariable=People_Val)
         Num_People.grid(column=0, row=2, sticky=W)
         Num_People.state(['readonly'])
-        Num_People.bind("<<Increment>>", lambda e: update_lb_num_people(People_Val))  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
-        Num_People.bind("<<Decrement>>", lambda e: update_lb_num_people(People_Val))
+        Num_People.bind("<<Increment>>", lambda e: inc_lb_num_people())  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
+        Num_People.bind("<<Decrement>>", lambda e: dec_lb_num_people())
 
         ## Number of people infected spin box
         Infected_People_Val = IntVar()
@@ -257,8 +305,8 @@ class GUI:
         Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=parameters['Number of People'], textvariable=Infected_People_Val)
         Inf_People.grid(column=0, row=4, sticky=W)
         Inf_People.state(['readonly'])
-        Inf_People.bind("<<Increment>>", lambda e: update_lb_Inf_People(Infected_People_Val))
-        Inf_People.bind("<<Decrement>>", lambda e: update_lb_Inf_People(Infected_People_Val))
+        Inf_People.bind("<<Increment>>", lambda e: inc_lb_Inf_People())
+        Inf_People.bind("<<Decrement>>", lambda e: dec_lb_Inf_People())
 
         ## Max age slider
         Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)
@@ -285,8 +333,8 @@ class GUI:
         office_plans_var = StringVar(value=Office_Plans)
         Office_Plans_Listbox = Listbox(mainframe, listvariable=office_plans_var, height=4)
         Office_Plans_Listbox.grid(column=0, row=14, sticky='we')
-        Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans(Office_Plans_Listbox.curselection()))
-
+        Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans())
+        # Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: print("list"))
         ## Simulation Duration slider
         Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur, command=update_lbl_SimDur)
         Sim_Dur_Slider.grid(column=0, row=16, sticky='we')

@@ -50,6 +50,7 @@ from office import Office
 import transmission
 import random
 import sys
+import numpy as np
 
 
 def main(parameters):
@@ -135,8 +136,26 @@ def update_location(person, office):
     set_array_value(person.current_location[0],
                     person.current_location[1],
                     office.pathfinding_array, - person.ID)
-    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations?
+    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations
 
+
+def path2disp(array, people):
+    # print(array.shape[0])
+
+    display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
+    display_array[array == 1] = [255, 255, 255]  # floor
+
+    for person in people:
+
+        if people[person].infected:
+            display_array[people[person].current_location] = [255, 0, 0]  # red
+        else:
+            display_array[people[person].current_location] = [0, 255, 0]  # green
+
+    # plt.figure()
+    # plt.imshow(display_array)
+    # plt.show()
+    return display_array
 
 def set_array_value(x, y, array, value):
     """Updates an array"""
@@ -160,7 +179,7 @@ def move_somewhere(person, office):
     # Set current person location in pathfinding array to be traversable
     set_array_value(person.current_location[0],
                     person.current_location[1],
-                    office.display_array, 1)
+                    office.input_array, 1)
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
@@ -219,8 +238,8 @@ def run_simulation(params, office, people):
         office.interaction_frames.append(office.interactions)  # record interactions
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
-
-        display_frames.append(office.pathfinding_array.copy().tolist())  # record people locations in office
+        display_frame = path2disp(office.pathfinding_array.copy(), people)
+        display_frames.append(display_frame.copy())  # record people locations in office
         # plot_figure(time, office)
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()

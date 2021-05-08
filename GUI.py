@@ -168,10 +168,10 @@ class GUI:
             # # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
             # # newcanvas.draw()
             #
-            # for i in display_frames:
+            # for frame in display_frames:
             #     test_plot = Figure(figsize=(5, 4), dpi=100, )
             #     new_plot = test_plot.add_subplot()
-            #     new_plot.imshow(i)
+            #     new_plot.imshow(frame)
             #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
             #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
             #     newcanvas.draw_idle()
@@ -184,12 +184,12 @@ class GUI:
             display_frames = simulation.main(parameters)
             # frame = 1
 
-            for i in display_frames:
+            for frame in display_frames:
                 test_plot = Figure(figsize=(5, 4), dpi=100, )
                 new_plot = test_plot.add_subplot()
                 # frame += 1
                 # new_plot.title(frame)
-                new_plot.imshow(i)
+                new_plot.imshow(frame)
                 newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
                 newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
                 newcanvas.draw_idle()

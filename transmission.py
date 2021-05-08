@@ -126,4 +126,4 @@ def step_transmission(people, person, interactions):
             if infection_occurred_step:
                 infected = get_total_infected(people)
                 infected_fraction = str(infected) + ' / ' + str(len(people))
-                print("Infected: " + infected_fraction)
+                # print("Infected: " + infected_fraction)

@@ -152,27 +152,19 @@ class GUI:
                 update_plot(display_array)
 
         def get_desk_no():
-            # office_plans_var = Office_Plans_Listbox.curselection()
-            # parameters.update({"Office Plan": office_plans_var})
             office = Office(parameters['Office Plan'][0])
             desk_no = len(office.desk_locations)
             return desk_no
 
         def inc_lb_num_people():
-            # desk_no = get_desk_no()
-            # People_Val = int(Num_People.get()) # Fetch Number of people
-            # if People_Val < desk_no:
-            #     People_Val = People_Val+1 #Increase the number of people
-            # else:
-            #     Num_People.set(People_Val-1)
-            # parameters.update({"Number of People": People_Val})
-            # Inf_People.config(to=People_Val)
-
+            People_Val = int(Num_People.get())  # Fetch Number of people
             desk_no = get_desk_no()
-            if int(Num_People.get()) > desk_no:
+            if People_Val >= desk_no: # If the number of people is greater than or equal to the number of desks set the number of people to the number of desks (This is only required when the Office Plan is changed
                 Num_People.set(desk_no)
-            parameters.update({"Number of People": int(Num_People.get())})
-            Inf_People.config(to=int(Num_People.get()))
+            if People_Val < desk_no: # If the number of people is less than the the number of desks increase the number of people
+                People_Val = People_Val + 1
+            parameters.update({"Number of People": int(People_Val)})
+            Inf_People.config(to=People_Val)
 
         def dec_lb_num_people():
             People_Val = int(Num_People.get()) # Fetch Number of people
@@ -219,8 +211,6 @@ class GUI:
         def switch_on_Begin_sim_button_state():
                 Begin_sim_button.state(['!disabled'])
 
-
-
         def switch_off_Begin_sim_button_state():
             if Begin_sim_button.instate(['!disabled']):
                 Begin_sim_button.state(['disabled'])
@@ -228,25 +218,14 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-
             Begin_sim_button.state(['disabled'])
             display_frames = simulation.main(parameters)
-            # frame = 1
-            timestamp = 1
+
             for frame in display_frames:
                 update_plot(frame)
                 time.sleep(1/30)
-                
-                timestamp += 1
-            
-        def save_simulation(display_frames):
-            for frame in display_frames:
-                simulation.save_plot(frame, timestamp)
-                simulation.save_animation()
-            
+            Begin_sim_button.state(['!disabled'])
 
-
-    
         ### Labels and widgets
 
         ## Instructions label

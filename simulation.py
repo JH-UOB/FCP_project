@@ -80,15 +80,16 @@ def instantiate_people(params, office):
     # Populate a list of people with Person objects each with a unique desk 
     # location
     people = {}
+    desks = random.sample(office.desk_locations, k=len(office.desk_locations))
     for ID in range(1, number_of_people + 1):
-        people[ID] = Person(ID, office.desk_locations, params)
+        people[ID] = Person(ID, desks, params)
         # Update dictionary of people locations stored in Office object
         office.people_locations[ID] = people[ID].current_location
         # Set person location in pathfinding array to be not traversable
         set_array_value(people[ID].current_location[0],
                         people[ID].current_location[1],
                         office.pathfinding_array, - ID)
-    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected'])
+    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected']-1)
     for ID in infected_IDs:
         people[ID].infected = True
         people[ID].contagious = True
@@ -142,8 +143,8 @@ def update_location(person, office):
 def input2disp(array):
     display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
     display_array[array == 1] = [200, 200, 200]  # floor
-    display_array[array == 'T'] = [153, 51, 255]  # tasks
-    display_array[array == 'D'] = [0, 128, 255]  # desks
+    display_array[array == 'T'] = [110, 124, 154]  # tasks
+    display_array[array == 'D'] = [139, 61, 123]  # desks
 
     return display_array
 
@@ -155,9 +156,9 @@ def path2disp(array, people):
     for person in people:
 
         if people[person].infected:
-            display_array[people[person].current_location] = [255, 0, 0]  # red
+            display_array[people[person].current_location] = [177, 0, 30]  # red
         else:
-            display_array[people[person].current_location] = [0, 255, 0]  # green
+            display_array[people[person].current_location] = [22, 152, 66]  # green
 
     return display_array
 
@@ -225,6 +226,8 @@ def run_simulation(params, office, people):
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
     progress = 0
+    sys.stdout.write("Loading \n")
+    sys.stdout.write(u"\u2588" )
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
@@ -259,6 +262,14 @@ def run_simulation(params, office, people):
 
 
 if __name__ == "__main__":
+    # parameters = {'Maximum Age': 65,
+    #           'Minimum Age': 20,
+    #           'Mask Adherence': 80,
+    #           'Social Distancing Adherence': 50,
+    #           'Office Plan': (0,),
+    #           'Number of People': 20,
+    #           'Number of infected': 5,
+    #           'Simulation Duration': 12}
     start = timeit.default_timer()
     office = main(parameters)
     stop = timeit.default_timer()

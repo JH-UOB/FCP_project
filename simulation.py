@@ -226,10 +226,10 @@ def run_simulation(params, office, people):
         # plt.close()
         # plot_figure(time, office)
         progress += time/sim_duration
-        while progress > sim_duration/80:
+        while progress >= sim_duration/5:
             sys.stdout.write(" "+ u"\u2588" )
             sys.stdout.flush()
-            progress -= sim_duration/80
+            progress -= sim_duration/100
     sys.stdout.write("\n")
     return display_frames
 

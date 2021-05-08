@@ -158,7 +158,7 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            print(parameters)
+            # print(parameters)
             # Begin_sim_button.state(['disabled'])
             # display_frames = simulation.main(parameters)
             # # test_plot = Figure(figsize=(5, 4), dpi=100, )

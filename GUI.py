@@ -129,9 +129,22 @@ class GUI:
         def update_lb_num_people(People_Val):
             People_Val = int(Num_People.get())
             parameters.update({"Number of People": People_Val})
+            change_Infected_People_max_val(People_Val)
+
+        def update_lb_Inf_People(Infected_People_Val):
+            Infected_People_Val = int(Inf_People.get())
+            parameters.update({"Number of infected": Infected_People_Val})
+            change_Num_People_min_val(Infected_People_Val)
 
         def switch_on_Begin_sim_button_state():
                 Begin_sim_button.state(['!disabled'])
+
+        def change_Infected_People_max_val(People_Val):
+            Inf_People.config(to=People_Val)
+
+        def change_Num_People_min_val(Infected_People_Val):
+            Num_People.config(from_=Infected_People_Val)
+
 
         def switch_off_Begin_sim_button_state():
             if Begin_sim_button.instate(['!disabled']):
@@ -140,26 +153,27 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            Begin_sim_button.state(['disabled'])
-            display_frames = simulation.main(parameters)
-            # test_plot = Figure(figsize=(5, 4), dpi=100, )
-            # new_plot = test_plot.add_subplot()
-            # new_plot.imshow(display_frames[1].tolist())
-            # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            # newcanvas.draw()
-
-            for i in display_frames:
-                test_plot = Figure(figsize=(5, 4), dpi=100, )
-                new_plot = test_plot.add_subplot()
-                new_plot.imshow(i)
-                newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-                newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-                newcanvas.draw_idle()
-                time.sleep(1/30)
-                figframe.update()
-
-            Begin_sim_button.state(['!disabled'])
+            print(parameters)
+            # Begin_sim_button.state(['disabled'])
+            # display_frames = simulation.main(parameters)
+            # # test_plot = Figure(figsize=(5, 4), dpi=100, )
+            # # new_plot = test_plot.add_subplot()
+            # # new_plot.imshow(display_frames[1].tolist())
+            # # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            # # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            # # newcanvas.draw()
+            #
+            # for i in display_frames:
+            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
+            #     new_plot = test_plot.add_subplot()
+            #     new_plot.imshow(i)
+            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            #     newcanvas.draw_idle()
+            #     time.sleep(1/30)
+            #     figframe.update()
+            #
+            # Begin_sim_button.state(['!disabled'])
 
             # for i in display_frames:
             #     test_plot = Figure(figsize=(5, 4), dpi=100, )
@@ -180,82 +194,94 @@ class GUI:
         ## People label
         People_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
 
+        ## Infected People label
+        Infected_label= ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
+
         ## Max age label
         Max_Age = IntVar()
         Max_Age_label = ttk.Label(mainframe)
-        Max_Age_label.grid(column=0, row=3, sticky='we')
+        Max_Age_label.grid(column=0, row=5, sticky='we')
 
         ## Min age label
         Min_Age = IntVar()
         Min_Age_label = ttk.Label(mainframe)
-        Min_Age_label.grid(column=0, row=5, sticky='we')
+        Min_Age_label.grid(column=0, row=7, sticky='we')
 
         ## Mask adherence label
         Mask_Adh = IntVar()
         MA_label = ttk.Label(mainframe)
-        MA_label.grid(column=0, row=7, sticky='we')
+        MA_label.grid(column=0, row=9, sticky='we')
 
         ## Social distancing label
         Soc_Dist = IntVar()
         SD_label = ttk.Label(mainframe)
-        SD_label.grid(column=0, row=9, sticky='we')
+        SD_label.grid(column=0, row=11, sticky='we')
 
         ## Office floor plans label
-        Office_Plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=11, sticky='we')
+        Office_Plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=13, sticky='we')
 
         ## Simulation Duration label
         Sim_Dur = IntVar()
         Sim_Dur_label = ttk.Label(mainframe)
-        Sim_Dur_label.grid(column=0, row=13, sticky='we')
+        Sim_Dur_label.grid(column=0, row=15, sticky='we')
 
         ## Begin simulation button
         Begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=Begin_Sim)
-        Begin_sim_button.grid(column=0, row=15, sticky='we')
+        Begin_sim_button.grid(column=0, row=17, sticky='we')
 
         ## Number of people spin box
         People_Val = IntVar()
         People_Val.set(15)  # set box to correct default value
-        Num_People = ttk.Spinbox(mainframe, from_=1.0, to=20, textvariable=People_Val)
+        Num_People = ttk.Spinbox(mainframe,from_ =1.0, to=20, textvariable=People_Val)
         Num_People.grid(column=0, row=2, sticky=W)
         Num_People.state(['readonly'])
         Num_People.bind("<<Increment>>", lambda e: update_lb_num_people(People_Val))  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
         Num_People.bind("<<Decrement>>", lambda e: update_lb_num_people(People_Val))
 
+        ## Number of people infected spin box
+        Infected_People_Val = IntVar()
+        Infected_People_Val.set(5)  # set box to correct default value
+        Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=20, textvariable=Infected_People_Val)
+        Inf_People.grid(column=0, row=4, sticky=W)
+        Inf_People.state(['readonly'])
+        Inf_People.bind("<<Increment>>", lambda e: update_lb_Inf_People(Infected_People_Val))
+        Inf_People.bind("<<Decrement>>", lambda e: update_lb_Inf_People(Infected_People_Val))
+
         ## Max age slider
         Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)
-        Max_Age_Slider.grid(column=0, row=4, sticky='we')
+        Max_Age_Slider.grid(column=0, row=6, sticky='we')
         Max_Age_Slider.set(65)
 
         ## Min age slider
         Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age, command=update_lbl_MinAge)
-        Min_Age_Slider.grid(column=0, row=6, sticky='we')
+        Min_Age_Slider.grid(column=0, row=8, sticky='we')
         Min_Age_Slider.set(18)
 
         ## Mask adherence slider
         Mask_Adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Mask_Adh, command=update_lbl_MA)
-        Mask_Adh_Slider.grid(column=0, row=8, sticky='we')
+        Mask_Adh_Slider.grid(column=0, row=10, sticky='we')
         Mask_Adh_Slider.set(80)
 
         ## Social distancing slider
         Soc_Dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Soc_Dist,command=update_lbl_SD)
-        Soc_Dist_Slider.grid(column=0, row=10, sticky='we')
+        Soc_Dist_Slider.grid(column=0, row=12, sticky='we')
         Soc_Dist_Slider.set(50)
 
         ## Office plan listbox
         Office_Plans = ["Floor 1", "Floor 2", "Floor 3", "Floor 4"]
         office_plans_var = StringVar(value=Office_Plans)
         Office_Plans_Listbox = Listbox(mainframe, listvariable=office_plans_var, height=4)
-        Office_Plans_Listbox.grid(column=0, row=12, sticky='we')
+        Office_Plans_Listbox.grid(column=0, row=14, sticky='we')
         Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans(Office_Plans_Listbox.curselection()))
 
         ## Simulation Duration slider
         Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur, command=update_lbl_SimDur)
-        Sim_Dur_Slider.grid(column=0, row=14, sticky='we')
+        Sim_Dur_Slider.grid(column=0, row=16, sticky='we')
         Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
         Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)
-        Quit_app_button.grid(column=0, row=16, sticky='we')
+        Quit_app_button.grid(column=0, row=18, sticky='we')
 
         ##scalling to add space around widgets
         for child in mainframe.winfo_children():

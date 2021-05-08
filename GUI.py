@@ -22,6 +22,10 @@ import numpy as np
 import simulation
 import time
 from office import Office
+import imageio
+import os
+from os import listdir
+from os.path import isfile, join
 
 class GUI:
     """This class is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input parameters using widgets.
@@ -228,14 +232,21 @@ class GUI:
             Begin_sim_button.state(['disabled'])
             display_frames = simulation.main(parameters)
             # frame = 1
-
+            timestamp = 1
             for frame in display_frames:
                 update_plot(frame)
                 time.sleep(1/30)
+                
+                timestamp += 1
+            
+        def save_simulation(display_frames):
+            for frame in display_frames:
+                simulation.save_plot(frame, timestamp)
+                simulation.save_animation()
+            
 
-            Begin_sim_button.state(['!disabled'])
 
-
+    
         ### Labels and widgets
 
         ## Instructions label

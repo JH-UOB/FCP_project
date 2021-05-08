@@ -209,6 +209,20 @@ def plot_figure(time, office):
     # plt.imshow(office.pathfinding_array.tolist())
     # plt.show()
 
+def save_plot(frame, timestamp):
+    plt.imshow(frame)
+    plt.title('Time:' + str(timestamp))
+    plt.savefig('./Plots/' + str(timestamp + 10))
+    
+def save_animation():
+    files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
+    with imageio.get_writer('animation.gif', mode='I') as writer:
+        for filename in files:
+            image = imageio.imread(filename)
+            writer.append_data(image)
+
+
+
 
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
@@ -258,6 +272,7 @@ def run_simulation(params, office, people):
             sys.stdout.flush()
             progress -= sim_duration / 100
     sys.stdout.write("\n")
+    simulation.display_frames = display_frames.copy()
     return display_frames
 
 

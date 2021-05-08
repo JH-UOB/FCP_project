@@ -74,10 +74,14 @@ class GUI:
         figure_plot = Figure(figsize=(5, 4), dpi=100, )
         y = np.random.random([10, 1])
         office_plot = figure_plot.add_subplot()
-        office_plot.plot(y)
+        office = Office(parameters['Office Plan'][0])
+        display_array = simulation.input2disp(office.input_array)
+        office_plot.imshow(display_array)
         canvas = FigureCanvasTkAgg(figure_plot, master=figframe)
         canvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         canvas.draw()
+        figframe.update()
+
 
         ## Toolbar to manipulate figure
         toolbar = NavigationToolbar2Tk(canvas, figframe, pack_toolbar=False) # pack_toolbar=False required for layout managment.
@@ -86,7 +90,6 @@ class GUI:
         canvas.mpl_connect(
             "key_press_event", lambda event: print(f"you pressed {event.key}")) # popups that show when you hover over a toolbar button
         canvas.mpl_connect("key_press_event", key_press_handler)
-
 
 
         ## Label update functions
@@ -144,15 +147,12 @@ class GUI:
                 display_array = simulation.input2disp(office.input_array)
                 update_plot(display_array)
 
-
         def get_desk_no():
             # office_plans_var = Office_Plans_Listbox.curselection()
             # parameters.update({"Office Plan": office_plans_var})
             office = Office(parameters['Office Plan'][0])
             desk_no = len(office.desk_locations)
             return desk_no
-
-
 
         def inc_lb_num_people():
             # desk_no = get_desk_no()
@@ -179,7 +179,6 @@ class GUI:
             Inf_People.config(to=People_Val)
 
 
-
         def update_plot(frame):
             test_plot = Figure(figsize=(5, 4), dpi=100, )
             new_plot = test_plot.add_subplot()
@@ -188,7 +187,6 @@ class GUI:
             newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
             newcanvas.draw_idle()
             figframe.update()
-
 
         def inc_lb_Inf_People():
             desk_no = get_desk_no()

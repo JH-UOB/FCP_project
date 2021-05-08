@@ -165,27 +165,27 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            print(parameters)
-            # Begin_sim_button.state(['disabled'])
-            # display_frames = simulation.main(parameters)
-            # # test_plot = Figure(figsize=(5, 4), dpi=100, )
-            # # new_plot = test_plot.add_subplot()
-            # # new_plot.imshow(display_frames[1].tolist())
-            # # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            # # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            # # newcanvas.draw()
-            #
-            # for i in display_frames:
-            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
-            #     new_plot = test_plot.add_subplot()
-            #     new_plot.imshow(i)
-            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            #     newcanvas.draw_idle()
-            #     time.sleep(1/30)
-            #     figframe.update()
-            #
-            # Begin_sim_button.state(['!disabled'])
+            # print(parameters)
+            Begin_sim_button.state(['disabled'])
+            display_frames = simulation.main(parameters)
+            # test_plot = Figure(figsize=(5, 4), dpi=100, )
+            # new_plot = test_plot.add_subplot()
+            # new_plot.imshow(display_frames[1].tolist())
+            # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            # newcanvas.draw()
+            
+            for i in display_frames:
+                test_plot = Figure(figsize=(5, 4), dpi=100, )
+                new_plot = test_plot.add_subplot()
+                new_plot.imshow(i)
+                newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+                newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+                newcanvas.draw_idle()
+                time.sleep(1/30)
+                figframe.update()
+            
+            Begin_sim_button.state(['!disabled'])
 
             # for i in display_frames:
             #     test_plot = Figure(figsize=(5, 4), dpi=100, )

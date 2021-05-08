@@ -49,6 +49,7 @@ from person import Person
 from office import Office
 import transmission
 import random
+import sys
 
 
 def main(parameters):
@@ -199,7 +200,7 @@ def run_simulation(params, office, people):
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
-
+    progress = 0
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
@@ -213,7 +214,7 @@ def run_simulation(params, office, people):
             else:  # between tasks, keep moving
                 update_location(people[person], office)
 
-        print('Time: ', time)  # for tracking progress
+        # print('Time: ', time)  # for tracking progress
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
@@ -224,7 +225,12 @@ def run_simulation(params, office, people):
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()
         # plot_figure(time, office)
-
+        progress += time/sim_duration
+        while progress > sim_duration/80:
+            sys.stdout.write(" "+ u"\u2588" )
+            sys.stdout.flush()
+            progress -= sim_duration/80
+    sys.stdout.write("\n")
     return display_frames
 
 
@@ -232,4 +238,4 @@ if __name__ == "__main__":
     start = timeit.default_timer()
     office = main(parameters)
     stop = timeit.default_timer()
-    print('Time: ', stop - start)
+    # print('Time: ', stop - start)

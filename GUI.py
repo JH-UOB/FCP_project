@@ -139,6 +139,10 @@ class GUI:
                 Num_People.config(to=desk_no) # Limit max number of people based on number of desks
                 Inf_People.config(to=desk_no)
 
+                office = Office(parameters['Office Plan'][0])
+                display_array = simulation.input2disp(office.input_array)
+                update_plot(display_array)
+
 
         def get_desk_no():
             # office_plans_var = Office_Plans_Listbox.curselection()
@@ -173,6 +177,19 @@ class GUI:
             parameters.update({"Number of People": People_Val})
             Inf_People.config(to=People_Val)
 
+
+
+
+        def update_plot(frame):
+            test_plot = Figure(figsize=(5, 4), dpi=100, )
+            new_plot = test_plot.add_subplot()
+            new_plot.imshow(frame)
+            newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            newcanvas.draw_idle()
+            figframe.update()
+
+
         def inc_lb_Inf_People():
             desk_no = get_desk_no()
             People_Val = int(Num_People.get()) # Fetch Number of people
@@ -203,45 +220,16 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            print(parameters)
-            # Begin_sim_button.state(['disabled'])
-            # display_frames = simulation.main(parameters)
-            # # test_plot = Figure(figsize=(5, 4), dpi=100, )
-            # # new_plot = test_plot.add_subplot()
-            # # new_plot.imshow(display_frames[1].tolist())
-            # # newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            # # newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            # # newcanvas.draw()
-            #
-            # for i in display_frames:
-            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
-            #     new_plot = test_plot.add_subplot()
-            #     new_plot.imshow(i)
-            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            #     newcanvas.draw_idle()
-            #     time.sleep(1/30)
-            #     figframe.update()
-            #
-            # Begin_sim_button.state(['!disabled'])
 
-            # Begin_sim_button.state(['disabled'])
-            # display_frames = simulation.main(parameters)
-            # # frame = 1
-            #
-            # for i in display_frames:
-            #     test_plot = Figure(figsize=(5, 4), dpi=100, )
-            #     new_plot = test_plot.add_subplot()
-            #     # frame += 1
-            #     # new_plot.title(frame)
-            #     new_plot.imshow(i)
-            #     newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-            #     newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-            #     newcanvas.draw_idle()
-            #     time.sleep(1/30)
-            #     figframe.update()
-            #
-            # Begin_sim_button.state(['!disabled'])
+            Begin_sim_button.state(['disabled'])
+            display_frames = simulation.main(parameters)
+            # frame = 1
+
+            for frame in display_frames:
+                update_plot(frame)
+                time.sleep(1/30)
+
+            Begin_sim_button.state(['!disabled'])
 
 
         ### Labels and widgets

@@ -50,6 +50,7 @@ from office import Office
 import transmission
 import random
 import sys
+import numpy as np
 
 
 def main(parameters):
@@ -79,19 +80,20 @@ def instantiate_people(params, office):
     # Populate a list of people with Person objects each with a unique desk 
     # location
     people = {}
+    desks = random.sample(office.desk_locations, k=len(office.desk_locations))
     for ID in range(1, number_of_people + 1):
-        people[ID] = Person(ID, office.desk_locations, params)
+        people[ID] = Person(ID, desks, params)
         # Update dictionary of people locations stored in Office object
         office.people_locations[ID] = people[ID].current_location
         # Set person location in pathfinding array to be not traversable
         set_array_value(people[ID].current_location[0],
                         people[ID].current_location[1],
                         office.pathfinding_array, - ID)
-    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected'])
+    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected']-1)
     for ID in infected_IDs:
         people[ID].infected = True
         people[ID].contagious = True
-    
+
     # Save dict of people to office object
     office.people = people.copy()
     return people
@@ -135,7 +137,30 @@ def update_location(person, office):
     set_array_value(person.current_location[0],
                     person.current_location[1],
                     office.pathfinding_array, - person.ID)
-    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations?
+    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations
+
+
+def input2disp(array):
+    display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
+    display_array[array == 1] = [200, 200, 200]  # floor
+    display_array[array == 'T'] = [110, 124, 154]  # tasks
+    display_array[array == 'D'] = [139, 61, 123]  # desks
+
+    return display_array
+
+
+def path2disp(array, people):
+
+    display_array = input2disp(array)
+
+    for person in people:
+
+        if people[person].infected:
+            display_array[people[person].current_location] = [177, 0, 30]  # red
+        else:
+            display_array[people[person].current_location] = [22, 152, 66]  # green
+
+    return display_array
 
 
 def set_array_value(x, y, array, value):
@@ -160,7 +185,7 @@ def move_somewhere(person, office):
     # Set current person location in pathfinding array to be traversable
     set_array_value(person.current_location[0],
                     person.current_location[1],
-                    office.display_array, 1)
+                    office.input_array, 1)
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
@@ -201,6 +226,8 @@ def run_simulation(params, office, people):
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
     progress = 0
+    sys.stdout.write("Loading \n")
+    sys.stdout.write(u"\u2588" )
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
@@ -219,22 +246,30 @@ def run_simulation(params, office, people):
         office.interaction_frames.append(office.interactions)  # record interactions
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
-
-        display_frames.append(office.pathfinding_array.copy().tolist())  # record people locations in office
+        display_frame = path2disp(office.input_array.copy(), people)
+        display_frames.append(display_frame.copy())  # record people locations in office
         # plot_figure(time, office)
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()
         # plot_figure(time, office)
-        progress += time/sim_duration
-        while progress > sim_duration/80:
-            sys.stdout.write(" "+ u"\u2588" )
+        progress += time / sim_duration
+        while progress >= sim_duration / 5:
+            sys.stdout.write(" " + u"\u2588")
             sys.stdout.flush()
-            progress -= sim_duration/80
+            progress -= sim_duration / 100
     sys.stdout.write("\n")
     return display_frames
 
 
 if __name__ == "__main__":
+    # parameters = {'Maximum Age': 65,
+    #           'Minimum Age': 20,
+    #           'Mask Adherence': 80,
+    #           'Social Distancing Adherence': 50,
+    #           'Office Plan': (0,),
+    #           'Number of People': 20,
+    #           'Number of infected': 5,
+    #           'Simulation Duration': 12}
     start = timeit.default_timer()
     office = main(parameters)
     stop = timeit.default_timer()

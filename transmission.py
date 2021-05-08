@@ -65,6 +65,7 @@ def get_transmission_chance(interaction, people):
     person_1_number = interaction[0]
     person_2_number = interaction[1]
     distance = interaction[2]
+    virality = 0.05
 
     if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
@@ -80,9 +81,9 @@ def get_transmission_chance(interaction, people):
     elif distance > 2:
         distance_transmission_chance = 0.25
     else:
-        distance_transmission_chance = 1 / (distance ** 2)
+        distance_transmission_chance = 1 / (distance ** 2)  # Inverse square law
 
-    transmission_chance = mask_transmission_chance * distance_transmission_chance
+    transmission_chance = mask_transmission_chance * distance_transmission_chance * virality
 
     return transmission_chance
 
@@ -111,7 +112,7 @@ def determine_infection(contagious_interactions, people):
         if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
             infection_occurred_step = True
-    return(infection_occurred_step)
+    return infection_occurred_step
 
 
 """     step_transmission checks if interactions have happened in the given step --> equiv to main   """

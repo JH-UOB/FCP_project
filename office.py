@@ -44,14 +44,16 @@ class Office:
 
         """
         # Create an array using the excel input file
-        self.display_array = pd.read_excel('office_array.xls', floor_no).values.transpose()
+        self.input_array = pd.read_excel('office_array.xls', floor_no).values.transpose()
         # Create pathfinding array denoting which cells are traversible.
-        self.pathfinding_array = np.where(self.display_array != 0, 1, self.display_array)
+        self.pathfinding_array = np.where(self.input_array != 0, 1, self.input_array)
+        # Create array for displaying infection status
+        self.display_array = self.pathfinding_array.copy()
         # Find locations of tasks (T in excel) and desks (D in excel)
-        self.desk_locations = list(zip(list(np.where(self.display_array == 'D'))[0],
-                                       list(np.where(self.display_array == 'D'))[1]))
-        self.task_locations = list(zip(list(np.where(self.display_array == 'T'))[0],
-                                       list(np.where(self.display_array == 'T'))[1]))
+        self.desk_locations = list(zip(list(np.where(self.input_array == 'D'))[0],
+                                       list(np.where(self.input_array == 'D'))[1]))
+        self.task_locations = list(zip(list(np.where(self.input_array == 'T'))[0],
+                                       list(np.where(self.input_array == 'T'))[1]))
         # Create social distancing array from pathfinding array which will be
         # used for people who have the social distancing attribute.
         self.social_dist_array = self.pathfinding_array.copy()

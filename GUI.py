@@ -52,7 +52,7 @@ class GUI:
                       'Mask Adherence': 80,
                       'Social Distancing Adherence': 50,
                       'Office Plan': (0,),
-                      'Number of People': 20,
+                      'Number of People': 15,
                       'Number of infected': 5,
                       'Simulation Duration': 12}
 
@@ -245,7 +245,7 @@ class GUI:
         ## Number of people spin box
         People_Val = IntVar()
         People_Val.set(parameters['Number of People'])  # set box to correct default value
-        Num_People = ttk.Spinbox(mainframe,from_ =1.0, to=20, textvariable=People_Val)
+        Num_People = ttk.Spinbox(mainframe,from_ =parameters['Number of infected'], to=20, textvariable=People_Val)
         Num_People.grid(column=0, row=2, sticky=W)
         Num_People.state(['readonly'])
         Num_People.bind("<<Increment>>", lambda e: update_lb_num_people(People_Val))  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
@@ -254,7 +254,7 @@ class GUI:
         ## Number of people infected spin box
         Infected_People_Val = IntVar()
         Infected_People_Val.set(parameters['Number of infected'])  # set box to correct default value
-        Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=20, textvariable=Infected_People_Val)
+        Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=parameters['Number of People'], textvariable=Infected_People_Val)
         Inf_People.grid(column=0, row=4, sticky=W)
         Inf_People.state(['readonly'])
         Inf_People.bind("<<Increment>>", lambda e: update_lb_Inf_People(Infected_People_Val))

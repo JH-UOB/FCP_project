@@ -92,7 +92,7 @@ def instantiate_people(params, office):
     for ID in infected_IDs:
         people[ID].infected = True
         people[ID].contagious = True
-    
+
     # Save dict of people to office object
     office.people = people.copy()
     return people
@@ -139,13 +139,18 @@ def update_location(person, office):
     office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations
 
 
-def path2disp(array, people):
-    # print(array.shape[0])
-
+def input2disp(array):
     display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
     display_array[array == 1] = [200, 200, 200]  # floor
     display_array[array == 'T'] = [153, 51, 255]  # tasks
     display_array[array == 'D'] = [0, 128, 255]  # desks
+
+    return display_array
+
+
+def path2disp(array, people):
+
+    display_array = input2disp(array)
 
     for person in people:
 
@@ -154,10 +159,8 @@ def path2disp(array, people):
         else:
             display_array[people[person].current_location] = [0, 255, 0]  # green
 
-    # plt.figure()
-    # plt.imshow(display_array)
-    # plt.show()
     return display_array
+
 
 def set_array_value(x, y, array, value):
     """Updates an array"""
@@ -246,11 +249,11 @@ def run_simulation(params, office, people):
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()
         # plot_figure(time, office)
-        progress += time/sim_duration
-        while progress >= sim_duration/5:
-            sys.stdout.write(" "+ u"\u2588" )
+        progress += time / sim_duration
+        while progress >= sim_duration / 5:
+            sys.stdout.write(" " + u"\u2588")
             sys.stdout.flush()
-            progress -= sim_duration/100
+            progress -= sim_duration / 100
     sys.stdout.write("\n")
     return display_frames
 

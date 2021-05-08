@@ -131,6 +131,18 @@ class GUI:
             desk_no = len(office.desk_locations)
             test = 1
 
+            display_array = simulation.input2disp(office.input_array)
+            update_plot(display_array)
+
+        def update_plot(frame):
+            test_plot = Figure(figsize=(5, 4), dpi=100, )
+            new_plot = test_plot.add_subplot()
+            new_plot.imshow(frame)
+            newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
+            newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+            newcanvas.draw_idle()
+            figframe.update()
+
         def update_lb_num_people(People_Val):
             People_Val = int(Num_People.get())
             parameters.update({"Number of People": People_Val})
@@ -185,16 +197,8 @@ class GUI:
             # frame = 1
 
             for frame in display_frames:
-                test_plot = Figure(figsize=(5, 4), dpi=100, )
-                new_plot = test_plot.add_subplot()
-                # frame += 1
-                # new_plot.title(frame)
-                new_plot.imshow(frame)
-                newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-                newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-                newcanvas.draw_idle()
+                update_plot(frame)
                 time.sleep(1/30)
-                figframe.update()
 
             Begin_sim_button.state(['!disabled'])
 

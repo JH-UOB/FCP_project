@@ -52,6 +52,7 @@ class GUI:
                       'Mask Adherence': 80,
                       'Social Distancing Adherence': 50,
                       'Office Plan': (0,),
+                      'Virality': 50,
                       'Number of People': 15,
                       'Number of infected': 5,
                       'Simulation Duration': 12}
@@ -177,6 +178,7 @@ class GUI:
             parameters.update({"Number of People": People_Val})
             Inf_People.config(to=People_Val)
 
+
         def update_plot(frame):
             test_plot = Figure(figsize=(5, 4), dpi=100, )
             new_plot = test_plot.add_subplot()
@@ -203,6 +205,12 @@ class GUI:
                 Infected_People_Val = Infected_People_Val - 1 # Decrease the number of infected people
             parameters.update({"Number of infected": Infected_People_Val})
             Num_People.config(from_=Infected_People_Val)
+
+        def update_lbl_V(Virality):
+            Virality = int(float((Virality)))
+            V_label['text'] = "Virality: " + str(Virality) + "%"
+            parameters.update({"Virality": Virality})
+
 
         def switch_on_Begin_sim_button_state():
                 Begin_sim_button.state(['!disabled'])
@@ -240,12 +248,10 @@ class GUI:
         Infected_label= ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
 
         ## Max age label
-        Max_Age = IntVar()
         Max_Age_label = ttk.Label(mainframe)
         Max_Age_label.grid(column=0, row=5, sticky='we')
 
         ## Min age label
-        Min_Age = IntVar()
         Min_Age_label = ttk.Label(mainframe)
         Min_Age_label.grid(column=0, row=7, sticky='we')
 
@@ -259,17 +265,20 @@ class GUI:
         SD_label = ttk.Label(mainframe)
         SD_label.grid(column=0, row=11, sticky='we')
 
+        ## Virality label
+        V_label = ttk.Label(mainframe,text='Virality:')
+        V_label.grid(column=0, row=13, sticky='we')
+
         ## Office floor plans label
-        Office_Plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=13, sticky='we')
+        Office_Plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=14, sticky='we')
 
         ## Simulation Duration label
-        Sim_Dur = IntVar()
         Sim_Dur_label = ttk.Label(mainframe)
-        Sim_Dur_label.grid(column=0, row=15, sticky='we')
+        Sim_Dur_label.grid(column=0, row=17, sticky='we')
 
         ## Begin simulation button
         Begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=Begin_Sim)
-        Begin_sim_button.grid(column=0, row=17, sticky='we')
+        Begin_sim_button.grid(column=0, row=19, sticky='we')
 
         ## Number of people spin box
         # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
@@ -293,11 +302,13 @@ class GUI:
         Inf_People.bind("<<Decrement>>", lambda e: dec_lb_Inf_People())
 
         ## Max age slider
+        Max_Age = IntVar()
         Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)
         Max_Age_Slider.grid(column=0, row=6, sticky='we')
         Max_Age_Slider.set(parameters['Maximum Age'])
 
         ## Min age slider
+        Min_Age = IntVar()
         Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age, command=update_lbl_MinAge)
         Min_Age_Slider.grid(column=0, row=8, sticky='we')
         Min_Age_Slider.set(parameters['Minimum Age'])
@@ -312,21 +323,29 @@ class GUI:
         Soc_Dist_Slider.grid(column=0, row=12, sticky='we')
         Soc_Dist_Slider.set(parameters['Social Distancing Adherence'])
 
+
+        ## Virality slider
+        Viral = IntVar()
+        Viral_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Viral,command=update_lbl_V)
+        Viral_Slider.grid(column=0, row=14, sticky='we')
+        Viral_Slider.set(parameters['Virality'])
+
         ## Office plan listbox
         Office_Plans = ["Floor 1", "Floor 2", "Floor 3", "Floor 4"]
         office_plans_var = StringVar(value=Office_Plans)
         Office_Plans_Listbox = Listbox(mainframe, listvariable=office_plans_var, height=4)
-        Office_Plans_Listbox.grid(column=0, row=14, sticky='we')
+        Office_Plans_Listbox.grid(column=0, row=16, sticky='we')
         Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans())
-        # Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: print("list"))
+
         ## Simulation Duration slider
+        Sim_Dur = IntVar()
         Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur, command=update_lbl_SimDur)
-        Sim_Dur_Slider.grid(column=0, row=16, sticky='we')
+        Sim_Dur_Slider.grid(column=0, row=18, sticky='we')
         Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
         Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)
-        Quit_app_button.grid(column=0, row=18, sticky='we')
+        Quit_app_button.grid(column=0, row=20, sticky='we')
 
         ##scalling to add space around widgets
         for child in mainframe.winfo_children():

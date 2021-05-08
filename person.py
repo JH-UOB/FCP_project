@@ -33,11 +33,11 @@ class Person:
             self.gender = 'Male'
         else:
             self.gender = 'Female'
-        if random.random() < params['Mask Adherence']:
+        if random.random() < params['Mask Adherence']/100:
             self.mask = True
         else:
             self.mask = False
-        if random.random() < params['Social Distancing Adherence']:
+        if random.random() < params['Social Distancing Adherence']/100:
             self.social_distancing = True
         else:
             self.social_distancing = False

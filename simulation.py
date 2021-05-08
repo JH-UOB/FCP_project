@@ -66,7 +66,7 @@ def main(parameters):
     #               'Simulation Duration': 50,
     #               }
 
-    selected_office = Office()  # initialise office space
+    selected_office = Office(parameters['Office Plan'][0])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
     display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
     return display_frames
@@ -194,6 +194,8 @@ def run_simulation(params, office, people):
 
     # Initialise lists to record results
     sim_duration = params['Simulation Duration']
+    # office.floor_switcher(0)
+    # print(params['Office Plan'][0])
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
@@ -211,7 +213,7 @@ def run_simulation(params, office, people):
             else:  # between tasks, keep moving
                 update_location(people[person], office)
 
-        print(time)  # for tracking progress
+        print('Time: ', time)  # for tracking progress
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 

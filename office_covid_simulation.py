@@ -58,19 +58,11 @@ def main(*arguments):
         import GUI
         GUI.main()
     elif len(arguments) == 1 and arguments[0].endswith('txt'):
-        parameters = {'Maximum Age': 65,
-                      'Minimum Age': 20,
-                      'Mask Adherence': 80,
-                      'Social Distancing Adherence': 50,
-                      'Office Plan': (0,),
-                      'Number of People': 15,
-                      'Number of infected': 5,
-                      'Simulation Duration': 12}
-        # file = open(arguments[0], 'r')
-        # contents = file.read()
-        # import ast
-        # parameters = ast.literal_eval(contents)
-        # file.close()
+        file = open(arguments[0], 'r')
+        contents = file.read()
+        import ast
+        parameters = ast.literal_eval(contents)
+        file.close()
         import simulation
         simulation.main(parameters)
 

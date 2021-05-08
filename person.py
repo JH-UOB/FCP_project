@@ -41,15 +41,15 @@ class Person:
             self.social_distancing = True
         else:
             self.social_distancing = False
-        if random.random() < 0.4:  # should be parameterised
-            self.infected = True
-            self.infected_time = 0
+        # if random.random() < 0.4:  # should be parameterised
+        self.infected = False
+        self.infected_time = 0
+        self.contagious = False
+        #     self.contagious = True  # Those infected initially are contagious
+        # else:
+        #     self.infected = False
 
-            self.contagious = True  # Those infected initially are contagious
-        else:
-            self.infected = False
-
-            self.contagious = False
+        #     self.contagious = False
 
         # Position properties
         self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION

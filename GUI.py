@@ -10,6 +10,7 @@ Used by simulation.py.
 """
 
 ## Import modules
+import matplotlib.backends.backend_tkagg
 from tkinter import *
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -51,6 +52,7 @@ class GUI:
                       'Social Distancing Adherence': 0.5,
                       'Office Plan': (0,),
                       'Number of People': 15,
+                      'Number of infected': 2,
                       'Simulation Duration': 10}
 
         ## Main frame setup - GUI Controls
@@ -153,7 +155,7 @@ class GUI:
                 new_plot.imshow(i)
                 newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
                 newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
-                newcanvas.draw()
+                newcanvas.draw_idle()
                 time.sleep(1/30)
                 figframe.update()
 

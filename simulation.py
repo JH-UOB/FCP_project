@@ -272,7 +272,7 @@ def run_simulation(params, office, people):
             sys.stdout.flush()
             progress -= sim_duration / 100
     sys.stdout.write("\n")
-    simulation.display_frames = display_frames.copy()
+    office.display_frames = display_frames.copy()
     return display_frames
 
 

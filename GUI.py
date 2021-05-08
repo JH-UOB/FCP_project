@@ -86,7 +86,6 @@ class GUI:
         canvas.draw()
         figframe.update()
 
-
         ## Toolbar to manipulate figure
         toolbar = NavigationToolbar2Tk(canvas, figframe, pack_toolbar=False) # pack_toolbar=False required for layout managment.
         toolbar.update() # Toolbar automatically updates (this is a built in function)
@@ -94,7 +93,6 @@ class GUI:
         canvas.mpl_connect(
             "key_press_event", lambda event: print(f"you pressed {event.key}")) # popups that show when you hover over a toolbar button
         canvas.mpl_connect("key_press_event", key_press_handler)
-
 
         ## Label update functions
         def update_lbl_MaxAge(Max_Age):
@@ -135,18 +133,18 @@ class GUI:
         def update_lb_office_plans():
             office_plans_var = Office_Plans_Listbox.curselection()
             if office_plans_var != (): # This is a get-around to issue where listbox lamba function is called on both selection and deselection - In the case where nothing is selected "()" we do not want the value of office plan to be reassigned
-                print(Office_Plans_Listbox.curselection())
                 parameters.update({"Office Plan": office_plans_var})
                 desk_no = get_desk_no()
                 People_Val = int(Num_People.get())  # Fetch Number of people
                 Infected_People_Val = int(Inf_People.get())  # Fetch Number of infected people
                 if People_Val > desk_no: # If the number of people exceeds the number of desks for that office selection set the number of people to the number of desks
                     Num_People.set(desk_no)
+                    parameters.update({"Number of People": desk_no})
                 if Infected_People_Val > desk_no:
                     Inf_People.set(desk_no)
+                    parameters.update({"Number of infected": desk_no})
                 Num_People.config(to=desk_no) # Limit max number of people based on number of desks
                 Inf_People.config(to=desk_no)
-
                 office = Office(parameters['Office Plan'][0])
                 display_array = simulation.input2disp(office.input_array)
                 update_plot(display_array)
@@ -218,6 +216,7 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
+            print(parameters)
             Begin_sim_button.state(['disabled'])
             display_frames = simulation.main(parameters)
 

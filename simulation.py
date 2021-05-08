@@ -143,7 +143,9 @@ def path2disp(array, people):
     # print(array.shape[0])
 
     display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
-    display_array[array == 1] = [255, 255, 255]  # floor
+    display_array[array == 1] = [200, 200, 200]  # floor
+    display_array[array == 'T'] = [153, 51, 255]  # tasks
+    display_array[array == 'D'] = [0, 128, 255]  # desks
 
     for person in people:
 
@@ -238,7 +240,7 @@ def run_simulation(params, office, people):
         office.interaction_frames.append(office.interactions)  # record interactions
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
-        display_frame = path2disp(office.pathfinding_array.copy(), people)
+        display_frame = path2disp(office.input_array.copy(), people)
         display_frames.append(display_frame.copy())  # record people locations in office
         # plot_figure(time, office)
         # people_frames.append(people)  # record status of people (included infection status)

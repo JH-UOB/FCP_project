@@ -47,13 +47,13 @@ class GUI:
 
         ##Initalisiing parameters
         parameters = {'Maximum Age': 65,
-                      'Minimum Age': 18,
-                      'Mask Adherence': 0.8,
-                      'Social Distancing Adherence': 0.5,
+                      'Minimum Age': 20,
+                      'Mask Adherence': 80,
+                      'Social Distancing Adherence': 50,
                       'Office Plan': (0,),
-                      'Number of People': 15,
-                      'Number of infected': 2,
-                      'Simulation Duration': 10}
+                      'Number of People': 20,
+                      'Number of infected': 5,
+                      'Simulation Duration': 12}
 
         ## Main frame setup - GUI Controls
         root.title("COVID-19 MODELLING PARAMETERS")
@@ -243,7 +243,7 @@ class GUI:
 
         ## Number of people spin box
         People_Val = IntVar()
-        People_Val.set(15)  # set box to correct default value
+        People_Val.set(parameters['Number of People'])  # set box to correct default value
         Num_People = ttk.Spinbox(mainframe,from_ =1.0, to=20, textvariable=People_Val)
         Num_People.grid(column=0, row=2, sticky=W)
         Num_People.state(['readonly'])
@@ -252,7 +252,7 @@ class GUI:
 
         ## Number of people infected spin box
         Infected_People_Val = IntVar()
-        Infected_People_Val.set(5)  # set box to correct default value
+        Infected_People_Val.set(parameters['Number of infected'])  # set box to correct default value
         Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=20, textvariable=Infected_People_Val)
         Inf_People.grid(column=0, row=4, sticky=W)
         Inf_People.state(['readonly'])
@@ -262,22 +262,22 @@ class GUI:
         ## Max age slider
         Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)
         Max_Age_Slider.grid(column=0, row=6, sticky='we')
-        Max_Age_Slider.set(65)
+        Max_Age_Slider.set(parameters['Maximum Age'])
 
         ## Min age slider
         Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age, command=update_lbl_MinAge)
         Min_Age_Slider.grid(column=0, row=8, sticky='we')
-        Min_Age_Slider.set(18)
+        Min_Age_Slider.set(parameters['Minimum Age'])
 
         ## Mask adherence slider
         Mask_Adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Mask_Adh, command=update_lbl_MA)
         Mask_Adh_Slider.grid(column=0, row=10, sticky='we')
-        Mask_Adh_Slider.set(80)
+        Mask_Adh_Slider.set(parameters['Mask Adherence'])
 
         ## Social distancing slider
         Soc_Dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Soc_Dist,command=update_lbl_SD)
         Soc_Dist_Slider.grid(column=0, row=12, sticky='we')
-        Soc_Dist_Slider.set(50)
+        Soc_Dist_Slider.set(parameters['Social Distancing Adherence'])
 
         ## Office plan listbox
         Office_Plans = ["Floor 1", "Floor 2", "Floor 3", "Floor 4"]

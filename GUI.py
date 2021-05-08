@@ -126,18 +126,30 @@ class GUI:
             office_plans_var = Office_Plans_Listbox.curselection()
             parameters.update({"Office Plan": office_plans_var})
 
-        def update_lb_num_people(People_Val):
-            People_Val = int(Num_People.get())
+        def inc_lb_num_people(People_Val):
+            People_Val = int(Num_People.get())+1 #Get the value of People_Val (+1 required due to the way <<Increment>> works to get correct value
             parameters.update({"Number of People": People_Val})
             change_Infected_People_max_val(People_Val)
 
-        def update_lb_Inf_People(Infected_People_Val):
-            Infected_People_Val = int(Inf_People.get())
+        def dec_lb_num_people(People_Val):
+            People_Val = int(Num_People.get())-1 #Get the value of People_Val (-1 required due to the way <<Decrement>> works to get correct value
+            parameters.update({"Number of People": People_Val})
+            change_Infected_People_max_val(People_Val) # Reset the max value of the Inf_People slider such that the number of infected people cannot exceed the number of people
+
+
+        def inc_lb_Inf_People(Infected_People_Val):
+            Infected_People_Val = int(Inf_People.get())+1 #Get the value of Infected_People_Val (+1 required due to the way <<Increment>> works to get correct value
+            parameters.update({"Number of infected": Infected_People_Val}) #Get the value of Infected_People_Val (-1 required due to the way <<Decrement>> works to get correct value
+            change_Num_People_min_val(Infected_People_Val) # Reset the min value of Num_People slider such that the number of people cannot be less than the number of infected people
+            
+
+        def dec_lb_Inf_People(Infected_People_Val):
+            Infected_People_Val = int(Inf_People.get())-1
             parameters.update({"Number of infected": Infected_People_Val})
             change_Num_People_min_val(Infected_People_Val)
 
         def switch_on_Begin_sim_button_state():
-                Begin_sim_button.state(['!disabled'])
+            Begin_sim_button.state(['!disabled'])
 
         def change_Infected_People_max_val(People_Val):
             Inf_People.config(to=People_Val)
@@ -235,8 +247,8 @@ class GUI:
         Num_People = ttk.Spinbox(mainframe,from_ =1.0, to=20, textvariable=People_Val)
         Num_People.grid(column=0, row=2, sticky=W)
         Num_People.state(['readonly'])
-        Num_People.bind("<<Increment>>", lambda e: update_lb_num_people(People_Val))  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
-        Num_People.bind("<<Decrement>>", lambda e: update_lb_num_people(People_Val))
+        Num_People.bind("<<Increment>>", lambda e: inc_lb_num_people(People_Val))  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
+        Num_People.bind("<<Decrement>>", lambda e: dec_lb_num_people(People_Val))
 
         ## Number of people infected spin box
         Infected_People_Val = IntVar()
@@ -244,8 +256,8 @@ class GUI:
         Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=20, textvariable=Infected_People_Val)
         Inf_People.grid(column=0, row=4, sticky=W)
         Inf_People.state(['readonly'])
-        Inf_People.bind("<<Increment>>", lambda e: update_lb_Inf_People(Infected_People_Val))
-        Inf_People.bind("<<Decrement>>", lambda e: update_lb_Inf_People(Infected_People_Val))
+        Inf_People.bind("<<Increment>>", lambda e: inc_lb_Inf_People(Infected_People_Val))
+        Inf_People.bind("<<Decrement>>", lambda e: dec_lb_Inf_People(Infected_People_Val))
 
         ## Max age slider
         Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)

@@ -112,12 +112,18 @@ def main():
         Inf_People.config(to=People_Val)
 
     def update_plot(frame, timestamp):
+        infected_no = np.count_nonzero(frame == 177)
+        people_no = infected_no + np.count_nonzero(frame == 22)
         test_plot = Figure(figsize=(6, 7), dpi=100, )
         new_plot = test_plot.add_subplot()
         new_plot.imshow(frame)
         new_plot.axis('off')
         if timestamp > 0:
-            new_plot.title.set_text('Time: ' + str(timestamp))
+            new_plot.title.set_text('Time: ' + str(timestamp) 
+                                    +'          Number of Infected: ' 
+                                    + str(infected_no) 
+                                    + '/' + str(people_no))
+            # new_plot.set_xlabel('Number of Infected: ' + str(infected_no))
         newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
         newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         newcanvas.draw_idle()
@@ -163,6 +169,7 @@ def main():
     def Begin_Sim():
         # print(parameters)
         Begin_sim_button.state(['disabled'])
+        Save_sim_button.state(['disabled'])
         display_frames = simulation.main(parameters)
         with open('frames.p', "wb") as f:
             pickle.dump(display_frames, f)
@@ -171,7 +178,7 @@ def main():
             update_plot(frame, timestamp)
             time.sleep(1 / 30)
             timestamp += 1
-
+        Save_sim_button.state(['!disabled'])
         Begin_sim_button.state(['!disabled'])
 
     def save_sim():
@@ -189,7 +196,6 @@ def main():
             next_bar = simulation.progress_update(timestamp - 1, len(display_frames), next_bar)
             timestamp += 1
         sys.stdout.write("\n")
-
         simulation.save_animation()
         Begin_sim_button.state(['!disabled'])
         Save_sim_button.state(['!disabled'])

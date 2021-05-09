@@ -211,8 +211,14 @@ def record_interactions(office, people):
     return interactions
 
 def save_plot(frame, timestamp):
+    infected_no = np.count_nonzero(frame == 177)
+    people_no = infected_no + np.count_nonzero(frame == 22)
     plt.imshow(frame)
-    plt.title('Time:' + str(timestamp))
+    plt.axis('off')
+    plt.title('Time: ' + str(timestamp) 
+               +'          Number of Infected: ' 
+               + str(infected_no) 
+               + '/' + str(people_no))
     plt.savefig('./Plots/' + str(timestamp + 1000))
     
 def save_animation():
@@ -285,7 +291,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
-        transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, people[person], office.interactions,params['Virality'])  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
         display_frames.append(display_frame.copy())  # record people locations in office
 

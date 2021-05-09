@@ -93,7 +93,7 @@ def instantiate_people(params, office):
         set_array_value(people[ID].current_location[0],
                         people[ID].current_location[1],
                         office.pathfinding_array, - ID)
-    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected']-1)
+    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected'])
     for ID in infected_IDs:
         people[ID].infected = True
         people[ID].contagious = True

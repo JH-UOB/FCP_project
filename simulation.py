@@ -227,6 +227,20 @@ def progress_update(it, duration, next_bar):
     
     return next_bar
 
+
+def save_outputs(display_frames):
+    if os.path.exists('./Plots'):
+        shutil.rmtree('./Plots')
+    os.mkdir('./Plots')
+    timestamp = 1
+    next_bar = progress_setup()
+    for frame in display_frames:
+        save_plot(frame, timestamp)
+        next_bar = progress_update(timestamp-1, len(display_frames), next_bar)
+        timestamp +=1
+    sys.stdout.write("\n")    
+    save_animation()
+
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
 
@@ -279,4 +293,5 @@ def run_simulation(params, office, people):
     #         next_bar += 0.025
     sys.stdout.write("\n")
     office.display_frames = display_frames.copy()
+    
     return display_frames

@@ -64,7 +64,9 @@ def main(*arguments):
         parameters = ast.literal_eval(contents)
         file.close()
         import simulation
-        simulation.main(parameters)
+        sim = simulation.main(parameters)
+        simulation.save_outputs(sim)
+        
 
 
 if __name__ == "__main__":

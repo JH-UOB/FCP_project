@@ -285,7 +285,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
-        transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, people[person], office.interactions,params['Virality'])  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
         display_frames.append(display_frame.copy())  # record people locations in office
 

@@ -184,19 +184,9 @@ def main():
     def save_sim():
         Begin_sim_button.state(['disabled'])
         Save_sim_button.state(['disabled'])
-        if os.path.exists('./Plots'):
-            shutil.rmtree('./Plots')
-        os.mkdir('./Plots')
         with open('frames.p', "rb") as f:
             display_frames = pickle.load(f)
-        timestamp = 1
-        next_bar = simulation.progress_setup()
-        for frame in display_frames:
-            simulation.save_plot(frame, timestamp)
-            next_bar = simulation.progress_update(timestamp - 1, len(display_frames), next_bar)
-            timestamp += 1
-        sys.stdout.write("\n")
-        simulation.save_animation()
+        simulation.save_outputs(display_frames)
         Begin_sim_button.state(['!disabled'])
         Save_sim_button.state(['!disabled'])
 
@@ -301,7 +291,7 @@ def main():
     ## Save simulation button
     Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
     Save_sim_button.grid(column=0, row=20, sticky='we')
-
+    Save_sim_button.state(['disabled'])
 
     ## Number of people spin box
     # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters

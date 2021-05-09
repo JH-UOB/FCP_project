@@ -56,6 +56,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import shutil
+from joblib import Parallel, delayed
 
 def main(parameters):
     """Command line entry point."""
@@ -221,6 +222,7 @@ def save_plot(frame, timestamp):
                + '/' + str(people_no))
     plt.savefig('./Plots/' + str(timestamp + 1000))
     
+    
 def save_animation():
     files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
     with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
@@ -247,16 +249,12 @@ def progress_update(it, duration, next_bar):
 
 
 def save_outputs(display_frames):
+    print('Saving plots...')
     if os.path.exists('./Plots'):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
-    timestamp = 1
-    next_bar = progress_setup()
-    for frame in display_frames:
-        save_plot(frame, timestamp)
-        next_bar = progress_update(timestamp-1, len(display_frames), next_bar)
-        timestamp +=1
-    sys.stdout.write("\nDone \n")    
+    Parallel(n_jobs=12)(delayed(save_plot)(display_frames[i], i) 
+                        for i in range(len(display_frames)))
     save_animation()
 
 def run_simulation(params, office, people):

@@ -25,6 +25,7 @@ from office import Office
 import pickle
 import os
 import shutil
+import sys
 
 
 class GUI:
@@ -286,7 +287,7 @@ class GUI:
             Save_sim_button.state(['!disabled'])
             
         def quit_sim():
-            if os.path.exists('frams.p'):
+            if os.path.exists('frames.p'):
                 os.remove('frames.p')
             root.quit()
 
@@ -407,7 +408,7 @@ class GUI:
         Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
-        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)
+        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=quit_sim)
         Quit_app_button.grid(column=0, row=21, sticky='we')
 
         ##scalling to add space around widgets

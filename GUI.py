@@ -346,8 +346,6 @@ def GUI():
     Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
     Save_sim_button.grid(column=0, row=20, sticky='we')
     Save_sim_button.state(['disabled'])
-
-
     ## Number of people spin box
     # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
     # desk_no = len(office.desk_locations) # Calculate the number of desks to set the maximum number of people

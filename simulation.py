@@ -211,8 +211,14 @@ def record_interactions(office, people):
     return interactions
 
 def save_plot(frame, timestamp):
+    infected_no = np.count_nonzero(frame == 177)
+    people_no = infected_no + np.count_nonzero(frame == 22)
     plt.imshow(frame)
-    plt.title('Time:' + str(timestamp))
+    plt.axis('off')
+    plt.title('Time: ' + str(timestamp) 
+               +'          Number of Infected: ' 
+               + str(infected_no) 
+               + '/' + str(people_no))
     plt.savefig('./Plots/' + str(timestamp + 1000))
     
 def save_animation():

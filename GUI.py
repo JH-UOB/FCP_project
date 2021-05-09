@@ -108,12 +108,18 @@ def main():
         Inf_People.config(to=People_Val)
 
     def update_plot(frame, timestamp):
+        infected_no = np.count_nonzero(frame == 177)
+        people_no = infected_no + np.count_nonzero(frame == 22)
         test_plot = Figure(figsize=(6, 7), dpi=100, )
         new_plot = test_plot.add_subplot()
         new_plot.imshow(frame)
         new_plot.axis('off')
         if timestamp > 0:
-            new_plot.title.set_text('Time: ' + str(timestamp))
+            new_plot.title.set_text('Time: ' + str(timestamp) 
+                                    +'          Number of Infected: ' 
+                                    + str(infected_no) 
+                                    + '/' + str(people_no))
+            # new_plot.set_xlabel('Number of Infected: ' + str(infected_no))
         newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
         newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         newcanvas.draw_idle()

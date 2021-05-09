@@ -66,8 +66,10 @@ def main(parameters):
     return display_frames
 
 # def check_parameters(parameters):
-#     if  type(parameters) is dict:
-#         if parameters['Maximum Age'] > 16
+#     if  type(parameters) is not dict:
+#         print('Error: input parameters must be ')
+#         for item in parameters:
+#             if
 #
 #     parameters = {'Maximum Age': 65,
 #                   'Minimum Age': 20,

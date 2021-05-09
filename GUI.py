@@ -38,19 +38,37 @@ class GUI:
             "Maximum Age" - Maximum possible age of people in the office [slider]
             "Minimum Age" - Minimum possible age of people in the office [slider]
             "Mask Adherence" - Percentage of people who wear a face mask [slider]
+            "Virality" - Percentage of virality [slider]
             "Social Distancing Adherence" - Percentage of people who adhere to social distancing measures [slider]
             "Office Plan" - Which floor of the office is simulated from the 4 choices [Listbox]
             "Simulation duration" - Number of movement interactions to model simulation over [slider]
 
         Once the user has specified their parameters they  can begin the simulation by pressing the "Begin Simulation" button.
+        Additionally there is a
 
         The simulated office space is then shown for each discrete time event.
 
         """
 
     def __init__(self, root):
+        """This is function contains the main loop which is continually rerun while the GUI is open.
+        Due to the way information is handeled within Tkinter, this results in the requirement of nested functions which handle the various callbacks from widgets.
 
-        ##Initalisiing parameters
+        It contains the following key sections:
+            - (1) Initialising the parameters dictionary.
+            - (2) Setup of the GUI window, frames and figure and toolbar.
+            - (3) Functions which handle callbacks (command and lamdba e) from widgets to update parameters and run the main simulation.py
+            - (4) Setup of labels to show widget information in real time
+            - (5) Setup of widgets
+
+
+
+
+
+
+                """
+
+        ### (1) Initialising the parameters dictionary
         parameters = {'Maximum Age': 65,
                       'Minimum Age': 20,
                       'Mask Adherence': 80,
@@ -61,7 +79,7 @@ class GUI:
                       'Number of infected': 5,
                       'Simulation Duration': 12}
 
-        
+        ### (2) Setup of the GUI window, frames and figure and toolbar.
         ## Main frame setup - GUI Controls
         root.title("COVID-19 MODELLING PARAMETERS")
         mainframe = ttk.Frame(root, padding="2 2 12 12")
@@ -95,22 +113,26 @@ class GUI:
             "key_press_event", lambda event: print(f"you pressed {event.key}")) # popups that show when you hover over a toolbar button
         canvas.mpl_connect("key_press_event", key_press_handler)
 
-        ## Label update functions
+        ### (3) Functions which handle callbacks
+
+        def update_lbl_MaxAge(Max_Age):
+                try:
+                    Min_Age = int(float((Min_Age_Slider.get())))
+                except:
+                    Min_Age = parameters['Number of People']
+                Max_Age = int(float((Max_Age)))
+                Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
+                parameters.update({"Maximum Age": Max_Age})
+                if Min_Age > Max_Age:
+                    switch_off_Begin_sim_button_state()
+                else:
+                    switch_on_Begin_sim_button_state()
+
         def update_lbl_MinAge(Min_Age):
             Min_Age = int(float((Min_Age)))
             Max_Age = int(float((Max_Age_Slider.get())))
             Min_Age_label['text'] = "Minimum age: " + str(Min_Age) + " years old"
             parameters.update({"Minimum Age": Min_Age})
-            if Min_Age > Max_Age:
-                switch_off_Begin_sim_button_state()
-            else:
-                switch_on_Begin_sim_button_state()
-
-        def update_lbl_MaxAge(Max_Age):
-            Min_Age = int(float((Min_Age_Slider.get())))
-            Max_Age = int(float((Max_Age)))
-            Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
-            parameters.update({"Maximum Age": Max_Age})
             if Min_Age > Max_Age:
                 switch_off_Begin_sim_button_state()
             else:
@@ -156,7 +178,9 @@ class GUI:
             return desk_no
 
         def inc_lb_num_people():
-            People_Val = int(Num_People.get())  # Fetch Number of people
+            if Num_People.get() == '':
+                Num_People.set(parameters['Number of People'])
+            People_Val = int(float(Num_People.get()))  # Fetch Number of people
             desk_no = get_desk_no()
             if People_Val >= desk_no: # If the number of people is greater than or equal to the number of desks set the number of people to the number of desks (This is only required when the Office Plan is changed
                 Num_People.set(desk_no)
@@ -166,7 +190,9 @@ class GUI:
             Inf_People.config(to=People_Val)
 
         def dec_lb_num_people():
-            People_Val = int(Num_People.get()) # Fetch Number of people
+            if Num_People.get() == '':
+                Num_People.set(parameters['Number of People'])
+            People_Val = int(float(Num_People.get())) # Fetch Number of people
             Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
             if People_Val != Infected_People_Val: #Decrease the number of people as long as it wouldnt result in the number of infected exceeding the number of people
                 People_Val = People_Val-1
@@ -187,18 +213,23 @@ class GUI:
             figframe.update()
 
         def inc_lb_Inf_People():
+            if Inf_People.get() == '':
+                Inf_People.set(parameters['Number of infected'])
             desk_no = get_desk_no()
-            People_Val = int(Num_People.get()) # Fetch Number of people
-            Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
+            People_Val = int(float(Num_People.get())) # Fetch Number of people
+            Infected_People_Val = int(float(Inf_People.get())) # Fetch Number of infected people
             if Infected_People_Val <= desk_no:
                 Infected_People_Val + 1
-            if Infected_People_Val != People_Val: #Increase the number of infeceted people as long as it wouldnt exceed the number of people
+            if Infected_People_Val < People_Val: #Increase the number of infeceted people as long as it wouldnt exceed the number of people
                 Infected_People_Val = Infected_People_Val + 1
             parameters.update({"Number of infected": Infected_People_Val})
             Num_People.config(from_=Infected_People_Val)
 
         def dec_lb_Inf_People():
-            Infected_People_Val = int(Inf_People.get()) # Fetch Number of infected people
+            if Inf_People.get() == '':
+                Inf_People.set(parameters['Number of infected'])
+
+            Infected_People_Val = int(float(Inf_People.get())) # Fetch Number of infected people
             if Infected_People_Val > 1:
                 Infected_People_Val = Infected_People_Val - 1 # Decrease the number of infected people
             parameters.update({"Number of infected": Infected_People_Val})
@@ -261,7 +292,7 @@ class GUI:
 
 
 
-        ### Labels and widgets
+        ### (4) Setup of labels
 
         ## Instructions label
         instructions_label = ttk.Label(mainframe, text='Please enter the following parameters:').grid(column=0, row=0, sticky='we')
@@ -300,6 +331,8 @@ class GUI:
         ## Simulation Duration label
         Sim_Dur_label = ttk.Label(mainframe)
         Sim_Dur_label.grid(column=0, row=17, sticky='we')
+
+        ### (5) Setup of widgets
 
         ## Begin simulation button
         Begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=Begin_Sim)

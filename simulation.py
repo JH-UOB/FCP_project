@@ -239,8 +239,9 @@ def run_simulation(params, office, people):
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
+    next_bar = 0.025
     progress = 0
-    sys.stdout.write("Loading \n")
+    sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
@@ -266,11 +267,11 @@ def run_simulation(params, office, people):
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()
         # plot_figure(time, office)
-        progress += time / sim_duration
-        while progress >= sim_duration / 5:
+        progress = (time+1) / sim_duration
+        while progress >= next_bar:
             sys.stdout.write(" " + u"\u2588")
             sys.stdout.flush()
-            progress -= sim_duration / 100
+            next_bar += 0.025
     sys.stdout.write("\n")
     office.display_frames = display_frames.copy()
     return display_frames

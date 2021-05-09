@@ -61,7 +61,7 @@ class GUI:
                       'Number of infected': 5,
                       'Simulation Duration': 12}
 
-
+        
         ## Main frame setup - GUI Controls
         root.title("COVID-19 MODELLING PARAMETERS")
         mainframe = ttk.Frame(root, padding="2 2 12 12")
@@ -85,7 +85,7 @@ class GUI:
         canvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         canvas.draw()
         figframe.update()
-
+        root.iconbitmap('icon.ico')
         ## Toolbar to manipulate figure
         toolbar = NavigationToolbar2Tk(canvas, figframe, pack_toolbar=False) # pack_toolbar=False required for layout managment.
         toolbar.update() # Toolbar automatically updates (this is a built in function)
@@ -216,7 +216,7 @@ class GUI:
                 Begin_sim_button.state(['disabled'])
 
         def Begin_Sim():
-            print(parameters)
+            # print(parameters)
             Begin_sim_button.state(['disabled'])
             display_frames = simulation.main(parameters)
 

@@ -53,10 +53,10 @@ def main(*arguments):
         return
     elif len(arguments) == 1 and arguments[0] == 'GUI':
         import GUI
-        GUI.main()
+        GUI.GUI()
     elif len(arguments) == 1 and arguments[0] == 'GUI':
         import GUI
-        GUI.main()
+        GUI.GUI()
     elif len(arguments) == 1 and arguments[0].endswith('txt'):
         file = open(arguments[0], 'r')
         contents = file.read()

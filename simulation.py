@@ -236,7 +236,7 @@ def progress_update(it, duration, next_bar):
     while progress >= next_bar:
         sys.stdout.write(" " + u"\u2588")
         sys.stdout.flush()
-        next_bar += 0.025
+        next_bar += 0.017
     
     return next_bar
 

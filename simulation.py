@@ -171,14 +171,11 @@ def path2disp(array, people):
             display_array[people[person].current_location] = [177, 0, 30]  # red = infected
         else:
             display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
-
     return display_array
-
 
 def set_array_value(x, y, array, value):
     """Updates an array"""
     array[x][y] = value
-
 
 def start_moving(person, office):
     """Assign a task to a person and start moving"""
@@ -187,7 +184,6 @@ def start_moving(person, office):
     person.get_task(office.task_locations)
     # Begin movement along path
     update_location(person, office)
-
 
 def move_somewhere(person, office):
     """Move person somewhere adjacent to avoid blockages in narrow spaces"""
@@ -201,7 +197,6 @@ def move_somewhere(person, office):
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
-
 def record_interactions(office, people):
     """Checks for interactions in the office and stores them to simulate transmissions"""
     interactions = []
@@ -212,14 +207,6 @@ def record_interactions(office, people):
     interactions.sort()
     interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
     return interactions
-
-
-def plot_figure(time, office):
-    """Plots the locations of people in the office as their locations are updated"""
-    # plt.figure(time)
-    # plt.title(str(time))
-    # plt.imshow(office.pathfinding_array.tolist())
-    # plt.show()
 
 def save_plot(frame, timestamp):
     plt.imshow(frame)
@@ -248,6 +235,20 @@ def progress_update(it, duration, next_bar):
     
     return next_bar
 
+
+def save_outputs(display_frames):
+    if os.path.exists('./Plots'):
+        shutil.rmtree('./Plots')
+    os.mkdir('./Plots')
+    timestamp = 1
+    next_bar = progress_setup()
+    for frame in display_frames:
+        save_plot(frame, timestamp)
+        next_bar = progress_update(timestamp-1, len(display_frames), next_bar)
+        timestamp +=1
+    sys.stdout.write("\n")    
+    save_animation()
+
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
 
@@ -258,15 +259,12 @@ def run_simulation(params, office, people):
 
     # Initialise lists to record results
     sim_duration = params['Simulation Duration']
-    # office.floor_switcher(0)
-    # print(params['Office Plan'][0])
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
     next_bar = progress_setup()
     # progress = 0
-    # sys.stdout.write("Loading... \n")
-    # sys.stdout.write(u"\u2588" )
+
     
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
@@ -281,23 +279,17 @@ def run_simulation(params, office, people):
             else:  # between tasks, keep moving
                 update_location(people[person], office)
 
-        # print('Time: ', time)  # for tracking progress
+
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
         transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
         display_frames.append(display_frame.copy())  # record people locations in office
-        # plot_figure(time, office)
-        # people_frames.append(people)  # record status of people (included infection status)
-        # plt.close()
-        # plot_figure(time, office)
+
         next_bar = progress_update(time, sim_duration, next_bar)
-        # progress = (time+1) / sim_duration
-    #     while progress >= next_bar:
-    #         sys.stdout.write(" " + u"\u2588")
-    #         sys.stdout.flush()
-    #         next_bar += 0.025
+
     sys.stdout.write("\n")
     office.display_frames = display_frames.copy()
+    
     return display_frames

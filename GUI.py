@@ -22,10 +22,10 @@ import numpy as np
 import simulation
 import time
 from office import Office
-import imageio
+import pickle
 import os
-from os import listdir
-from os.path import isfile, join
+import shutil
+
 
 class GUI:
     """This class is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input parameters using widgets.
@@ -219,11 +219,41 @@ class GUI:
             # print(parameters)
             Begin_sim_button.state(['disabled'])
             display_frames = simulation.main(parameters)
-
+            with open('frames.p', "wb") as f:
+                pickle.dump(display_frames, f)
             for frame in display_frames:
                 update_plot(frame)
                 time.sleep(1/30)
+                
             Begin_sim_button.state(['!disabled'])
+            
+
+        def save_sim():
+            Begin_sim_button.state(['disabled'])
+            Save_sim_button.state(['disabled'])
+            if os.path.exists('./Plots'):
+                shutil.rmtree('./Plots')
+            os.mkdir('./Plots')
+            with open('frames.p', "rb") as f:
+                display_frames = pickle.load(f)
+            timestamp = 1
+            next_bar = simulation.progress_setup()
+            for frame in display_frames:
+                simulation.save_plot(frame, timestamp)
+                next_bar = simulation.progress_update(timestamp-1, len(display_frames), next_bar)
+                timestamp +=1
+            sys.stdout.write("\n")    
+            
+            simulation.save_animation()
+            Begin_sim_button.state(['!disabled'])
+            Save_sim_button.state(['!disabled'])
+            
+        def quit_sim():
+            if os.path.exists('frams.p'):
+                os.remove('frames.p')
+            root.quit
+
+
 
         ### Labels and widgets
 
@@ -268,6 +298,11 @@ class GUI:
         ## Begin simulation button
         Begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=Begin_Sim)
         Begin_sim_button.grid(column=0, row=19, sticky='we')
+        
+        ## Save simulation button
+        Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
+        Save_sim_button.grid(column=0, row=20, sticky='we')
+
 
         ## Number of people spin box
         # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
@@ -333,8 +368,8 @@ class GUI:
         Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
-        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)
-        Quit_app_button.grid(column=0, row=20, sticky='we')
+        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=quit_sim())
+        Quit_app_button.grid(column=0, row=21, sticky='we')
 
         ##scalling to add space around widgets
         for child in mainframe.winfo_children():

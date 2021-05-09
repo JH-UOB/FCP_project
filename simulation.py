@@ -51,7 +51,11 @@ import transmission
 import random
 import sys
 import numpy as np
-
+import imageio
+import os
+from os import listdir
+from os.path import isfile, join
+import shutil
 
 def main(parameters):
     """Command line entry point."""
@@ -212,7 +216,7 @@ def plot_figure(time, office):
 def save_plot(frame, timestamp):
     plt.imshow(frame)
     plt.title('Time:' + str(timestamp))
-    plt.savefig('./Plots/' + str(timestamp + 10))
+    plt.savefig('./Plots/' + str(timestamp + 1000))
     
 def save_animation():
     files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
@@ -221,8 +225,20 @@ def save_animation():
             image = imageio.imread(filename)
             writer.append_data(image)
 
+def progress_setup():
+    next_bar = 0.025
+    sys.stdout.write("Loading... \n")
+    sys.stdout.write(u"\u2588" )
+    return next_bar
 
-
+def progress_update(it, duration, next_bar):
+    progress = (it+1) / duration
+    while progress >= next_bar:
+        sys.stdout.write(" " + u"\u2588")
+        sys.stdout.flush()
+        next_bar += 0.025
+    
+    return next_bar
 
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
@@ -239,10 +255,11 @@ def run_simulation(params, office, people):
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
-    next_bar = 0.025
-    progress = 0
-    sys.stdout.write("Loading... \n")
-    sys.stdout.write(u"\u2588" )
+    next_bar = progress_setup()
+    # progress = 0
+    # sys.stdout.write("Loading... \n")
+    # sys.stdout.write(u"\u2588" )
+    
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
@@ -267,11 +284,12 @@ def run_simulation(params, office, people):
         # people_frames.append(people)  # record status of people (included infection status)
         # plt.close()
         # plot_figure(time, office)
-        progress = (time+1) / sim_duration
-        while progress >= next_bar:
-            sys.stdout.write(" " + u"\u2588")
-            sys.stdout.flush()
-            next_bar += 0.025
+        next_bar = progress_update(time, sim_duration, next_bar)
+        # progress = (time+1) / sim_duration
+    #     while progress >= next_bar:
+    #         sys.stdout.write(" " + u"\u2588")
+    #         sys.stdout.flush()
+    #         next_bar += 0.025
     sys.stdout.write("\n")
     office.display_frames = display_frames.copy()
     return display_frames

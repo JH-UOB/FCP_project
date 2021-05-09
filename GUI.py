@@ -96,21 +96,21 @@ class GUI:
         canvas.mpl_connect("key_press_event", key_press_handler)
 
         ## Label update functions
-        def update_lbl_MaxAge(Max_Age):
-            Min_Age = int(float((Min_Age_Slider.get())))
-            Max_Age = int(float((Max_Age)))
-            Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
-            parameters.update({"Maximum Age": Max_Age})
-            if Min_Age > Max_Age:
-                switch_off_Begin_sim_button_state()
-            else:
-                switch_on_Begin_sim_button_state()
-
         def update_lbl_MinAge(Min_Age):
             Min_Age = int(float((Min_Age)))
             Max_Age = int(float((Max_Age_Slider.get())))
             Min_Age_label['text'] = "Minimum age: " + str(Min_Age) + " years old"
             parameters.update({"Minimum Age": Min_Age})
+            if Min_Age > Max_Age:
+                switch_off_Begin_sim_button_state()
+            else:
+                switch_on_Begin_sim_button_state()
+
+        def update_lbl_MaxAge(Max_Age):
+            Min_Age = int(float((Min_Age_Slider.get())))
+            Max_Age = int(float((Max_Age)))
+            Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
+            parameters.update({"Maximum Age": Max_Age})
             if Min_Age > Max_Age:
                 switch_off_Begin_sim_button_state()
             else:
@@ -374,7 +374,7 @@ class GUI:
         Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
         ## Quit application button
-        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit())
+        Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=root.quit)
         Quit_app_button.grid(column=0, row=21, sticky='we')
 
         ##scalling to add space around widgets

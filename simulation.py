@@ -59,19 +59,6 @@ import shutil
 
 def main(parameters):
     """Command line entry point."""
-    #
-    # Load parameters from the argument specified source (the GUI or text file)
-    #   https://docs.python.org/3/library/argparse.html
-    #
-    # parameters = {'Maximum Age': 65,
-    #               'Minimum Age': 18,
-    #               'Mask Adherence': 0.8,
-    #               'Social Distancing Adherence': 1,
-    #               'Number of Floors': 0.5,
-    #               'Number of People': 10,
-    #               'Simulation Duration': 50,
-    #               }
-
     selected_office = Office(parameters['Office Plan'][0])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
     display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
@@ -293,18 +280,3 @@ def run_simulation(params, office, people):
     sys.stdout.write("\n")
     office.display_frames = display_frames.copy()
     return display_frames
-
-
-if __name__ == "__main__":
-    # parameters = {'Maximum Age': 65,
-    #           'Minimum Age': 20,
-    #           'Mask Adherence': 80,
-    #           'Social Distancing Adherence': 50,
-    #           'Office Plan': (0,),
-    #           'Number of People': 20,
-    #           'Number of infected': 5,
-    #           'Simulation Duration': 12}
-    start = timeit.default_timer()
-    office = main(parameters)
-    stop = timeit.default_timer()
-    # print('Time: ', stop - start)

@@ -75,12 +75,13 @@ class GUI:
 
 
         ## Setup figure withing canvas to plot onto
-        figure_plot = Figure(figsize=(5, 4), dpi=100, )
+        figure_plot = Figure(figsize=(6, 7), dpi=100, )
         y = np.random.random([10, 1])
         office_plot = figure_plot.add_subplot()
         office = Office(parameters['Office Plan'][0])
         display_array = simulation.input2disp(office.input_array)
         office_plot.imshow(display_array)
+        office_plot.axis('off')
         canvas = FigureCanvasTkAgg(figure_plot, master=figframe)
         canvas.get_tk_widget().grid(column=1, row=0, sticky='we')
         canvas.draw()
@@ -147,7 +148,7 @@ class GUI:
                 Inf_People.config(to=desk_no)
                 office = Office(parameters['Office Plan'][0])
                 display_array = simulation.input2disp(office.input_array)
-                update_plot(display_array)
+                update_plot(display_array, 0)
 
         def get_desk_no():
             office = Office(parameters['Office Plan'][0])
@@ -173,10 +174,13 @@ class GUI:
             Inf_People.config(to=People_Val)
 
 
-        def update_plot(frame):
-            test_plot = Figure(figsize=(5, 4), dpi=100, )
+        def update_plot(frame, timestamp):
+            test_plot = Figure(figsize=(6, 7), dpi=100, )
             new_plot = test_plot.add_subplot()
             new_plot.imshow(frame)
+            new_plot.axis('off')
+            if timestamp > 0:
+                new_plot.title.set_text('Time: ' + str(timestamp))
             newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
             newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
             newcanvas.draw_idle()
@@ -221,9 +225,11 @@ class GUI:
             display_frames = simulation.main(parameters)
             with open('frames.p', "wb") as f:
                 pickle.dump(display_frames, f)
+            timestamp = 1
             for frame in display_frames:
-                update_plot(frame)
+                update_plot(frame, timestamp)
                 time.sleep(1/30)
+                timestamp += 1
                 
             Begin_sim_button.state(['!disabled'])
             

@@ -159,6 +159,7 @@ def main():
     def Begin_Sim():
         # print(parameters)
         Begin_sim_button.state(['disabled'])
+        Save_sim_button.state(['disabled'])
         display_frames = simulation.main(parameters)
         with open('frames.p', "wb") as f:
             pickle.dump(display_frames, f)
@@ -167,7 +168,7 @@ def main():
             update_plot(frame, timestamp)
             time.sleep(1 / 30)
             timestamp += 1
-
+        Save_sim_button.state(['!disabled'])
         Begin_sim_button.state(['!disabled'])
 
     def save_sim():
@@ -185,7 +186,6 @@ def main():
             next_bar = simulation.progress_update(timestamp - 1, len(display_frames), next_bar)
             timestamp += 1
         sys.stdout.write("\n")
-
         simulation.save_animation()
         Begin_sim_button.state(['!disabled'])
         Save_sim_button.state(['!disabled'])

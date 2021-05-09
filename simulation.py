@@ -223,10 +223,12 @@ def save_plot(frame, timestamp):
     
 def save_animation():
     files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
-    with imageio.get_writer('animation.gif', mode='I') as writer:
+    with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
         for filename in files:
             image = imageio.imread(filename)
             writer.append_data(image)
+    output_path = os.path.dirname(os.path.realpath('./Plots/animation.gif'))
+    print('Plots and animation saved to ' + output_path)
 
 def progress_setup():
     next_bar = 0.025
@@ -254,7 +256,7 @@ def save_outputs(display_frames):
         save_plot(frame, timestamp)
         next_bar = progress_update(timestamp-1, len(display_frames), next_bar)
         timestamp +=1
-    sys.stdout.write("\n")    
+    sys.stdout.write("\nDone \n")    
     save_animation()
 
 def run_simulation(params, office, people):
@@ -297,7 +299,7 @@ def run_simulation(params, office, people):
 
         next_bar = progress_update(time, sim_duration, next_bar)
 
-    sys.stdout.write("\n")
+    sys.stdout.write("\nDone \n")
     office.display_frames = display_frames.copy()
     
     return display_frames

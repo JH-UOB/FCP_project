@@ -160,9 +160,9 @@ def path2disp(array, people):
     for person in people:
 
         if people[person].infected:
-            display_array[people[person].current_location] = [177, 0, 30]  # red
+            display_array[people[person].current_location] = [177, 0, 30]  # red = infected
         else:
-            display_array[people[person].current_location] = [22, 152, 66]  # green
+            display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
 
     return display_array
 
@@ -189,7 +189,7 @@ def move_somewhere(person, office):
     # Set current person location in pathfinding array to be traversable
     set_array_value(person.current_location[0],
                     person.current_location[1],
-                    office.input_array, 1)
+                    office.pathfinding_array, 1)
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 

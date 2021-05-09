@@ -158,7 +158,7 @@ class GUI:
             office_plans_var = Office_Plans_Listbox.curselection()
             if office_plans_var != (): # This is a get-around to issue where listbox lamba function is called on both selection and deselection - In the case where nothing is selected "()" we do not want the value of office plan to be reassigned
                 parameters.update({"Office Plan": office_plans_var})
-                desk_no = get_desk_no()
+                desk_no = simulation.get_desk_no(parameters)
                 People_Val = int(Num_People.get())  # Fetch Number of people
                 Infected_People_Val = int(Inf_People.get())  # Fetch Number of infected people
                 if People_Val > desk_no: # If the number of people exceeds the number of desks for that office selection set the number of people to the number of desks
@@ -173,16 +173,11 @@ class GUI:
                 display_array = simulation.input2disp(office.input_array)
                 update_plot(display_array, 0)
 
-        def get_desk_no():
-            office = Office(parameters['Office Plan'][0])
-            desk_no = len(office.desk_locations)
-            return desk_no
-
         def inc_lb_num_people():
             if Num_People.get() == '':
                 Num_People.set(parameters['Number of People'])
             People_Val = int(float(Num_People.get()))  # Fetch Number of people
-            desk_no = get_desk_no()
+            desk_no = simulation.get_desk_no(parameters)
             if People_Val >= desk_no: # If the number of people is greater than or equal to the number of desks set the number of people to the number of desks (This is only required when the Office Plan is changed
                 Num_People.set(desk_no)
             if People_Val < desk_no: # If the number of people is less than the the number of desks increase the number of people
@@ -216,7 +211,7 @@ class GUI:
         def inc_lb_Inf_People():
             if Inf_People.get() == '':
                 Inf_People.set(parameters['Number of infected'])
-            desk_no = get_desk_no()
+            desk_no = simulation.get_desk_no(parameters)
             People_Val = int(float(Num_People.get())) # Fetch Number of people
             Infected_People_Val = int(float(Inf_People.get())) # Fetch Number of infected people
             if Infected_People_Val <= desk_no:
@@ -347,7 +342,7 @@ class GUI:
         ## Number of people spin box
         # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
         # desk_no = len(office.desk_locations) # Calculate the number of desks to set the maximum number of people
-        desk_no = get_desk_no()
+        desk_no = simulation.get_desk_no(parameters)
         People_Val = IntVar()
         People_Val.set(parameters['Number of People'])  # set box to correct default value
         Num_People = ttk.Spinbox(mainframe,from_ =parameters['Number of infected'], to=desk_no, textvariable=People_Val)

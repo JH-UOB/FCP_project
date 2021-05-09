@@ -220,11 +220,12 @@ def save_plot(frame, timestamp):
                +'          Number of Infected: ' 
                + str(infected_no) 
                + '/' + str(people_no))
-    plt.savefig('./Plots/' + str(timestamp + 1000))
+    plt.savefig('./Plots/' + str(timestamp))
     
     
 def save_animation():
-    files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
+    num_files = len([name for name in os.listdir('./Plots') if os.path.isfile(os.path.join('./Plots', name))])
+    files = ['./Plots/' + str(f) + '.png' for f in range(num_files)]
     with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
         for filename in files:
             image = imageio.imread(filename)

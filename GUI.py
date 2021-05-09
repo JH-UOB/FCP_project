@@ -74,7 +74,7 @@ class GUI:
                       'Minimum Age': 20,
                       'Mask Adherence': 80,
                       'Social Distancing Adherence': 50,
-                      'Office Plan': (0,),
+                      'Office Plan': 0,
                       'Virality': 50,
                       'Number of People': 15,
                       'Number of infected': 5,
@@ -97,7 +97,7 @@ class GUI:
         figure_plot = Figure(figsize=(6, 7), dpi=100, )
         y = np.random.random([10, 1])
         office_plot = figure_plot.add_subplot()
-        office = Office(parameters['Office Plan'][0])
+        office = Office(parameters['Office Plan'])
         display_array = simulation.input2disp(office.input_array)
         office_plot.imshow(display_array)
         office_plot.axis('off')
@@ -154,7 +154,7 @@ class GUI:
         def update_lb_office_plans():
             office_plans_var = Office_Plans_Listbox.curselection()
             if office_plans_var != (): # This is a get-around to issue where listbox lamba function is called on both selection and deselection - In the case where nothing is selected "()" we do not want the value of office plan to be reassigned
-                parameters.update({"Office Plan": office_plans_var})
+                parameters.update({"Office Plan": office_plans_var[0]})
                 desk_no = simulation.get_desk_no(parameters)
                 People_Val = int(Num_People.get())  # Fetch Number of people
                 Infected_People_Val = int(Inf_People.get())  # Fetch Number of infected people
@@ -166,7 +166,7 @@ class GUI:
                     parameters.update({"Number of infected": desk_no})
                 Num_People.config(to=desk_no) # Limit max number of people based on number of desks
                 Inf_People.config(to=desk_no)
-                office = Office(parameters['Office Plan'][0])
+                office = Office(parameters['Office Plan'])
                 display_array = simulation.input2disp(office.input_array)
                 update_plot(display_array, 0)
 

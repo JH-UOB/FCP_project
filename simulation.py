@@ -60,28 +60,28 @@ import shutil
 def main(parameters):
     """Command line entry point."""
     # check_parameters(parameters)
-    selected_office = Office(parameters['Office Plan'][0])  # initialise office space
+    selected_office = Office(parameters['Office Plan'])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
     display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
     return display_frames
 
 # def check_parameters(parameters):
-    # if  type(parameters) is dict:
-    #     parameters['Maximum Age'] 16 to 120
-    #
-    # parameters = {'Maximum Age': 65,
-    #               'Minimum Age': 20,
-    #               'Mask Adherence': 80,
-    #               'Social Distancing Adherence': 50,
-    #               'Office Plan': (0,),
-    #               'Virality': 50,
-    #               'Number of People': 15,
-    #               'Number of infected': 5,
-    #               'Simulation Duration': 12}
+#     if  type(parameters) is dict:
+#         if parameters['Maximum Age'] > 16
+#
+#     parameters = {'Maximum Age': 65,
+#                   'Minimum Age': 20,
+#                   'Mask Adherence': 80,
+#                   'Social Distancing Adherence': 50,
+#                   'Office Plan': 0,
+#                   'Virality': 50,
+#                   'Number of People': 15,
+#                   'Number of infected': 5,
+#                   'Simulation Duration': 12}
 
 
 def get_desk_no(parameters):
-    office = Office(parameters['Office Plan'][0])
+    office = Office(parameters['Office Plan'])
     desk_no = len(office.desk_locations)
     return desk_no
 

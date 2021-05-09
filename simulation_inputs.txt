@@ -2,7 +2,7 @@
  'Minimum Age': 20,
  'Mask Adherence': 80,
  'Social Distancing Adherence': 50,
- 'Office Plan': (0,),
+ 'Office Plan': 0,
  'Number of People': 15,
  'Number of infected': 5,
  'Simulation Duration': 12}

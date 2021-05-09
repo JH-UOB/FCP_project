@@ -4,12 +4,13 @@ GUI.py
 Designed and written by James Irvin
 May 2021
 
-This script contains a class that defines the GUI and plots the outputs of simulation.py as an animated office.
+This script contains a function which creates a GUI that can be used to view and the office layout and control input
+parameters to simulation.py.
 
 Used by simulation.py.
 """
 
-## Import modules
+# Import modules
 import matplotlib.backends.backend_tkagg
 from tkinter import *
 from tkinter import ttk
@@ -27,65 +28,117 @@ import os
 import shutil
 import sys
 
+
 # Main body
-def main():
-    ### (3) Functions which handle callbacks
+def GUI():
+    """This function is used to generate a Tkinter Graphical User Interface (GUI) which allows the user to change input
+    parameters using widgets.
+
+        The GUI is also used to present animated results from simulation.py as a matplotlib plot.
+
+        The following parameters can be changed within the "parameters" dictionary [widget]
+
+            "Number of people" - The number of people in the office [spin box]
+            "Number of infected people" - The number of infected people [spin box]
+            "Maximum Age" - Maximum possible age of people in the office [slider]
+            "Minimum Age" - Minimum possible age of people in the office [slider]
+            "Mask Adherence" - Percentage of people who wear a face mask [slider]
+            "Virality" - Percentage of virality [slider]
+            "Social Distancing Adherence" - Percentage of people who adhere to social distancing measures [slider]
+            "Office Plan" - Which floor of the office is simulated from the 4 choices [Listbox]
+            "Simulation duration" - Number of movement interactions to model simulation over [slider]
+
+        Once the user has specified their parameters they  can begin the simulation by pressing the "Begin Simulation"
+        button - This passes on the parameters to simulation.py.
+
+        The simulated office space is then shown for each discrete time event.
+
+        Additionally there is a button to save the Animation which saves the Matplotlib frames as a GIF
+
+        The function is seperated into the following subsections:
+
+            - (1) Functions which handle callbacks *Note: These fuctions must be nested within GUI for the widget
+                  callbacks to work correctly*
+            - (2) Initialising the parameters dictionary.
+            - (3) Setup of the GUI window, frames and figure and toolbar.
+            - (4) Setup GUI labels for parameters
+            - (5) Setup of widgets
+        """
+
+    # (1) Functions which handle callbacks
 
     def update_lbl_MaxAge(Max_Age):
+        """Update the Max Age label and check that max age exceeds min age.
+        If this is not true then the begin simulation button is disabled"""
         try:
-            Min_Age = int(float((Min_Age_Slider.get())))
+            Min_Age = int(float((Min_Age_Slider.get())))  # Get the current value of min age
         except:
-            Min_Age = parameters['Minimum Age']
-
-        Max_Age = int(float((Max_Age)))
-        Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
-        parameters.update({"Maximum Age": Max_Age})
+            Min_Age = parameters[
+                'Minimum Age']  # This is required as the max age slider is initalised before the min..
+            #  slider - this means for the first loop the min age slider doesnt exist so in this instance min age is ...
+            #  defined from parameters.
+        Max_Age = int(float((Max_Age)))  # Convert from Tkinter IntVar() to Int
+        Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"  # Update max age label
+        parameters.update({"Maximum Age": Max_Age})  # Update max age within parameters
         if Min_Age > Max_Age:
-            switch_off_Begin_sim_button_state()
+            switch_off_Begin_sim_button_state()  # disable begin sim button
         else:
-            switch_on_Begin_sim_button_state()
+            switch_on_Begin_sim_button_state()  # enable begin sim button
 
     def update_lbl_MinAge(Min_Age):
-        Min_Age = int(float((Min_Age)))
-        Max_Age = int(float((Max_Age_Slider.get())))
-        Min_Age_label['text'] = "Minimum age: " + str(Min_Age) + " years old"
-        parameters.update({"Minimum Age": Min_Age})
+        """Update the Min Age label and check that max age exceeds min age.
+                If this is not true then the begin simulation button is disabled"""
+        Min_Age = int(float((Min_Age)))  # Convert from Tkinter IntVar() to Int
+        Max_Age = int(float((Max_Age_Slider.get())))  # Get the current value of max age
+        Min_Age_label['text'] = "Minimum age: " + str(Min_Age) + " years old"  # Update min age label
+        parameters.update({"Minimum Age": Min_Age})  # Update min age within parameters
         if Min_Age > Max_Age:
             switch_off_Begin_sim_button_state()
         else:
             switch_on_Begin_sim_button_state()
 
     def update_lbl_MA(Mask_Adh):
-        Mask_Adh = int(float((Mask_Adh)))
-        MA_label['text'] = "Mask adherence: " + str(Mask_Adh) + "%"
-        parameters.update({"Mask Adherence": Mask_Adh})
+        """Update the Mask Adherence label"""
+        Mask_Adh = int(float((Mask_Adh)))  # Convert from Tkinter IntVar() to Int
+        MA_label['text'] = "Mask adherence: " + str(Mask_Adh) + "%"  # Update mask adherence label
+        parameters.update({"Mask Adherence": Mask_Adh})  # Update mask adherence within parameters
 
     def update_lbl_SD(Soc_Dist):
-        Soc_Dist = int(float((Soc_Dist)))
-        SD_label['text'] = "Social distancing adherence: " + str(Soc_Dist) + "%"
-        parameters.update({"Social Distancing Adherence": Soc_Dist})
+        """Update the Social Distancing label"""
+        Soc_Dist = int(float((Soc_Dist)))  # Convert from Tkinter IntVar() to Int
+        SD_label['text'] = "Social distancing adherence: " + str(Soc_Dist) + "%"  # Update social distancing label
+        parameters.update({"Social Distancing Adherence": Soc_Dist})  # Update social distancing within parameters
 
     def update_lbl_SimDur(Sim_Dur):
-        Sim_Dur = int(float((Sim_Dur)))
-        Sim_Dur_label['text'] = "Simulation duration: " + str(Sim_Dur) + " iterations"
-        parameters.update({"Simulation Duration": Sim_Dur})
+        """Update the Simulation Duration label"""
+        Sim_Dur = int(float((Sim_Dur)))  # Convert from Tkinter IntVar() to Int
+        Sim_Dur_label['text'] = "Simulation duration: " + str(
+            Sim_Dur) + " iterations"  # Update simulation duration label
+        parameters.update({"Simulation Duration": Sim_Dur})  # Update simulation duration within parameters
 
     def update_lb_office_plans():
-        office_plans_var = Office_Plans_Listbox.curselection()
-        if office_plans_var != ():  # This is a get-around to issue where listbox lamba function is called on both selection and deselection - In the case where nothing is selected "()" we do not want the value of office plan to be reassigned
-            parameters.update({"Office Plan": office_plans_var[0]})
-            desk_no = simulation.get_desk_no(parameters)
+        """Update the Office Plans selection and check that the number of people and number of infected are valid for
+        that office.If there are too many people then reset the select box value to the number desks (maximum allowed
+        for that office)"""
+        office_plans_var = Office_Plans_Listbox.curselection()  # Fetch current office floor selection
+        if office_plans_var != ():  # This is a get-around to issue where listbox lamba function is called on both...
+            # selection and deselection - In the case where nothing is selected "()" we do not  want the value of office
+            # plan to be reassigned
+            parameters.update({"Office Plan": office_plans_var[0]})  # Update office plan within parameters
+            desk_no = simulation.get_desk_no(parameters)  # Get number of desks from simulation.py
             People_Val = int(Num_People.get())  # Fetch Number of people
             Infected_People_Val = int(Inf_People.get())  # Fetch Number of infected people
-            if People_Val > desk_no:  # If the number of people exceeds the number of desks for that office selection set the number of people to the number of desks
+            if People_Val > desk_no:  # If the number of people exceeds the number of desks for that office selection...
+                # set the number of people to the number of desks
                 Num_People.set(desk_no)
                 parameters.update({"Number of People": desk_no})
-            if Infected_People_Val > desk_no:
+            if Infected_People_Val > desk_no: # If the number of infected people exceeds the number of desks for that...
+                # office selection set the number of people to the number of desks
                 Inf_People.set(desk_no)
                 parameters.update({"Number of infected": desk_no})
-            Num_People.config(to=desk_no)  # Limit max number of people based on number of desks
-            Inf_People.config(to=desk_no)
-            office = Office(parameters['Office Plan'])
+            Num_People.config(to=desk_no)  # Limit max number of people based on number of desks for new office
+            Inf_People.config(to=desk_no)  # Limit max number of infected based on number of desks for new office
+            office = Office(parameters['Office Plan']) # Update office plan in parameters
             display_array = simulation.input2disp(office.input_array)
             update_plot(display_array, 0)
 
@@ -119,9 +172,9 @@ def main():
         new_plot.imshow(frame)
         new_plot.axis('off')
         if timestamp > 0:
-            new_plot.title.set_text('Time: ' + str(timestamp) 
-                                    +'          Number of Infected: ' 
-                                    + str(infected_no) 
+            new_plot.title.set_text('Time: ' + str(timestamp)
+                                    + '          Number of Infected: '
+                                    + str(infected_no)
                                     + '/' + str(people_no))
             # new_plot.set_xlabel('Number of Infected: ' + str(infected_no))
         newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
@@ -195,9 +248,7 @@ def main():
             os.remove('frames.p')
         root.quit()
 
-    root = Tk()
-
-    ### (1) Initialising the parameters dictionary
+    ### (2) Initialising the parameters dictionary
     parameters = {'Maximum Age': 65,
                   'Minimum Age': 20,
                   'Mask Adherence': 80,
@@ -210,6 +261,7 @@ def main():
 
     ### (2) Setup of the GUI window, frames and figure and toolbar.
     ## Main frame setup - GUI Controls
+    root = Tk()
     root.title("COVID-19 MODELLING PARAMETERS")
     mainframe = ttk.Frame(root, padding="2 2 12 12")
     mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
@@ -219,7 +271,6 @@ def main():
     ## Second frame setup - Figure window
     figframe = ttk.Frame(root, padding="2 2 12 12")
     figframe.grid(column=1, row=0, sticky=(N, W, E, S))
-
 
     ## Setup figure withing canvas to plot onto
     figure_plot = Figure(figsize=(6, 7), dpi=100, )
@@ -235,23 +286,26 @@ def main():
     figframe.update()
     root.iconbitmap('icon.ico')
     ## Toolbar to manipulate figure
-    toolbar = NavigationToolbar2Tk(canvas, figframe, pack_toolbar=False) # pack_toolbar=False required for layout managment.
-    toolbar.update() # Toolbar automatically updates (this is a built in function)
+    toolbar = NavigationToolbar2Tk(canvas, figframe,
+                                   pack_toolbar=False)  # pack_toolbar=False required for layout managment.
+    toolbar.update()  # Toolbar automatically updates (this is a built in function)
     toolbar.grid(column=1, row=1, sticky='we')
     canvas.mpl_connect(
-        "key_press_event", lambda event: print(f"you pressed {event.key}")) # popups that show when you hover over a toolbar button
+        "key_press_event",
+        lambda event: print(f"you pressed {event.key}"))  # popups that show when you hover over a toolbar button
     canvas.mpl_connect("key_press_event", key_press_handler)
 
     ### (4) Setup of labels
 
     ## Instructions label
-    instructions_label = ttk.Label(mainframe, text='Please enter the following parameters:').grid(column=0, row=0, sticky='we')
+    instructions_label = ttk.Label(mainframe, text='Please enter the following parameters:').grid(column=0, row=0,
+                                                                                                  sticky='we')
 
     ## People label
     People_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
 
     ## Infected People label
-    Infected_label= ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
+    Infected_label = ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
 
     ## Max age label
     Max_Age_label = ttk.Label(mainframe)
@@ -272,7 +326,7 @@ def main():
     SD_label.grid(column=0, row=11, sticky='we')
 
     ## Virality label
-    V_label = ttk.Label(mainframe,text='Virality:')
+    V_label = ttk.Label(mainframe, text='Virality:')
     V_label.grid(column=0, row=13, sticky='we')
 
     ## Office floor plans label
@@ -291,7 +345,10 @@ def main():
     ## Save simulation button
     Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
     Save_sim_button.grid(column=0, row=20, sticky='we')
+<<<<<<< HEAD
     Save_sim_button.state(['disabled'])
+=======
+>>>>>>> 93145985988667cc61b2a445e11f93dab05fb887
 
     ## Number of people spin box
     # office = Office(parameters['Office Plan'][0]) # Fetch the office plan parameters
@@ -299,10 +356,11 @@ def main():
     desk_no = simulation.get_desk_no(parameters)
     People_Val = IntVar()
     People_Val.set(parameters['Number of People'])  # set box to correct default value
-    Num_People = ttk.Spinbox(mainframe,from_ =parameters['Number of infected'], to=desk_no, textvariable=People_Val)
+    Num_People = ttk.Spinbox(mainframe, from_=parameters['Number of infected'], to=desk_no, textvariable=People_Val)
     Num_People.grid(column=0, row=2, sticky=W)
     Num_People.state(['readonly'])
-    Num_People.bind("<<Increment>>", lambda e: inc_lb_num_people())  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
+    Num_People.bind("<<Increment>>", lambda
+        e: inc_lb_num_people())  # lambda used to create autonimous functions - If spin box valaue is changed the label will automatcailly be updated
     Num_People.bind("<<Decrement>>", lambda e: dec_lb_num_people())
 
     ## Number of people infected spin box
@@ -316,30 +374,34 @@ def main():
 
     ## Max age slider
     Max_Age = IntVar()
-    Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age, command=update_lbl_MaxAge)
+    Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age,
+                               command=update_lbl_MaxAge)
     Max_Age_Slider.grid(column=0, row=6, sticky='we')
     Max_Age_Slider.set(parameters['Maximum Age'])
 
     ## Min age slider
     Min_Age = IntVar()
-    Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age, command=update_lbl_MinAge)
+    Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age,
+                               command=update_lbl_MinAge)
     Min_Age_Slider.grid(column=0, row=8, sticky='we')
     Min_Age_Slider.set(parameters['Minimum Age'])
 
     ## Mask adherence slider
-    Mask_Adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Mask_Adh, command=update_lbl_MA)
+    Mask_Adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Mask_Adh,
+                                command=update_lbl_MA)
     Mask_Adh_Slider.grid(column=0, row=10, sticky='we')
     Mask_Adh_Slider.set(parameters['Mask Adherence'])
 
     ## Social distancing slider
-    Soc_Dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Soc_Dist,command=update_lbl_SD)
+    Soc_Dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Soc_Dist,
+                                command=update_lbl_SD)
     Soc_Dist_Slider.grid(column=0, row=12, sticky='we')
     Soc_Dist_Slider.set(parameters['Social Distancing Adherence'])
 
-
     ## Virality slider
     Viral = IntVar()
-    Viral_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Viral,command=update_lbl_V)
+    Viral_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Viral,
+                             command=update_lbl_V)
     Viral_Slider.grid(column=0, row=14, sticky='we')
     Viral_Slider.set(parameters['Virality'])
 
@@ -352,7 +414,8 @@ def main():
 
     ## Simulation Duration slider
     Sim_Dur = IntVar()
-    Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur, command=update_lbl_SimDur)
+    Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur,
+                               command=update_lbl_SimDur)
     Sim_Dur_Slider.grid(column=0, row=18, sticky='we')
     Sim_Dur_Slider.set(parameters['Simulation Duration'])
 
@@ -368,4 +431,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    GUI()

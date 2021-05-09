@@ -32,14 +32,18 @@ def main():
     ### (3) Functions which handle callbacks
 
     def update_lbl_MaxAge(Max_Age):
-        # Min_Age = int(float((Min_Age_Slider.get())))
+        try:
+            Min_Age = int(float((Min_Age_Slider.get())))
+        except:
+            Min_Age = parameters['Minimum Age']
+
         Max_Age = int(float((Max_Age)))
         Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"
         parameters.update({"Maximum Age": Max_Age})
-        # if Min_Age > Max_Age:
-        #     switch_off_Begin_sim_button_state()
-        # else:
-        #     switch_on_Begin_sim_button_state()
+        if Min_Age > Max_Age:
+            switch_off_Begin_sim_button_state()
+        else:
+            switch_on_Begin_sim_button_state()
 
     def update_lbl_MinAge(Min_Age):
         Min_Age = int(float((Min_Age)))

@@ -32,8 +32,8 @@ def get_contagious_interactions(people, person, interactions):
     contagious_interactions = []
 
     for i in range(0, len(interactions)):
-        person_1_ID = abs(int(interactions[i][0])) - 1  # Acquiring IDs for people involved in interaction 'i' of step
-        person_2_ID = abs(int(interactions[i][1])) - 1  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
+        person_1_ID = abs(int(interactions[i][0]))  # Acquiring IDs for people involved in interaction 'i' of step
+        person_2_ID = abs(int(interactions[i][1]))  # Question this -1 as unsure if mistake - 06.04.2021 - Alex
         distance = interactions[i][2]
 
         person_1_type = get_type([people[person_1_ID].infected, people[person_1_ID].contagious])
@@ -65,6 +65,7 @@ def get_transmission_chance(interaction, people):
     person_1_number = interaction[0]
     person_2_number = interaction[1]
     distance = interaction[2]
+    virality = 0.05
 
     if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
@@ -80,9 +81,9 @@ def get_transmission_chance(interaction, people):
     elif distance > 2:
         distance_transmission_chance = 0.25
     else:
-        distance_transmission_chance = 1 / (distance ** 2)
+        distance_transmission_chance = 1 / (distance ** 2)  # Inverse square law
 
-    transmission_chance = mask_transmission_chance * distance_transmission_chance
+    transmission_chance = mask_transmission_chance * distance_transmission_chance * virality
 
     return transmission_chance
 
@@ -93,7 +94,7 @@ def get_transmission_chance(interaction, people):
 def get_total_infected(people):
     infected = 0
     for person in people:
-        if person.infected:
+        if people[person].infected:
             infected += 1
         else:
             pass
@@ -111,7 +112,7 @@ def determine_infection(contagious_interactions, people):
         if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
             infection_occurred_step = True
-    return(infection_occurred_step)
+    return infection_occurred_step
 
 
 """     step_transmission checks if interactions have happened in the given step --> equiv to main   """
@@ -126,4 +127,4 @@ def step_transmission(people, person, interactions):
             if infection_occurred_step:
                 infected = get_total_infected(people)
                 infected_fraction = str(infected) + ' / ' + str(len(people))
-                print("Infected: " + infected_fraction)
+                # print("Infected: " + infected_fraction)

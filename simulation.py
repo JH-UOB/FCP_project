@@ -45,32 +45,24 @@ import itertools
 import timeit
 import random
 import matplotlib.pyplot as plt
-# from scipy.spatial import distance
-# from joblib import Parallel, delayed
 from person import Person
 from office import Office
 import transmission
+import random
+import sys
+import numpy as np
+import imageio
+import os
+from os import listdir
+from os.path import isfile, join
+import shutil
 
-
-def main():
+def main(parameters):
     """Command line entry point."""
-    #
-    # Load parameters from the argument specified source (the GUI or text file)
-    #   https://docs.python.org/3/library/argparse.html
-    #
-    parameters = {'Maximum Age': 65,
-                  'Minimum Age': 18,
-                  'Mask Adherence': 0.8,
-                  'Social Distancing Adherence': 1,
-                  'Number of Floors': 0.5,
-                  'Number of People': 10,
-                  'Simulation Duration': 200,
-                  }
-
-    selected_office = Office()  # initialise office space
+    selected_office = Office(parameters['Office Plan'][0])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
-    run_simulation(parameters, selected_office, selected_people)  # run the simulation
-    return selected_office
+    display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
+    return display_frames
 
 
 def instantiate_people(params, office):
@@ -78,16 +70,22 @@ def instantiate_people(params, office):
     number_of_people = params['Number of People']
     # Populate a list of people with Person objects each with a unique desk 
     # location
-    people = []
+    people = {}
+    desks = random.sample(office.desk_locations, k=len(office.desk_locations))
     for ID in range(1, number_of_people + 1):
-        people.append(Person(ID, office.desk_locations, params))
+        people[ID] = Person(ID, desks, params)
         # Update dictionary of people locations stored in Office object
-        office.people_locations[ID] = people[ID - 1].current_location
+        office.people_locations[ID] = people[ID].current_location
         # Set person location in pathfinding array to be not traversable
-        set_array_value(people[ID - 1].current_location[0],
-                        people[ID - 1].current_location[1],
+        set_array_value(people[ID].current_location[0],
+                        people[ID].current_location[1],
                         office.pathfinding_array, - ID)
-    # Save list of people to office object
+    infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of infected'])
+    for ID in infected_IDs:
+        people[ID].infected = True
+        people[ID].contagious = True
+
+    # Save dict of people to office object
     office.people = people.copy()
     return people
 
@@ -130,13 +128,33 @@ def update_location(person, office):
     set_array_value(person.current_location[0],
                     person.current_location[1],
                     office.pathfinding_array, - person.ID)
-    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations?
+    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations
 
+
+def input2disp(array):
+    display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
+    display_array[array == 1] = [200, 200, 200]  # floor
+    display_array[array == 'T'] = [110, 124, 154]  # tasks
+    display_array[array == 'D'] = [139, 61, 123]  # desks
+
+    return display_array
+
+
+def path2disp(array, people):
+
+    display_array = input2disp(array)
+
+    for person in people:
+
+        if people[person].infected:
+            display_array[people[person].current_location] = [177, 0, 30]  # red = infected
+        else:
+            display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
+    return display_array
 
 def set_array_value(x, y, array, value):
     """Updates an array"""
     array[x][y] = value
-
 
 def start_moving(person, office):
     """Assign a task to a person and start moving"""
@@ -146,7 +164,6 @@ def start_moving(person, office):
     # Begin movement along path
     update_location(person, office)
 
-
 def move_somewhere(person, office):
     """Move person somewhere adjacent to avoid blockages in narrow spaces"""
     # Get available, adjacent cells that can be moved into i.e. not a wall or another person
@@ -155,30 +172,61 @@ def move_somewhere(person, office):
     # Set current person location in pathfinding array to be traversable
     set_array_value(person.current_location[0],
                     person.current_location[1],
-                    office.display_array, 1)
+                    office.pathfinding_array, 1)
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
-
 
 def record_interactions(office, people):
     """Checks for interactions in the office and stores them to simulate transmissions"""
     interactions = []
     # Detect interactions between people
     for person in people:
-        interactions.extend(office.find_interactions(office.pathfinding_array, person.current_location))
+        interactions.extend(office.find_interactions(office.pathfinding_array, people[person].current_location))
     # Remove duplicate interactions
     interactions.sort()
     interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
     return interactions
 
+def save_plot(frame, timestamp):
+    plt.imshow(frame)
+    plt.title('Time:' + str(timestamp))
+    plt.savefig('./Plots/' + str(timestamp + 1000))
+    
+def save_animation():
+    files = ['./Plots/' + f  for f in listdir('./Plots') if isfile(join('./Plots', f))]
+    with imageio.get_writer('animation.gif', mode='I') as writer:
+        for filename in files:
+            image = imageio.imread(filename)
+            writer.append_data(image)
 
-def plot_figure(time, office):
-    """Plots the locations of people in the office as their locations are updated"""
-    plt.figure(time)
-    plt.title(str(time))
-    plt.imshow(office.pathfinding_array.tolist())
-    # plt.show()
+def progress_setup():
+    next_bar = 0.025
+    sys.stdout.write("Loading... \n")
+    sys.stdout.write(u"\u2588" )
+    return next_bar
 
+def progress_update(it, duration, next_bar):
+    progress = (it+1) / duration
+    while progress >= next_bar:
+        sys.stdout.write(" " + u"\u2588")
+        sys.stdout.flush()
+        next_bar += 0.017
+    
+    return next_bar
+
+
+def save_outputs(display_frames):
+    if os.path.exists('./Plots'):
+        shutil.rmtree('./Plots')
+    os.mkdir('./Plots')
+    timestamp = 1
+    next_bar = progress_setup()
+    for frame in display_frames:
+        save_plot(frame, timestamp)
+        next_bar = progress_update(timestamp-1, len(display_frames), next_bar)
+        timestamp +=1
+    sys.stdout.write("\n")    
+    save_animation()
 
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
@@ -193,33 +241,34 @@ def run_simulation(params, office, people):
     display_frames = []  # used to store locations for each time tick, for running through in GUI
     people_frames = []  # used to store people states for each time tick, for running through in GUI
     office.interaction_frames = []
+    next_bar = progress_setup()
+    # progress = 0
 
+    
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
-            if person.current_location == person.task_location:
-                if person.task_progress < person.task_duration:  # task incomplete, keep doing task
-                    person.task_progress += 1
+            if people[person].current_location == people[person].task_location:
+                if people[person].task_progress < people[person].task_duration:  # task incomplete, keep doing task
+                    people[person].task_progress += 1
 
                 else:  # task complete, find new task and start moving
-                    start_moving(person, office)
+                    start_moving(people[person], office)
 
             else:  # between tasks, keep moving
-                update_location(person, office)
+                update_location(people[person], office)
 
-        print(time)  # for tracking progress
+
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  # record interactions
 
-        transmission.step_transmission(people, person, office.interactions)  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, people[person], office.interactions)  # TRANSMISSION - ALEX
+        display_frame = path2disp(office.input_array.copy(), people)
+        display_frames.append(display_frame.copy())  # record people locations in office
 
-        display_frames.append(office.display_array)  # record people locations in office
-        people_frames.append(people)  # record status of people (included infection status)
-        plot_figure(time, office)
+        next_bar = progress_update(time, sim_duration, next_bar)
 
-
-if __name__ == "__main__":
-    start = timeit.default_timer()
-    office = main()
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
+    sys.stdout.write("\n")
+    office.display_frames = display_frames.copy()
+    
+    return display_frames

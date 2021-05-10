@@ -257,10 +257,31 @@ def record_interactions(office, people):
     return interactions
 
 def save_plot(frame, timestamp):
+    """
+    Export plot as .png to ./Plots folder
+
+    Parameters
+    ----------
+    frame : 3D numpy array
+        RGB matrix containing locations and colours of people, desks, tasks and
+        walls
+    timestamp : int
+        Timestamp of current plot.
+
+    Returns
+    -------
+    None.
+
+    """
+    # Get number of people who are infected based on number of array cells in red 
     infected_no = np.count_nonzero(frame == 177)
+    # Add number of healthy people to infected people to get total population.
+    # This is necessary as the simulation only outputs display frames without
+    # explicit infection data
     people_no = infected_no + np.count_nonzero(frame == 22)
     plt.imshow(frame)
     plt.axis('off')
+    # Set title to show timestamp and number of people infected/ total population
     plt.title('Time: ' + str(timestamp) 
                +'          Number of Infected: ' 
                + str(infected_no) 
@@ -269,6 +290,7 @@ def save_plot(frame, timestamp):
     
     
 def save_animation():
+    
     num_files = len([name for name in os.listdir('./Plots') if os.path.isfile(os.path.join('./Plots', name))])
     files = ['./Plots/' + str(f) + '.png' for f in range(num_files)]
     with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
@@ -280,7 +302,7 @@ def save_animation():
 
 def progress_setup():
     next_bar = 0.025
-    sys.stdout.write("Simulation running... \n")
+    sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     return next_bar
 
@@ -341,7 +363,7 @@ def run_simulation(params, office, people):
 
         next_bar = progress_update(time, sim_duration, next_bar)
 
-    sys.stdout.write("\nSimulation finished \n")
+    sys.stdout.write("\nDone \n")
     office.display_frames = display_frames.copy()
     
     return display_frames

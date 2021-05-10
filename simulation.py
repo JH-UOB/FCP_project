@@ -47,13 +47,10 @@ import matplotlib.pyplot as plt
 from person import Person
 from office import Office
 import transmission
-# import random
 import sys
 import numpy as np
 import imageio
 import os
-# from os import listdir
-# from os.path import isfile, join
 import shutil
 from joblib import Parallel, delayed
 
@@ -140,6 +137,7 @@ def instantiate_people(params, office):
     # Populate a list of people with Person objects each with a unique desk 
     # location
     people = {}
+    # Randomise desk order so that desks are not assigned sequentially
     desks = random.sample(office.desk_locations, k=len(office.desk_locations))
     for ID in range(1, number_of_people + 1):
         people[ID] = Person(ID, desks, params)
@@ -150,6 +148,7 @@ def instantiate_people(params, office):
                         people[ID].current_location[1],
                         office.pathfinding_array, - ID)
     infected_IDs = random.sample(range(1, number_of_people + 1), params['Number of Infected'])
+    # Set people's infected and contagious status
     for ID in infected_IDs:
         people[ID].infected = True
         people[ID].contagious = True
@@ -163,7 +162,6 @@ def update_location(person, office):
     """Moves people that are moving between their desk and their next task, attempting to socially distance only if
     possible """
     set_array_value(person.current_location[0], person.current_location[1], office.pathfinding_array, 1)
-
     if person.social_distancing:
         # Generate array for pathfinding whilst socially distancing
         social_dist_array = office.fill_social_distancing_array(person.ID, office.people_locations)
@@ -197,7 +195,8 @@ def update_location(person, office):
     set_array_value(person.current_location[0],
                     person.current_location[1],
                     office.pathfinding_array, - person.ID)
-    office.people_locations[person.ID] = person.current_location  # Question - why do we record people locations
+    # Store people locations in office object
+    office.people_locations[person.ID] = person.current_location
 
 
 def input2disp(array):
@@ -322,13 +321,16 @@ def progress_update(it, duration, next_bar):
 
 
 def save_outputs(display_frames):
-    
+    """Save plots and create simulation gif"""
     print('Saving plots...')
+    # Delete existing plots and simulation gif
     if os.path.exists('./Plots'):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
+    # Save plots in parallel using number of cpu cores - 2
     Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) 
                         for i in range(len(display_frames)))
+    # Generate simulation gif
     save_animation()
 
 def run_simulation(params, office, people):
@@ -341,11 +343,11 @@ def run_simulation(params, office, people):
 
     # Initialise lists to record results
     sim_duration = params['Simulation Duration']
-    display_frames = []  # used to store locations for each time tick, for running through in GUI
+    # used to store locations for each time tick, for running through in GUI
+    display_frames = []
     office.interaction_frames = []
+    # Initiate progress bar
     next_bar = progress_setup()
-
-    
     # For each time step, perform actions for each person in office
     for time in range(sim_duration):
         for person in people:  # move people as necessary
@@ -359,17 +361,19 @@ def run_simulation(params, office, people):
             else:  # between tasks, keep moving
                 update_location(people[person], office)
 
-
+        # record interactions
         office.interactions = record_interactions(office, people)
-        office.interaction_frames.append(office.interactions)  # record interactions
+        office.interaction_frames.append(office.interactions)  
 
         transmission.step_transmission(people, people[person], office.interactions,params['Virality'])  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
-        display_frames.append(display_frame.copy())  # record people locations in office
-
+        # record people locations in office as numpy array
+        display_frames.append(display_frame.copy())  
+        # Update progress bar
         next_bar = progress_update(time, sim_duration, next_bar)
-
+    # Print completion message
     sys.stdout.write("\nDone \n")
+    # Save display_frames to office object
     office.display_frames = display_frames.copy()
     
     return display_frames

@@ -42,31 +42,30 @@ must also be on PATH.
 """
 
 import itertools
-import timeit
 import random
 import matplotlib.pyplot as plt
 from person import Person
 from office import Office
 import transmission
-import random
+# import random
 import sys
 import numpy as np
 import imageio
 import os
-from os import listdir
-from os.path import isfile, join
+# from os import listdir
+# from os.path import isfile, join
 import shutil
 from joblib import Parallel, delayed
 
+
 def main(parameters):
     """Command line entry point."""
-    if check_inputs(parameters):
-        selected_office = Office(parameters['Office Plan'])  # initialise office space
-        selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
-        display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
-        return display_frames
-    else:
-        return
+    check_inputs(parameters)
+    selected_office = Office(parameters['Office Plan'])  # initialise office space
+    selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
+    display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
+    return display_frames
+
 
 
 def check_inputs(parameters):
@@ -74,44 +73,55 @@ def check_inputs(parameters):
 ### Number of people needs to update properly and break function
 
     try:
-        f = open('office_array.xls')
+        file = open('office_array.xls')
     except IOError:
         print("office_array.xls not found.")
+        print('See README.txt for valid input formatting.')
+        raise SystemExit
     finally:
-        f.close()
+        file.close()
 
-    if type(parameters) is not dict:
-        print('Error: input parameters must be in a python dictionary')
+    if 'Office Plan' not in parameters.keys():
+        print('Error: ', 'Office Plan', ' must be included as a variable.')
+        print('See README.txt for valid input formatting.')
+        raise SystemExit
+
+    if type(parameters['Office Plan']) == int:
+        expected_parameters = get_expected_parameters(parameters)
     else:
-        if 'Office Plan' in parameters.keys():
-            if type(parameters['Office Plan']) == int:
-                expected_parameters = get_expected_parameters(parameters)
-                if len(expected_parameters) == len(parameters):
-                    for parameter in parameters:
-                        if str(parameter) in expected_parameters.keys():
-                            if type(parameters[str(parameter)]) == int:
-                                if not expected_parameters[str(parameter)][0] <= parameters[str(parameter)] <= expected_parameters[str(parameter)][1]:
-                                    print('Error: ', parameter, ' value out of range. Must be between ',
-                                          expected_parameters[str(parameter)][0], ' and ',
-                                          expected_parameters[str(parameter)][1], '.')
-                            else:
-                                print('Error: ', parameter, ' must be an integer.')
-                                return False
-                        else:
-                            print('Error: ', parameter, ' not expected as a parameter.')
-                            return False
-                else:
-                    print('Error: incorrect number of input parameters.')
-                    return False
-            else:
-                print('Error: ', 'Office Plan', ' must be an integer.')
-                return False
-        else:
-            print('Error: ', 'Office Plan', ' must be included as a variable.')
-            return False
+        print('Error: ', 'Office Plan', ' must be an integer.')
+        print('See README.txt for valid input formatting.')
+        raise SystemExit
+
+    if len(expected_parameters.keys()) != len(parameters.keys()):
+        print('Error: incorrect number of input parameters.')
+        print('See README.txt for valid input formatting.')
+        raise SystemExit
+
+    for parameter in parameters:
+        if str(parameter) not in expected_parameters.keys():
+            print('Error: ', parameter, ' not expected as a parameter.')
+            print('See README.txt for valid input formatting.')
+            raise SystemExit
+
+        if type(parameters[str(parameter)]) != int:
+            print('Error:', parameter, 'must be an integer.')
+            print('See README.txt for valid input formatting.')
+            raise SystemExit
+
+        if not expected_parameters[str(parameter)][0] <= parameters[str(parameter)] <= expected_parameters[str(parameter)][1]:
+            print('Error: ', parameter, 'value out of range. It must be between',
+                  expected_parameters[str(parameter)][0], 'and',
+                  expected_parameters[str(parameter)][1])
+            print('See README.txt for valid input formatting.')
+            raise SystemExit
+
+    if parameters['Number of People'] < parameters['Number of Infected']:
+        print('Error: Number of Infected must be less than Number of People')
+        print('See README.txt for valid input formatting.')
+        raise SystemExit
 
     print('Inputs validated')
-    return True
 
 
 def get_expected_parameters(parameters):
@@ -123,7 +133,7 @@ def get_expected_parameters(parameters):
                                'Virality': [0, 100],
                                'Number of People': [1, get_desk_no(parameters)],
                                'Number of Infected': [1, get_desk_no(parameters)],
-                               'Simulation Duration': [0, 500]}
+                               'Simulation Duration': [1, 500]}
 
 
     return expected_parameters
@@ -290,9 +300,11 @@ def save_plot(frame, timestamp):
     
     
 def save_animation():
-    
+    """Generate simulation gif from output files"""
+    # Store plot paths in list in chronological order
     num_files = len([name for name in os.listdir('./Plots') if os.path.isfile(os.path.join('./Plots', name))])
     files = ['./Plots/' + str(f) + '.png' for f in range(num_files)]
+    # Generate and save gif
     with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
         for filename in files:
             image = imageio.imread(filename)
@@ -301,27 +313,31 @@ def save_animation():
     print('Plots and animation saved to ' + output_path)
 
 def progress_setup():
+    """Initiate progress bar"""
+    # next_bar is first progress threshold to be met
     next_bar = 0.025
     sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     return next_bar
 
 def progress_update(it, duration, next_bar):
+    """Update progress bar when next progress threshold has been met"""
     progress = (it+1) / duration
     while progress >= next_bar:
         sys.stdout.write(" " + u"\u2588")
         sys.stdout.flush()
+        # Set next progress threshold
         next_bar += 0.017
-    
     return next_bar
 
 
 def save_outputs(display_frames):
+    
     print('Saving plots...')
     if os.path.exists('./Plots'):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
-    Parallel(n_jobs=12)(delayed(save_plot)(display_frames[i], i) 
+    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) 
                         for i in range(len(display_frames)))
     save_animation()
 

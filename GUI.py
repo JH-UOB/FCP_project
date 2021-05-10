@@ -137,7 +137,7 @@ def GUI():
                 parameters.update({"Number of Infected": desk_no})
 
             Num_People.config(to=desk_no)  # Limit max number of people based on number of desks for new office
-            Inf_People.config(to=desk_no)  # Limit max number of infected based on number of desks for new office
+            Inf_People.config(to=Num_People.get())  # Limit max number of infected based on number of people
             office = Office(parameters['Office Plan']) # Update office plan in parameters
             display_array = simulation.input2disp(office.input_array)  # Fetch new office layout
             update_plot(display_array, 0)  # Update figure in Tkinter window
@@ -213,8 +213,6 @@ def GUI():
         People_Val = int(float(Num_People.get()))  # Get Number of people
         Infected_People_Val = int(float(Inf_People.get()))  # Get Number of infected people
         # Increase the number of infected people as long as it wouldn't exceed the number of desks
-        if Infected_People_Val <= desk_no:
-            Infected_People_Val + 1
 
         # Increase the number of infected people as long as it wouldn't exceed the number of people
         if Infected_People_Val < People_Val:

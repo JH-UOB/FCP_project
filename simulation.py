@@ -49,7 +49,7 @@ import track_and_trace
 
 def main(parameters):
     """Entry point from GUI or command line interface"""
-    check_inputs(parameters)
+    check_inputs(parameters)  # Validate inputs o.k.
     selected_office = Office(parameters['Office Plan'])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
     display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
@@ -57,6 +57,8 @@ def main(parameters):
 
 
 def check_inputs(parameters):
+    """Inputs are checked to exist in the right format, as a dictionary of integers within pre-specified ranges"""
+    # Check excel file exists
     try:
         file = open('office_array.xls')
     except IOError:
@@ -66,11 +68,13 @@ def check_inputs(parameters):
     finally:
         file.close()
 
+    # Manually check for office plan to load expected
     if 'Office Plan' not in parameters.keys():
         print('Error: ', 'Office Plan', ' must be included as a variable.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Load expected parameters for subsequent checks based on number of desks on floor, which must be an integer
     if type(parameters['Office Plan']) == int:
         expected_parameters = get_expected_parameters(parameters)
     else:
@@ -78,11 +82,13 @@ def check_inputs(parameters):
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Check right number of input parameters
     if len(expected_parameters.keys()) != len(parameters.keys()):
         print('Error: incorrect number of input parameters.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Check number of parameters and individual keys match expected dictionary, and that values are within range
     for parameter in parameters:
         if str(parameter) not in expected_parameters.keys():
             print('Error: ', parameter, ' not expected as a parameter.')
@@ -101,6 +107,7 @@ def check_inputs(parameters):
             print('See README.txt for valid input formatting.')
             raise SystemExit
 
+    # Check number of infected people less than total people
     if parameters['Number of People'] < parameters['Number of Infected']:
         print('Error: Number of Infected must be less than Number of People')
         print('See README.txt for valid input formatting.')
@@ -110,13 +117,14 @@ def check_inputs(parameters):
 
 
 def get_expected_parameters(parameters):
+    """Acceptable ranges for each input parameter"""
     expected_parameters = {'Maximum Age': [16, 120],
                                'Minimum Age': [16, 120],
                                'Mask Adherence': [0, 100],
                                'Social Distancing Adherence': [0, 100],
                                'Office Plan': [0, 3],
                                'Virality': [0, 100],
-                               'Number of People': [1, get_desk_no(parameters)],
+                               'Number of People': [1, get_desk_no(parameters)],  # Floor must have enough desks for people
                                'Number of Infected': [1, get_desk_no(parameters)],
                                'Simulation Duration': [1, 500]}
 
@@ -124,6 +132,7 @@ def get_expected_parameters(parameters):
 
 
 def get_desk_no(parameters):
+    """Retrieves number of desks that can seat people on the selected office floor"""
     office = Office(parameters['Office Plan'])
     desk_no = len(office.desk_locations)
     return desk_no
@@ -198,6 +207,7 @@ def update_location(person, office):
 
 
 def input2disp(array):
+    """Processes input array based on input excel file array"""
     display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
     display_array[array == 1] = [200, 200, 200]  # floor
     display_array[array == 'T'] = [110, 124, 154]  # tasks
@@ -207,7 +217,7 @@ def input2disp(array):
 
 
 def path2disp(array, people):
-
+    """Processes input array based on pathfinding array (people in office space without desks and tasks)"""
     display_array = input2disp(array)
 
     for person in people:
@@ -277,12 +287,12 @@ def save_plot(frame, timestamp):
     None.
 
     """
-    # Get number of people who are cpntagious based on number of array cells in red 
+    # Get number of people who are cpntagious based on number of array cells in red
     infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
     # Add number of healthy and infected people to contagious people to get total population.
     # This is necessary as the simulation only outputs display frames without
     # explicit infection data
-    people_no = infected_no + np.count_nonzero(frame == 22) 
+    people_no = infected_no + np.count_nonzero(frame == 22)
     plt.imshow(frame)
     plt.axis('off')
     # Set title to show timestamp and number of people infected/ total population

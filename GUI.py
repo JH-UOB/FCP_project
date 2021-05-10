@@ -184,8 +184,8 @@ def GUI():
 
     def update_plot(frame, timestamp):
         """Update the GUI office plot"""
-        infected_no = np.count_nonzero(frame == 177)
-        people_no = infected_no + np.count_nonzero(frame == 22)
+        infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
+        people_no = infected_no + np.count_nonzero(frame == 22) 
         test_plot = Figure(figsize=(6, 7), dpi=100, )
         new_plot = test_plot.add_subplot()
         new_plot.imshow(frame)

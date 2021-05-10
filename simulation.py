@@ -225,8 +225,10 @@ def path2disp(array, people):
 
     for person in people:
 
-        if people[person].infected:
-            display_array[people[person].current_location] = [177, 0, 30]  # red = infected
+        if people[person].contagious:
+            display_array[people[person].current_location] = [177, 0, 30]  # red = contagious
+        elif people[person].infected:
+            display_array[people[person].current_location] = [237, 71, 5] # orange = infected
         else:
             display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
     return display_array
@@ -283,12 +285,12 @@ def save_plot(frame, timestamp):
     None.
 
     """
-    # Get number of people who are infected based on number of array cells in red 
-    infected_no = np.count_nonzero(frame == 177)
-    # Add number of healthy people to infected people to get total population.
+    # Get number of people who are cpntagious based on number of array cells in red 
+    infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
+    # Add number of healthy and infected people to contagious people to get total population.
     # This is necessary as the simulation only outputs display frames without
     # explicit infection data
-    people_no = infected_no + np.count_nonzero(frame == 22)
+    people_no = infected_no + np.count_nonzero(frame == 22) 
     plt.imshow(frame)
     plt.axis('off')
     # Set title to show timestamp and number of people infected/ total population

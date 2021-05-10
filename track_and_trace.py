@@ -25,6 +25,13 @@ def draw_tree(infected):
 
     print(RenderTree(root).by_attr("lines"))
 
+def get_tree_data(people):
+    pass
+
+
+def track_and_trace(people):
+    print("working")
+
 # Get into format:
 
 # Parent --> Child 1, Child 2, Child 3

@@ -10,23 +10,20 @@ parameters to simulation.py.
 Used by simulation.py.
 """
 
-# Import modules
-import matplotlib.backends.backend_tkagg
+# External modules
 from tkinter import *
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import numpy as np
-import simulation
-import time
-from office import Office
 import pickle
 import os
-import shutil
-import sys
+import time
+
+# Directory modules
+from office import Office
+import simulation
 
 
 # Main body

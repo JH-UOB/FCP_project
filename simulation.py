@@ -33,16 +33,18 @@ NOTE: external modules must be installed.
 import itertools
 import random
 import matplotlib.pyplot as plt
-from person import Person
-from office import Office
-import transmission
-import track_and_trace
 import sys
 import numpy as np
 import imageio
 import os
 import shutil
 from joblib import Parallel, delayed
+
+# Directory modules
+from person import Person
+from office import Office
+import transmission
+import track_and_trace
 
 
 def main(parameters):

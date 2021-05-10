@@ -46,8 +46,13 @@ def main(*arguments):
 if __name__ == "__main__":
     """Run the simulation from the command line"""
     # Read in arguments and run main body
+
+    # External modules
     import sys
     import ast
+
+    # Directory modules
     import simulation
+
     arguments = sys.argv[1:]
     main(*arguments)

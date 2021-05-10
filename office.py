@@ -9,6 +9,7 @@ This script contains a class that defines an office space and processes it for m
 Used by simulation.py.
 """
 
+# External modules
 import pandas as pd
 import numpy as np
 from scipy.spatial import distance

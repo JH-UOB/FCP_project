@@ -47,6 +47,7 @@ import matplotlib.pyplot as plt
 from person import Person
 from office import Office
 import transmission
+import track_and_trace
 import sys
 import numpy as np
 import imageio
@@ -384,6 +385,8 @@ def run_simulation(params, office, people):
     # Print completion message
     sys.stdout.write("\nDone \n")
     # Save display_frames to office object
+    track_and_trace.track_and_trace(people)
+
     office.display_frames = display_frames.copy()
     
     return display_frames

@@ -4,11 +4,12 @@ office.py
 Designed and written by Adam Honnywill and James Hawke, predominantly through "pair coding"
 April 2021
 
-This script contains a class that defines an office space and processes it for display and movement purposes.
+This script contains a class that defines an office space and processes it for movement purposes.
 
 Used by simulation.py.
 """
 
+# External modules
 import pandas as pd
 import numpy as np
 from scipy.spatial import distance
@@ -16,24 +17,24 @@ from scipy.spatial import distance
 
 class Office:
     """This class is used to generate arrays that track the locations of tasks, desks and people as the latter move
-    through the simulation. To do this, it has three key purposes:
+    through the simulation. It:
 
-        1. Generating pathfinding arrays
+        1. Generates pathfinding arrays
 
-        Pathfinding arrays are processed from an .xls floorplan and input into the simulation by the office class.
-        They need to be formatted such that any traversable cell has a value greater than 0: wall cells have a value
-        of 0; floor, task and desk sitting cells have a value of 1, and people occupied cells have a value that is
-        equal to their negative ID number, to simultaneously track their position and make their location not
-        traversable to others.
+            Pathfinding arrays are processed from an .xls floorplan and input into the simulation by the office class.
+            They need to be formatted such that any traversable cell has a value greater than 0: wall cells have a value
+            of 0; floor, task and desk sitting cells have a value of 1, and people occupied cells have a value that is
+            equal to their negative ID number, to simultaneously track their position and make their location not
+            traversable to others.
 
-        2. Display arrays - TBC
+            It repeats this process for those who abide social distancing, making the adjacent cells to people not
+            traversable. This social distancing pathfinding array is only obeyed if the route is available: if they
+            cannot social distance, the person will revert to the normal pathfinding array.
 
-        Display arrays are processed pathfinding arrays to be displayed correctly.
+        2. Detecting interactions
 
-        3. Detecting interactions
-
-        As the pathfinding array stores the locations of people, these can be analysed at each time step to detect
-        interactions that might lead to transmission.
+            As the pathfinding array stores the locations of people, these can be analysed at each time step to detect
+            interactions that might lead to transmission.
 
     """
 
@@ -45,7 +46,7 @@ class Office:
         """
         # Create an array using the excel input file
         self.input_array = pd.read_excel('office_array.xls', floor_no).values.transpose()
-        # Create pathfinding array denoting which cells are traversible.
+        # Create pathfinding array denoting which cells are traversable
         self.pathfinding_array = np.where(self.input_array != 0, 1, self.input_array)
         # Create array for displaying infection status
         self.display_array = self.pathfinding_array.copy()
@@ -63,7 +64,7 @@ class Office:
 
     def adj_finder(self, matrix, position, interactions=False):
         """Used to detect if cells adjacent to the one occupied are available for moving into. The optional
-        interactions flag adds a social """
+        interactions flag enables social distancing"""
         adj = []
 
         for dx in range(-1, 2):

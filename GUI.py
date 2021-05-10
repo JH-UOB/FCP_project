@@ -10,23 +10,20 @@ parameters to simulation.py.
 Used by simulation.py.
 """
 
-# Import modules
-import matplotlib.backends.backend_tkagg
+# External modules
 from tkinter import *
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import numpy as np
-import simulation
-import time
-from office import Office
 import pickle
 import os
-import shutil
-import sys
+import time
+
+# Directory modules
+from office import Office
+import simulation
 
 
 # Main body
@@ -310,15 +307,20 @@ def GUI():
     figframe = ttk.Frame(root, padding="2 2 12 12")  # Create frame to display figure
     figframe.grid(column=1, row=0, sticky=(N, W, E, S))  # Position frame in window
 
-    # Setup figure withing canvas to plot onto
-    figure_plot = Figure(figsize=(6, 7), dpi=100, )  # Create figure to plot onto
+    # # Setup key figure withing canvas to plot onto
+    # key_plot = Figure(figsize=(2, 2), dpi=100)
+    # canvas = FigureCanvasTkAgg(key_plot, master=figframe) # Create new canvas to plot onto
+    # canvas.get_tk_widget().grid(column=1, row=1, sticky='we')  # Position canvas in figure frame
+    #
+    # Setup office figure withing canvas to plot onto
+    figure_plot = Figure(figsize=(6, 7), dpi=100)  # Create figure to plot onto
     office_plot = figure_plot.add_subplot()  # Add subplot
     office = Office(parameters['Office Plan'])  # Get the initial office layout from parameters
     display_array = simulation.input2disp(office.input_array)  # Convert office plan into RGB matrix
     office_plot.imshow(display_array)  # Show office plan
     office_plot.axis('off')  # Remove axis
     canvas = FigureCanvasTkAgg(figure_plot, master=figframe)  # Create new canvas to plot onto
-    canvas.get_tk_widget().grid(column=1, row=0, sticky='we')  # Position canvas in figure frame
+    canvas.get_tk_widget().grid(column=1, row=1, sticky='we')  # Position canvas in figure frame
     canvas.draw()  # Plot figure onto canvas
     figframe.update()
     root.iconbitmap('icon.ico')
@@ -326,7 +328,7 @@ def GUI():
     toolbar = NavigationToolbar2Tk(canvas, figframe,
                                    pack_toolbar=False)  # pack_toolbar=False required for layout management
     toolbar.update()  # Toolbar automatically updates (this is a built-in function)
-    toolbar.grid(column=1, row=1, sticky='we') # Position toolbar in figure frame
+    toolbar.grid(column=1, row=2, sticky='we') # Position toolbar in figure frame
     canvas.mpl_connect(
         "key_press_event",
         lambda event: print(f"you pressed {event.key}"))  # popups that show when you hover over a toolbar button
@@ -373,6 +375,7 @@ def GUI():
     # Simulation Duration label
     Sim_Dur_label = ttk.Label(mainframe)
     Sim_Dur_label.grid(column=0, row=17, sticky='we')
+
 
     # (5) Setup of widgets
 

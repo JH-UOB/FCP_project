@@ -6,7 +6,8 @@ Designed and written by Adam Honnywill and James Hawke, predominantly through "p
 April 2021
 
 This script runs simulations of coronavirus transmission in an office to investigate the effects of various
-parameters, such as wearing or social distancing. The script may be used to:
+parameters, such as wearing or social distancing. It can be called by a GUI or through the command line using
+office_covid_simulations. The script may be used to:
 
     1. Show an animation of the simulation on screen
     2. Create a video of a simulation
@@ -20,34 +21,18 @@ This is done using code in this script, which in turn uses uses classes in other
     3. GUI.py               # to perform GUI based parameter input
     4. transmission.py      # to update the infection status of people upon interaction
 
-The command line interface to the script allows for user input parameters to be input either from a GUI or a
-text file, such that no code needs changing between simulations:
-
-    $ python simulation.py               # run simulation with with text file input parameters
-    $ python simulation.py --GUI         # run simulation with with GUI input parameters
-    $ python simulation.py --help        # show all command line options
-
 In order to run this script, one or two input files must be present in the directory:
 
-    1. office_array.xls     # always
-    2. input_parameters.txt # if the --GUI flag is not called
+    1. office_array.xls      # always
+    2. simulation_inputs.txt # if the --GUI flag is not called
 
-It is also possible to create a video of the animation (if you install
-ffmpeg):
-
-    $ python simulator.py --file=simulation.mp4
-
-NOTE: You need to install ffmpeg for the above to work. The ffmpeg program
-must also be on PATH.
+NOTE: external modules must be installed.
 """
 
+# External modules
 import itertools
 import random
 import matplotlib.pyplot as plt
-from person import Person
-from office import Office
-import transmission
-import track_and_trace
 import sys
 import numpy as np
 import imageio
@@ -55,9 +40,15 @@ import os
 import shutil
 from joblib import Parallel, delayed
 
+# Directory modules
+from person import Person
+from office import Office
+import transmission
+import track_and_trace
+
 
 def main(parameters):
-    """Command line entry point."""
+    """Entry point from GUI or command line interface"""
     check_inputs(parameters)
     selected_office = Office(parameters['Office Plan'])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space

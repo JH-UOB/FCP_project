@@ -11,6 +11,7 @@ interactions and Covid-19 transmission.
 Used by simulation.py.
 """
 
+# External modules
 import random
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid

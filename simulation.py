@@ -65,11 +65,7 @@ def main(parameters):
     return display_frames
 
 
-
 def check_inputs(parameters):
-
-### Number of people needs to update properly and break function
-
     try:
         file = open('office_array.xls')
     except IOError:
@@ -133,8 +129,8 @@ def get_expected_parameters(parameters):
                                'Number of Infected': [1, get_desk_no(parameters)],
                                'Simulation Duration': [1, 500]}
 
-
     return expected_parameters
+
 
 def get_desk_no(parameters):
     office = Office(parameters['Office Plan'])
@@ -231,9 +227,11 @@ def path2disp(array, people):
             display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
     return display_array
 
+
 def set_array_value(x, y, array, value):
     """Updates an array"""
     array[x][y] = value
+
 
 def start_moving(person, office):
     """Assign a task to a person and start moving"""
@@ -242,6 +240,7 @@ def start_moving(person, office):
     person.get_task(office.task_locations)
     # Begin movement along path
     update_location(person, office)
+
 
 def move_somewhere(person, office):
     """Move person somewhere adjacent to avoid blockages in narrow spaces"""
@@ -255,6 +254,7 @@ def move_somewhere(person, office):
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
+
 def record_interactions(office, people):
     """Checks for interactions in the office and stores them to simulate transmissions"""
     interactions = []
@@ -265,6 +265,7 @@ def record_interactions(office, people):
     interactions.sort()
     interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
     return interactions
+
 
 def save_plot(frame, timestamp):
     """
@@ -312,6 +313,7 @@ def save_animation():
     output_path = os.path.dirname(os.path.realpath('./Plots/animation.gif'))
     print('Plots and animation saved to ' + output_path)
 
+
 def progress_setup():
     """Initiate progress bar"""
     # next_bar is first progress threshold to be met
@@ -319,6 +321,7 @@ def progress_setup():
     sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     return next_bar
+
 
 def progress_update(it, duration, next_bar):
     """Update progress bar when next progress threshold has been met"""
@@ -343,6 +346,7 @@ def save_outputs(display_frames):
                         for i in range(len(display_frames)))
     # Generate simulation gif
     save_animation()
+
 
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.

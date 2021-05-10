@@ -61,8 +61,6 @@ class Office:
         # people move.
         self.people_locations = {}
 
-
-
     def adj_finder(self, matrix, position, interactions=False):
         """Used to detect if cells adjacent to the one occupied are available for moving into. The optional
         interactions flag adds a social """

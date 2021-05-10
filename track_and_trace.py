@@ -2,7 +2,6 @@
 
 from anytree import Node, RenderTree
 from anytree.exporter import DotExporter
-import pydot
 import graphviz
 import os
 
@@ -14,14 +13,17 @@ Description:
     This code draws spider diagrams for infection in the office space.
 """
 
-def draw_tree(infected):
+def draw_tree(infector_ID_tree,infected_ID_tree):
 
     root = Node("root",parent=None,lines="Track and Trace Tree")
 
-    for tree in range(0, len(infected)):
-        infected_ID_node = Node(infected[tree][0], parent =root, lines ="Infector ID: " + str(infected[tree][0]))
-        for person in range (1,len(infected[tree])):
-            Node(infected[tree][person], parent= infected_ID_node, lines= "infected person ID: " + str(infected[tree][person]))
+    for n in range(0, len(infector_ID_tree)):
+        infected_ID_node = Node(infector_ID_tree[n], parent =root, lines ="Infector ID: " + str(infector_ID_tree[n]))
+        if len(infected_ID_tree[n]) > 0:
+            length = len(infected_ID_tree[n])
+            for p in range(0, length):
+                #print(infected_ID_tree[n][p])
+                Node(infected_ID_tree[n][p], parent= infected_ID_node, lines= "infected person ID: " + str(infected_ID_tree[n][p]))
 
     print(RenderTree(root).by_attr("lines"))
 
@@ -48,19 +50,7 @@ def get_tree_data(people):
 
 
 def track_and_trace(people):
-    get_tree_data(people)
-    print("working")
-
-# Get into format:
-
-# Parent --> Child 1, Child 2, Child 3
-
-"""
-infected = []
-
-infected.append(["1","2","3","4"])
-infected.append(["5","6","7","8"])
-
-draw_tree(infected)
-
-"""
+    infector_ID_tree,infected_ID_tree = get_tree_data(people)
+    #print(infector_ID_tree)
+    #print(infected_ID_tree)
+    draw_tree(infector_ID_tree, infected_ID_tree)

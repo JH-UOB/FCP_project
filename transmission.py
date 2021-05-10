@@ -17,8 +17,9 @@ import random
 # Tree diagram showing infection from one individual to the end
 # Modify how we access the class --> i.e Jane.age is better than people[number].age
 
+
 def get_type(boolean_array):
-    if boolean_array[0] == boolean_array[0]:
+    if boolean_array[0] == boolean_array[1]:
         if boolean_array[0] is True:
             person_type = 1
         else:
@@ -98,7 +99,19 @@ def get_total_infected(people):
             infected += 1
         else:
             pass
+    print(infected)
     return infected
+
+
+def get_total_contagious(people):
+    contagious = 0
+    for person in people:
+        if people[person].contagious:
+            contagious += 1
+        else:
+            pass
+    print(contagious)
+    return contagious
 
 
 def determine_infection(contagious_interactions, people,virality):
@@ -111,6 +124,7 @@ def determine_infection(contagious_interactions, people,virality):
 
         if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
+            people[non_infected_id].infector_ID = contagious_interactions[n][0]  # Infector ID for tree building
             infection_occurred_step = True
     return infection_occurred_step
 

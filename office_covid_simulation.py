@@ -61,8 +61,14 @@ def main(*arguments):
         file = open(arguments[0], 'r')
         contents = file.read()
         import ast
-        parameters = ast.literal_eval(contents)
-        file.close()
+        try:
+            parameters = ast.literal_eval(contents)
+        except SyntaxError:
+            print('Error: dictionary syntax invalid.')
+            raise SystemExit
+        finally:
+            file.close()
+
         import simulation
         sim = simulation.main(parameters)
         simulation.save_outputs(sim)

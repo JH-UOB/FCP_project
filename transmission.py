@@ -99,7 +99,6 @@ def get_total_infected(people):
             infected += 1
         else:
             pass
-    print(infected)
     return infected
 
 
@@ -110,7 +109,6 @@ def get_total_contagious(people):
             contagious += 1
         else:
             pass
-    print(contagious)
     return contagious
 
 

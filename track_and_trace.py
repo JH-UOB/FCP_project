@@ -26,7 +26,7 @@ def string_formatter(ID,death_string):
     return(string)
 
 def draw_tree(infector_ID_tree, infected_ID_tree,people):
-    root = Node("root", parent=None, lines="Track and Trace Tree")
+    root = Node("root", parent=None, lines="Track and Trace")
 
     for n in range(0, len(infector_ID_tree)):
         infector_str = string_formatter(infector_ID_tree[n],chance_of_death(people, infector_ID_tree[n]))
@@ -38,8 +38,10 @@ def draw_tree(infector_ID_tree, infected_ID_tree,people):
                 # print(infected_ID_tree[n][p])
                 Node(infected_ID_tree[n][p], parent=infected_ID_node,lines=infected_str)
 
+    line_separator = "_"
+    print(line_separator*60)
     print(RenderTree(root).by_attr("lines"))
-
+    print(line_separator * 60)
 
 def get_tree_data(people):
     infector_ID_tree = []

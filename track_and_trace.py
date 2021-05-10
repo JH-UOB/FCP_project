@@ -15,13 +15,15 @@ Description:
 
 
 def chance_of_death(people, ID):
-    base_death_rate = 1 / 1000
+    base_death_rate = 1 / 10000
     age = people[ID].age
-    death_rate = base_death_rate * age
-    return death_rate
+    death_rate = round(base_death_rate * age * 100)
 
-def string_formatter(ID,death_rate):
-    string = "Infector ID: " + str(ID) + " - Chance of death: " + str(death_rate)
+    death_string = " - Chance of death: " + str(death_rate) + "% (age:" + str(age) + ")"
+    return death_string
+
+def string_formatter(ID,death_string):
+    string = "Infector ID: " + str(ID) + death_string
     return(string)
 
 def draw_tree(infector_ID_tree, infected_ID_tree,people):
@@ -33,9 +35,9 @@ def draw_tree(infector_ID_tree, infected_ID_tree,people):
         if len(infected_ID_tree[n]) > 0:
             length = len(infected_ID_tree[n])
             for p in range(0, length):
+                infected_str = string_formatter(infected_ID_tree[n][p], chance_of_death(people, infected_ID_tree[n][p]))
                 # print(infected_ID_tree[n][p])
-                Node(infected_ID_tree[n][p], parent=infected_ID_node,
-                     lines="infected person ID: " + str(infected_ID_tree[n][p]))
+                Node(infected_ID_tree[n][p], parent=infected_ID_node,lines=infected_str)
 
     print(RenderTree(root).by_attr("lines"))
 

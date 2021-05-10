@@ -1,6 +1,6 @@
 
 PROGRAM_EXPLANATION = """
-office_covid_simulation.py directs the simulation to be ran either in a graphical user interface (GUI) or from a text 
+run_covid_simulation.py directs the simulation to be ran either in a graphical user interface (GUI) or from a text 
 input file. Both output a series of plots and a .gif of covid transmission through an office. See README for guidance on 
 valid inputs.
 

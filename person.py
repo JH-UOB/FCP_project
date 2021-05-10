@@ -45,11 +45,9 @@ class Person:
         self.infected = False
         self.infected_time = 0
         self.contagious = False
-        #     self.contagious = True  # Those infected initially are contagious
-        # else:
-        #     self.infected = False
 
-        #     self.contagious = False
+        # Transmission tree properties
+        self.infector_ID = ""
 
         # Position properties
         self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION

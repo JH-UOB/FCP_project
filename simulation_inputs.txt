@@ -1,8 +1,9 @@
 {'Maximum Age': 65,
  'Minimum Age': 20,
- 'Mask Adherence': 80,
- 'Social Distancing Adherence': 50,
- 'Office Plan': (0,),
+ 'Mask Adherence': 75,
+ 'Social Distancing Adherence': 70,
+ 'Office Plan': 0,
+ 'Virality': 30,
  'Number of People': 15,
- 'Number of infected': 5,
- 'Simulation Duration': 12}
+ 'Number of Infected': 2,
+ 'Simulation Duration': 50}

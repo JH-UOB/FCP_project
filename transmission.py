@@ -6,8 +6,9 @@ Author: Alex Straw
 Description:
     This piece of code receives the 'people' object and interactions for a given step.
     Contagious interactions where one individual has COVID-19 and the other does not are
-    extracted from this data.  Transmission chance is found from mask adherence and distance for
-    a given interaction. Where an infection has taken place, a person's infection state is set to True.
+    extracted from this data.  Transmission chance is found from mask adherence, distance for
+    a given interaction, and virality (acquired via GUI). Where an infection has taken
+    place, a person's infection state is set to True.
 """
 
 import random
@@ -43,7 +44,7 @@ def get_contagious_interactions(people, person, interactions):
         #  Type 1: [infected = True, contagious = True]     --> All initial infected
         #  Type 2: [infected = True, contagious = False]    --> Those infected during simulation.py
         #  Type 3: [infected = False, contagious = False]   --> Those not infected
-        #  A contagious interaction is an interaction between a Type 1 and Type 3
+        #  A contagious interaction is an interaction be    tween a Type 1 and Type 3
 
         # Room for optimisation here
 
@@ -61,11 +62,10 @@ def get_contagious_interactions(people, person, interactions):
 """     determine_infection calculates whether an infection has taken place and updates the people class   """
 
 
-def get_transmission_chance(interaction, people):
+def get_transmission_chance(interaction, people,virality):
     person_1_number = interaction[0]
     person_2_number = interaction[1]
     distance = interaction[2]
-    virality = 0.05
 
     if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
@@ -83,7 +83,7 @@ def get_transmission_chance(interaction, people):
     else:
         distance_transmission_chance = 1 / (distance ** 2)  # Inverse square law
 
-    transmission_chance = mask_transmission_chance * distance_transmission_chance * virality
+    transmission_chance = mask_transmission_chance * distance_transmission_chance * virality * 0.01
 
     return transmission_chance
 
@@ -101,13 +101,13 @@ def get_total_infected(people):
     return infected
 
 
-def determine_infection(contagious_interactions, people):
+def determine_infection(contagious_interactions, people,virality):
     infection_occurred_step = False
     for n in range(0, len(contagious_interactions)):
         transmission_random_number = random.uniform(0, 1)
         non_infected_id = abs(int(contagious_interactions[n][1]))
 
-        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people)
+        interaction_transmission_chance = get_transmission_chance(contagious_interactions[n], people,virality)
 
         if transmission_random_number < interaction_transmission_chance:
             people[non_infected_id].infected = True
@@ -118,11 +118,11 @@ def determine_infection(contagious_interactions, people):
 """     step_transmission checks if interactions have happened in the given step --> equiv to main   """
 
 
-def step_transmission(people, person, interactions):
+def step_transmission(people, person, interactions,virality):
     if len(interactions) > 0:  # Checking if any general interactions have happened in the step
         contagious_interactions = get_contagious_interactions(people, person, interactions)
         if len(contagious_interactions) > 0:  # Checking if any contagious interactions have happened in the step
-            infection_occurred_step = determine_infection(contagious_interactions, people)
+            infection_occurred_step = determine_infection(contagious_interactions, people,virality)
 
             if infection_occurred_step:
                 infected = get_total_infected(people)

@@ -42,21 +42,21 @@ must also be on PATH.
 """
 
 import itertools
-import timeit
 import random
 import matplotlib.pyplot as plt
 from person import Person
 from office import Office
 import transmission
-import random
+# import random
 import sys
 import numpy as np
 import imageio
 import os
-from os import listdir
-from os.path import isfile, join
+# from os import listdir
+# from os.path import isfile, join
 import shutil
 from joblib import Parallel, delayed
+
 
 def main(parameters):
     """Command line entry point."""
@@ -290,9 +290,11 @@ def save_plot(frame, timestamp):
     
     
 def save_animation():
-    
+    """Generate simulation gif from output files"""
+    # Store plot paths in list in chronological order
     num_files = len([name for name in os.listdir('./Plots') if os.path.isfile(os.path.join('./Plots', name))])
     files = ['./Plots/' + str(f) + '.png' for f in range(num_files)]
+    # Generate and save gif
     with imageio.get_writer('./Plots/animation.gif', mode='I') as writer:
         for filename in files:
             image = imageio.imread(filename)
@@ -301,27 +303,31 @@ def save_animation():
     print('Plots and animation saved to ' + output_path)
 
 def progress_setup():
+    """Initiate progress bar"""
+    # next_bar is first progress threshold to be met
     next_bar = 0.025
     sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     return next_bar
 
 def progress_update(it, duration, next_bar):
+    """Update progress bar when next progress threshold has been met"""
     progress = (it+1) / duration
     while progress >= next_bar:
         sys.stdout.write(" " + u"\u2588")
         sys.stdout.flush()
+        # Set next progress threshold
         next_bar += 0.017
-    
     return next_bar
 
 
 def save_outputs(display_frames):
+    
     print('Saving plots...')
     if os.path.exists('./Plots'):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
-    Parallel(n_jobs=12)(delayed(save_plot)(display_frames[i], i) 
+    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) 
                         for i in range(len(display_frames)))
     save_animation()
 

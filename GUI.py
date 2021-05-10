@@ -192,7 +192,7 @@ def GUI():
             Infected_People_Val + 1
         if Infected_People_Val < People_Val:  # Increase the number of infeceted people as long as it wouldnt exceed the number of people
             Infected_People_Val = Infected_People_Val + 1
-        parameters.update({"Number of infected": Infected_People_Val})
+        parameters.update({"Number of Infected": Infected_People_Val})
         Num_People.config(from_=Infected_People_Val)
 
     def dec_lb_Inf_People():
@@ -305,7 +305,7 @@ def GUI():
     People_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
 
     ## Infected People label
-    Infected_label = ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
+    Infected_label = ttk.Label(mainframe, text='Number of Infected people:').grid(column=0, row=3, sticky='we')
 
     ## Max age label
     Max_Age_label = ttk.Label(mainframe)

@@ -13,19 +13,32 @@ Description:
     This code draws spider diagrams for infection in the office space.
 """
 
-def draw_tree(infector_ID_tree,infected_ID_tree):
 
-    root = Node("root",parent=None,lines="Track and Trace Tree")
+def chance_of_death(people, ID):
+    base_death_rate = 1 / 1000
+    age = people[ID].age
+    death_rate = base_death_rate * age
+    return death_rate
+
+def string_formatter(ID,death_rate):
+    string = "Infector ID: " + str(ID) + " - Chance of death: " + str(death_rate)
+    return(string)
+
+def draw_tree(infector_ID_tree, infected_ID_tree,people):
+    root = Node("root", parent=None, lines="Track and Trace Tree")
 
     for n in range(0, len(infector_ID_tree)):
-        infected_ID_node = Node(infector_ID_tree[n], parent =root, lines ="Infector ID: " + str(infector_ID_tree[n]))
+        infector_str = string_formatter(infector_ID_tree[n],chance_of_death(people, infector_ID_tree[n]))
+        infected_ID_node = Node(infector_ID_tree[n], parent=root, lines=infector_str)
         if len(infected_ID_tree[n]) > 0:
             length = len(infected_ID_tree[n])
             for p in range(0, length):
-                #print(infected_ID_tree[n][p])
-                Node(infected_ID_tree[n][p], parent= infected_ID_node, lines= "infected person ID: " + str(infected_ID_tree[n][p]))
+                # print(infected_ID_tree[n][p])
+                Node(infected_ID_tree[n][p], parent=infected_ID_node,
+                     lines="infected person ID: " + str(infected_ID_tree[n][p]))
 
     print(RenderTree(root).by_attr("lines"))
+
 
 def get_tree_data(people):
     infector_ID_tree = []
@@ -46,11 +59,9 @@ def get_tree_data(people):
         else:
             pass
 
-    return infector_ID_tree,infected_ID_tree
+    return infector_ID_tree, infected_ID_tree
 
 
 def track_and_trace(people):
-    infector_ID_tree,infected_ID_tree = get_tree_data(people)
-    #print(infector_ID_tree)
-    #print(infected_ID_tree)
-    draw_tree(infector_ID_tree, infected_ID_tree)
+    infector_ID_tree, infected_ID_tree = get_tree_data(people)
+    draw_tree(infector_ID_tree, infected_ID_tree,people)

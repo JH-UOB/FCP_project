@@ -26,19 +26,41 @@ def draw_tree(infected):
     print(RenderTree(root).by_attr("lines"))
 
 def get_tree_data(people):
-    pass
+    infector_ID_tree = []
+    infected_ID_tree = []
+    for person in people:
+        if people[person].contagious:
+            infector_ID_tree.append(people[person].ID)
+        else:
+            pass
+
+    for i in range(0, len(infector_ID_tree)):
+        infected_ID_tree.append([])
+
+    for person in people:
+        if people[person].infected is True and people[person].contagious is False:
+            index = infector_ID_tree.index(people[person].infector_ID)
+            infected_ID_tree[index].append(people[person].ID)
+        else:
+            pass
+
+    return infector_ID_tree,infected_ID_tree
 
 
 def track_and_trace(people):
+    get_tree_data(people)
     print("working")
 
 # Get into format:
 
 # Parent --> Child 1, Child 2, Child 3
 
+"""
 infected = []
 
 infected.append(["1","2","3","4"])
 infected.append(["5","6","7","8"])
 
 draw_tree(infected)
+
+"""

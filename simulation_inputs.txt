@@ -3,6 +3,7 @@
  'Mask Adherence': 80,
  'Social Distancing Adherence': 50,
  'Office Plan': 0,
- 'Number of People': 15,
- 'Number of infected': 5,
- 'Simulation Duration': 12}
+ 'Virality': 50,
+ 'Number of People': 10,
+ 'Number of Infected': 10,
+ 'Simulation Duration': 50}

@@ -135,7 +135,7 @@ def GUI():
             if Infected_People_Val > desk_no: # If the number of infected people exceeds the number of desks for that...
                 # office selection set the number of people to the number of desks
                 Inf_People.set(desk_no)
-                parameters.update({"Number of infected": desk_no})
+                parameters.update({"Number of Infected": desk_no})
             Num_People.config(to=desk_no)  # Limit max number of people based on number of desks for new office
             Inf_People.config(to=desk_no)  # Limit max number of infected based on number of desks for new office
             office = Office(parameters['Office Plan']) # Update office plan in parameters
@@ -184,7 +184,7 @@ def GUI():
 
     def inc_lb_Inf_People():
         if Inf_People.get() == '':
-            Inf_People.set(parameters['Number of infected'])
+            Inf_People.set(parameters['Number of Infected'])
         desk_no = simulation.get_desk_no(parameters)
         People_Val = int(float(Num_People.get()))  # Fetch Number of people
         Infected_People_Val = int(float(Inf_People.get()))  # Fetch Number of infected people
@@ -197,12 +197,12 @@ def GUI():
 
     def dec_lb_Inf_People():
         if Inf_People.get() == '':
-            Inf_People.set(parameters['Number of infected'])
+            Inf_People.set(parameters['Number of Infected'])
 
         Infected_People_Val = int(float(Inf_People.get()))  # Fetch Number of infected people
         if Infected_People_Val > 1:
             Infected_People_Val = Infected_People_Val - 1  # Decrease the number of infected people
-        parameters.update({"Number of infected": Infected_People_Val})
+        parameters.update({"Number of Infected": Infected_People_Val})
         Num_People.config(from_=Infected_People_Val)
 
     def update_lbl_V(Virality):
@@ -256,7 +256,7 @@ def GUI():
                   'Office Plan': 0,
                   'Virality': 50,
                   'Number of People': 15,
-                  'Number of infected': 5,
+                  'Number of Infected': 5,
                   'Simulation Duration': 12}
 
     ### (2) Setup of the GUI window, frames and figure and toolbar.
@@ -352,7 +352,7 @@ def GUI():
     desk_no = simulation.get_desk_no(parameters)
     People_Val = IntVar()
     People_Val.set(parameters['Number of People'])  # set box to correct default value
-    Num_People = ttk.Spinbox(mainframe, from_=parameters['Number of infected'], to=desk_no, textvariable=People_Val)
+    Num_People = ttk.Spinbox(mainframe, from_=parameters['Number of Infected'], to=desk_no, textvariable=People_Val)
     Num_People.grid(column=0, row=2, sticky=W)
     Num_People.state(['readonly'])
     Num_People.bind("<<Increment>>", lambda
@@ -361,7 +361,7 @@ def GUI():
 
     ## Number of people infected spin box
     Infected_People_Val = IntVar()
-    Infected_People_Val.set(parameters['Number of infected'])  # set box to correct default value
+    Infected_People_Val.set(parameters['Number of Infected'])  # set box to correct default value
     Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=parameters['Number of People'], textvariable=Infected_People_Val)
     Inf_People.grid(column=0, row=4, sticky=W)
     Inf_People.state(['readonly'])

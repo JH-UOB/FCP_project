@@ -21,21 +21,32 @@ def chance_of_death(people, ID):
     death_string = " - Chance of death: " + str(death_rate) + "% (age:" + str(age) + ")"
     return death_string
 
+def mask_behaviour_string(people,ID):
+    mask_string = " - "
+    if people[ID].mask:
+        mask_string += "Mask: Yes, "
+    else:
+        mask_string += "Mask: No, "
+    return(mask_string)
+
+
 def string_formatter(ID,death_string):
     string = " ID: " + str(ID) + death_string
     return(string)
+
 
 def draw_tree(infector_ID_tree, infected_ID_tree,people):
     root = Node("root", parent=None, lines="Track and Trace")
 
     for n in range(0, len(infector_ID_tree)):
+        mask_string = mask_behaviour_string(people, infector_ID_tree[n])
         infector_str = string_formatter(infector_ID_tree[n],chance_of_death(people, infector_ID_tree[n]))
+        infector_str += mask_string
         infected_ID_node = Node(infector_ID_tree[n], parent=root, lines="Infector" + infector_str)
         if len(infected_ID_tree[n]) > 0:
             length = len(infected_ID_tree[n])
             for p in range(0, length):
                 infected_str = string_formatter(infected_ID_tree[n][p], chance_of_death(people, infected_ID_tree[n][p]))
-                # print(infected_ID_tree[n][p])
                 Node(infected_ID_tree[n][p], parent=infected_ID_node,lines="Infected " + infected_str)
 
     line_separator = "_"

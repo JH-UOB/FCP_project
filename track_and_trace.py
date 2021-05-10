@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
 
 from anytree import Node, RenderTree
-from anytree.exporter import DotExporter
-import graphviz
-import os
 
 """
 Created on Tues May 8 20:09:00 2021
 
 Author: Alex Straw
 Description:
-    This code draws spider diagrams for infection in the office space.
+    This code prints a terminal based tree diagram showing COVID transfer between
+    people inside the office.  A chance of death has been calculated for each infected
+    individual and also printed in the terminal.
 """
 
 
 def chance_of_death(people, ID):
-    base_death_rate = 1 / 10000
+    base_death_rate = 1 / 5000
     age = people[ID].age
-    death_rate = round(base_death_rate * age * 100)
+    death_rate = round(base_death_rate * age * 100,2)
 
     death_string = " - Chance of death: " + str(death_rate) + "% (age:" + str(age) + ")"
     return death_string

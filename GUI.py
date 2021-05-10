@@ -221,9 +221,8 @@ def GUI():
         # Increase the number of infected people as long as it wouldn't exceed the number of people
         if Infected_People_Val < People_Val:
             Infected_People_Val = Infected_People_Val + 1
-
-        parameters.update({"Number of infected": Infected_People_Val})  # Update the number of infected in parameters
-        Num_People.config(from_=Infected_People_Val)  # Set the minimum value of the 'number of people' spinbox
+        parameters.update({"Number of Infected": Infected_People_Val})
+        Num_People.config(from_=Infected_People_Val)
 
     def dec_lb_Inf_People():
         """Decrease the number of infected label if applicable"""
@@ -342,8 +341,9 @@ def GUI():
     # People label
     People_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
 
-    # Infected People label
-    Infected_label = ttk.Label(mainframe, text='Number of infected people:').grid(column=0, row=3, sticky='we')
+
+    ## Infected People label
+    Infected_label = ttk.Label(mainframe, text='Number of Infected people:').grid(column=0, row=3, sticky='we')
 
     # Max age label
     Max_Age_label = ttk.Label(mainframe)

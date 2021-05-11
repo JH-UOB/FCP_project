@@ -41,10 +41,10 @@ import shutil
 from joblib import Parallel, delayed
 
 # Directory modules
-from person import Person
-from office import Office
-import transmission
-import track_and_trace
+from covidsim.person import Person
+from covidsim.office import Office
+import covidsim.transmission as transmission
+import covidsim.track_and_trace as track_and_trace
 
 
 def main(parameters):

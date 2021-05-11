@@ -21,10 +21,10 @@ import pickle
 import os
 import time
 from PIL import ImageTk, Image
-
+import win32con, win32api
 # Directory modules
-from office import Office
-import simulation
+from covidsim.office import Office
+import covidsim.simulation as simulation
 
 
 # Main body
@@ -258,8 +258,9 @@ def GUI():
         """Begin the simulation upon button press """
         Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
         Save_sim_button.state(['disabled'])  # Disable the save simulation button
+        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         display_frames = simulation.main(parameters)
-        with open('frames.p', "wb") as f:
+        with open('./gui_files/frames.p', "wb") as f:
             pickle.dump(display_frames, f)
         timestamp = 1
 
@@ -269,22 +270,47 @@ def GUI():
             timestamp += 1
 
         Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
         Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button
+
+    def replay_animation():
+        """Replay animation of simulation that has just been run"""
+        Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
+        Save_sim_button.state(['disabled'])  # Disable the save simulation button
+        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        # Load in frames
+        with open('./gui_files/frames.p', "rb") as f:
+            display_frames = pickle.load(f)
+        timestamp = 1
+        # Display frames
+        for frame in display_frames:
+            update_plot(frame, timestamp)
+            time.sleep(1 / 30)
+            timestamp += 1
+
+        Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
+        Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button        
+
 
     def save_sim():
         """Save the simulation as a GIF upon button press"""
-        Begin_sim_button.state(['disabled'])
-        Save_sim_button.state(['disabled'])
-        with open('frames.p', "rb") as f:
+        Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
+        Save_sim_button.state(['disabled'])  # Disable the save simulation button
+        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        # Load in frames
+        with open('./gui_files/frames.p', "rb") as f:
             display_frames = pickle.load(f)
+        # Save frames
         simulation.save_outputs(display_frames)
-        Begin_sim_button.state(['!disabled'])
-        Save_sim_button.state(['!disabled'])
+        Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
+        Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button 
 
     def quit_sim():
         """Quit the GUI upon button press"""
-        if os.path.exists('frames.p'):
-            os.remove('frames.p')
+        if os.path.exists('./gui_files/frames.p'):
+            os.remove('./gui_files/frames.p')
         root.quit()
 
     ### (2) Initialising the parameters dictionary
@@ -312,7 +338,7 @@ def GUI():
     figframe.grid(column=1, row=0, sticky=(N, W, E, S))  # Position frame in window
 
     # Add key
-    img = Image.open('plot_key.png').resize((440, 40), Image.ANTIALIAS)  # Get key image and resize
+    img = Image.open('./gui_files/plot_key.png').resize((440, 40), Image.ANTIALIAS)  # Get key image and resize
     key = ImageTk.PhotoImage(img)  # Add image to tkinter
     key_plot = Label(figframe, image=key)  # plot image
     key_plot.grid(column=0, row=0, sticky='we')  # position key in frame
@@ -328,7 +354,7 @@ def GUI():
     canvas.get_tk_widget().grid(column=0, row=1, sticky='we')  # Position canvas in figure frame
     canvas.draw()  # Plot figure onto canvas
     figframe.update()
-    root.iconbitmap('icon.ico')
+    root.iconbitmap('./gui_files/icon.ico')
     # Toolbar to manipulate figure
     toolbar = NavigationToolbar2Tk(canvas, figframe,
                                    pack_toolbar=False)  # pack_toolbar=False required for layout management
@@ -390,7 +416,7 @@ def GUI():
 
     # Save simulation button
     Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
-    Save_sim_button.grid(column=0, row=20, sticky='we')
+    Save_sim_button.grid(column=0, row=21, sticky='we')
     Save_sim_button.state(['disabled'])
 
     # Number of people spin box
@@ -461,9 +487,14 @@ def GUI():
     Sim_Dur_Slider.grid(column=0, row=18, sticky='we')  # Position listbox
     Sim_Dur_Slider.set(parameters['Simulation Duration'])  # Set slider to correct initial value
 
+    # Replay animation button
+    Replay_animation_button = ttk.Button(master=mainframe, text="Replay Animaiton", command=replay_animation)
+    Replay_animation_button.grid(column=0, row=20, sticky='we')
+    Replay_animation_button.state(['disabled'])
+    
     # Quit application button
-    Quit_app_button = ttk.Button(master=mainframe, text="Quit app", command=quit_sim)
-    Quit_app_button.grid(column=0, row=21, sticky='we')
+    Quit_app_button = ttk.Button(master=mainframe, text="Quit App", command=quit_sim)
+    Quit_app_button.grid(column=0, row=22, sticky='we')
 
     # Scalling to add space around widgets
     for child in mainframe.winfo_children():

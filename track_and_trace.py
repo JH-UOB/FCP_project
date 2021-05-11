@@ -14,9 +14,9 @@ Description:
 
 
 def chance_of_death(people, ID):
-    base_death_rate = 1 / 5000
+    base_death_rate = 1 / 100000
     age = people[ID].age
-    death_rate = round(base_death_rate * age * 100,2)
+    death_rate = min(round(base_death_rate * age**2 * 100,2),100)
 
     death_string = " - Chance of death: " + str(death_rate) + "% (age:" + str(age) + ")"
     return death_string
@@ -42,6 +42,7 @@ def draw_tree(infector_ID_tree, infected_ID_tree,people):
     print(line_separator*60)
     print(RenderTree(root).by_attr("lines"))
     print(line_separator * 60)
+
 
 def get_tree_data(people):
     infector_ID_tree = []

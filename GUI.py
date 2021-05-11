@@ -182,18 +182,23 @@ def GUI():
 
     def update_plot(frame, timestamp):
         """Update the GUI office plot"""
+        # Get number of people who are infected or contagious based on number of 
+        # array cells in red and orange
         infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
-        people_no = infected_no + np.count_nonzero(frame == 22) 
+        # Add number of healthy people to infected and contagious people to get 
+        # total population.
+        # This is necessary as the simulation only outputs display frames without
+        # explicit infection data
+        people_no = infected_no + np.count_nonzero(frame == 22)
+        # Create infection plot from display frame
         test_plot = Figure(figsize=(6, 7), dpi=100, )
         new_plot = test_plot.add_subplot()
         new_plot.imshow(frame)
         new_plot.axis('off')
-        if timestamp > 0:
-            new_plot.title.set_text('Time: ' + str(timestamp)
+        new_plot.title.set_text('Time: ' + str(timestamp)
                                     + '          Number of Infected: '
                                     + str(infected_no)
                                     + '/' + str(people_no))
-            # new_plot.set_xlabel('Number of Infected: ' + str(infected_no))
 
         # Create a new canvas which the updated frame is plotted onto
         newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)

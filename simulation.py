@@ -272,24 +272,15 @@ def record_interactions(office, people):
 
 def save_plot(frame, timestamp):
     """
-    Export plot as .png to ./Plots folder
-
-    Parameters
-    ----------
-    frame : 3D numpy array
-        RGB matrix containing locations and colours of people, desks, tasks and
-        walls
-    timestamp : int
-        Timestamp of current plot.
-
-    Returns
-    -------
-    None.
+    Export plot as .png to ./Plots folder. Takes inputs of a 3D numpy array for
+    each frame and an integer timestamp for that frame.
 
     """
-    # Get number of people who are cpntagious based on number of array cells in red
+    # Get number of people who are infected or contagious based on number of 
+    # array cells in red and orange
     infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
-    # Add number of healthy and infected people to contagious people to get total population.
+    # Add number of healthy people to infected and contagious people to get 
+    # total population.
     # This is necessary as the simulation only outputs display frames without
     # explicit infection data
     people_no = infected_no + np.count_nonzero(frame == 22)
@@ -391,9 +382,9 @@ def run_simulation(params, office, people):
         next_bar = progress_update(time, sim_duration, next_bar)
     # Print completion message
     sys.stdout.write("\nDone \n")
-    # Save display_frames to office object
+    # Print track and trace tree diagram
     track_and_trace.track_and_trace(people)
-
+    # Save display_frames to office object
     office.display_frames = display_frames.copy()
     
     return display_frames

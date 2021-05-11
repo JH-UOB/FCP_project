@@ -13,6 +13,7 @@ Description:
 
 import random
 
+
 def get_type(boolean_array):
     """Determine the 'type' of individual --> further explanation within get_contagious_interactions"""
     if boolean_array[0] == boolean_array[1]:

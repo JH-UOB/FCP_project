@@ -27,9 +27,9 @@ def mask_behaviour_string(people,ID):
     """Creates a mask string for terminal output"""
     mask_string = " - "
     if people[ID].mask:
-        mask_string += "Mask: Yes, "
+        mask_string += "Mask: Yes"
     else:
-        mask_string += "Mask: No, "
+        mask_string += "Mask: No"
     return mask_string
 
 

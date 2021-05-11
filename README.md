@@ -32,11 +32,11 @@ In order to run this script, one or two input files must be present in the direc
 		There must be no empty cells within the walls.
 		Diagonal walls must have touching faces e.g.
 		Good:		Bad:
-		0000000		0000000
-		0     0     0     0
-		00    0      0    0
-		 00   0       0   0
-		  00000        0000
+		0000000	     0000000
+		0     0      0     0
+		00    0       0    0
+		 00   0        0   0
+		  00000         0000
 		
 		
 		

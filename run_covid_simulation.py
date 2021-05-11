@@ -1,6 +1,6 @@
 
 PROGRAM_EXPLANATION = """
-office_covid_simulation.py directs the simulation to be ran either in a graphical user interface (GUI) or from a text 
+run_covid_simulation.py directs the simulation to be ran either in a graphical user interface (GUI) or from a text 
 input file. Both output a series of plots and a .gif of covid transmission through an office. See README for guidance on 
 valid inputs.
 
@@ -46,8 +46,13 @@ def main(*arguments):
 if __name__ == "__main__":
     """Run the simulation from the command line"""
     # Read in arguments and run main body
+
+    # External modules
     import sys
     import ast
+
+    # Directory modules
     import simulation
+
     arguments = sys.argv[1:]
     main(*arguments)

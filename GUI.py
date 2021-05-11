@@ -10,23 +10,21 @@ parameters to simulation.py.
 Used by simulation.py.
 """
 
-# Import modules
-import matplotlib.backends.backend_tkagg
+# External modules
 from tkinter import *
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
-# Implement the default Matplotlib key bindings.
 from matplotlib.backend_bases import key_press_handler
 from matplotlib.figure import Figure
-import matplotlib.pyplot as plt
 import numpy as np
-import simulation
-import time
-from office import Office
 import pickle
 import os
-import shutil
-import sys
+import time
+from PIL import ImageTk, Image
+
+# Directory modules
+from office import Office
+import simulation
 
 
 # Main body
@@ -139,7 +137,7 @@ def GUI():
                 parameters.update({"Number of Infected": desk_no})
 
             Num_People.config(to=desk_no)  # Limit max number of people based on number of desks for new office
-            Inf_People.config(to=desk_no)  # Limit max number of infected based on number of desks for new office
+            Inf_People.config(to=Num_People.get())  # Limit max number of infected based on number of people
             office = Office(parameters['Office Plan']) # Update office plan in parameters
             display_array = simulation.input2disp(office.input_array)  # Fetch new office layout
             update_plot(display_array, 0)  # Update figure in Tkinter window
@@ -184,22 +182,27 @@ def GUI():
 
     def update_plot(frame, timestamp):
         """Update the GUI office plot"""
-        infected_no = np.count_nonzero(frame == 177)
+        # Get number of people who are infected or contagious based on number of 
+        # array cells in red and orange
+        infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
+        # Add number of healthy people to infected and contagious people to get 
+        # total population.
+        # This is necessary as the simulation only outputs display frames without
+        # explicit infection data
         people_no = infected_no + np.count_nonzero(frame == 22)
+        # Create infection plot from display frame
         test_plot = Figure(figsize=(6, 7), dpi=100, )
         new_plot = test_plot.add_subplot()
         new_plot.imshow(frame)
         new_plot.axis('off')
-        if timestamp > 0:
-            new_plot.title.set_text('Time: ' + str(timestamp)
+        new_plot.title.set_text('Time: ' + str(timestamp)
                                     + '          Number of Infected: '
                                     + str(infected_no)
                                     + '/' + str(people_no))
-            # new_plot.set_xlabel('Number of Infected: ' + str(infected_no))
 
         # Create a new canvas which the updated frame is plotted onto
         newcanvas = FigureCanvasTkAgg(test_plot, master=figframe)
-        newcanvas.get_tk_widget().grid(column=1, row=0, sticky='we')
+        newcanvas.get_tk_widget().grid(column=0, row=1, sticky='we')
         newcanvas.draw_idle()
         figframe.update()
 
@@ -215,8 +218,6 @@ def GUI():
         People_Val = int(float(Num_People.get()))  # Get Number of people
         Infected_People_Val = int(float(Inf_People.get()))  # Get Number of infected people
         # Increase the number of infected people as long as it wouldn't exceed the number of desks
-        if Infected_People_Val <= desk_no:
-            Infected_People_Val + 1
 
         # Increase the number of infected people as long as it wouldn't exceed the number of people
         if Infected_People_Val < People_Val:
@@ -310,15 +311,21 @@ def GUI():
     figframe = ttk.Frame(root, padding="2 2 12 12")  # Create frame to display figure
     figframe.grid(column=1, row=0, sticky=(N, W, E, S))  # Position frame in window
 
-    # Setup figure withing canvas to plot onto
-    figure_plot = Figure(figsize=(6, 7), dpi=100, )  # Create figure to plot onto
+    # Add key
+    img = Image.open('plot_key.png').resize((440, 40), Image.ANTIALIAS)  # Get key image and resize
+    key = ImageTk.PhotoImage(img)  # Add image to tkinter
+    key_plot = Label(figframe, image=key)  # plot image
+    key_plot.grid(column=0, row=0, sticky='we')  # position key in frame
+
+    # Setup office figure withing canvas to plot onto
+    figure_plot = Figure(figsize=(6, 7), dpi=100)  # Create figure to plot onto
     office_plot = figure_plot.add_subplot()  # Add subplot
     office = Office(parameters['Office Plan'])  # Get the initial office layout from parameters
     display_array = simulation.input2disp(office.input_array)  # Convert office plan into RGB matrix
     office_plot.imshow(display_array)  # Show office plan
     office_plot.axis('off')  # Remove axis
     canvas = FigureCanvasTkAgg(figure_plot, master=figframe)  # Create new canvas to plot onto
-    canvas.get_tk_widget().grid(column=1, row=0, sticky='we')  # Position canvas in figure frame
+    canvas.get_tk_widget().grid(column=0, row=1, sticky='we')  # Position canvas in figure frame
     canvas.draw()  # Plot figure onto canvas
     figframe.update()
     root.iconbitmap('icon.ico')
@@ -326,7 +333,7 @@ def GUI():
     toolbar = NavigationToolbar2Tk(canvas, figframe,
                                    pack_toolbar=False)  # pack_toolbar=False required for layout management
     toolbar.update()  # Toolbar automatically updates (this is a built-in function)
-    toolbar.grid(column=1, row=1, sticky='we') # Position toolbar in figure frame
+    toolbar.grid(column=0, row=2, sticky='we') # Position toolbar in figure frame
     canvas.mpl_connect(
         "key_press_event",
         lambda event: print(f"you pressed {event.key}"))  # popups that show when you hover over a toolbar button
@@ -373,6 +380,7 @@ def GUI():
     # Simulation Duration label
     Sim_Dur_label = ttk.Label(mainframe)
     Sim_Dur_label.grid(column=0, row=17, sticky='we')
+
 
     # (5) Setup of widgets
 
@@ -460,6 +468,10 @@ def GUI():
     # Scalling to add space around widgets
     for child in mainframe.winfo_children():
         child.grid_configure(padx=5, pady=5)
+    for child in figframe.winfo_children():
+        child.grid_configure(padx=5, pady=5)
+
+
 
     root.mainloop()  # This tells tkinter to loop continuously checking for button clicks or key presses
 

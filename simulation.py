@@ -6,7 +6,8 @@ Designed and written by Adam Honnywill and James Hawke, predominantly through "p
 April 2021
 
 This script runs simulations of coronavirus transmission in an office to investigate the effects of various
-parameters, such as wearing or social distancing. The script may be used to:
+parameters, such as wearing or social distancing. It can be called by a GUI or through the command line using
+office_covid_simulations. The script may be used to:
 
     1. Show an animation of the simulation on screen
     2. Create a video of a simulation
@@ -20,33 +21,18 @@ This is done using code in this script, which in turn uses uses classes in other
     3. GUI.py               # to perform GUI based parameter input
     4. transmission.py      # to update the infection status of people upon interaction
 
-The command line interface to the script allows for user input parameters to be input either from a GUI or a
-text file, such that no code needs changing between simulations:
-
-    $ python simulation.py               # run simulation with with text file input parameters
-    $ python simulation.py --GUI         # run simulation with with GUI input parameters
-    $ python simulation.py --help        # show all command line options
-
 In order to run this script, one or two input files must be present in the directory:
 
-    1. office_array.xls     # always
-    2. input_parameters.txt # if the --GUI flag is not called
+    1. office_array.xls      # always
+    2. simulation_inputs.txt # if the --GUI flag is not called
 
-It is also possible to create a video of the animation (if you install
-ffmpeg):
-
-    $ python simulator.py --file=simulation.mp4
-
-NOTE: You need to install ffmpeg for the above to work. The ffmpeg program
-must also be on PATH.
+NOTE: external modules must be installed.
 """
 
+# External modules
 import itertools
 import random
 import matplotlib.pyplot as plt
-from person import Person
-from office import Office
-import transmission
 import sys
 import numpy as np
 import imageio
@@ -54,21 +40,25 @@ import os
 import shutil
 from joblib import Parallel, delayed
 
+# Directory modules
+from person import Person
+from office import Office
+import transmission
+import track_and_trace
+
 
 def main(parameters):
-    """Command line entry point."""
-    check_inputs(parameters)
+    """Entry point from GUI or command line interface"""
+    check_inputs(parameters)  # Validate inputs o.k.
     selected_office = Office(parameters['Office Plan'])  # initialise office space
     selected_people = instantiate_people(parameters, selected_office)  # initialise people in office space
     display_frames = run_simulation(parameters, selected_office, selected_people)  # run the simulation
     return display_frames
 
 
-
 def check_inputs(parameters):
-
-### Number of people needs to update properly and break function
-
+    """Inputs are checked to exist in the right format, as a dictionary of integers within pre-specified ranges"""
+    # Check excel file exists
     try:
         file = open('office_array.xls')
     except IOError:
@@ -78,11 +68,13 @@ def check_inputs(parameters):
     finally:
         file.close()
 
+    # Manually check for office plan to load expected
     if 'Office Plan' not in parameters.keys():
         print('Error: ', 'Office Plan', ' must be included as a variable.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Load expected parameters for subsequent checks based on number of desks on floor, which must be an integer
     if type(parameters['Office Plan']) == int:
         expected_parameters = get_expected_parameters(parameters)
     else:
@@ -90,11 +82,13 @@ def check_inputs(parameters):
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Check right number of input parameters
     if len(expected_parameters.keys()) != len(parameters.keys()):
         print('Error: incorrect number of input parameters.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
+    # Check number of parameters and individual keys match expected dictionary, and that values are within range
     for parameter in parameters:
         if str(parameter) not in expected_parameters.keys():
             print('Error: ', parameter, ' not expected as a parameter.')
@@ -113,6 +107,7 @@ def check_inputs(parameters):
             print('See README.txt for valid input formatting.')
             raise SystemExit
 
+    # Check number of infected people less than total people
     if parameters['Number of People'] < parameters['Number of Infected']:
         print('Error: Number of Infected must be less than Number of People')
         print('See README.txt for valid input formatting.')
@@ -122,20 +117,22 @@ def check_inputs(parameters):
 
 
 def get_expected_parameters(parameters):
+    """Acceptable ranges for each input parameter"""
     expected_parameters = {'Maximum Age': [16, 120],
                                'Minimum Age': [16, 120],
                                'Mask Adherence': [0, 100],
                                'Social Distancing Adherence': [0, 100],
                                'Office Plan': [0, 3],
                                'Virality': [0, 100],
-                               'Number of People': [1, get_desk_no(parameters)],
+                               'Number of People': [1, get_desk_no(parameters)],  # Floor must have enough desks for people
                                'Number of Infected': [1, get_desk_no(parameters)],
                                'Simulation Duration': [1, 500]}
 
-
     return expected_parameters
 
+
 def get_desk_no(parameters):
+    """Retrieves number of desks that can seat people on the selected office floor"""
     office = Office(parameters['Office Plan'])
     desk_no = len(office.desk_locations)
     return desk_no
@@ -210,6 +207,7 @@ def update_location(person, office):
 
 
 def input2disp(array):
+    """Processes input array based on input excel file array"""
     display_array = np.zeros((array.shape[0], array.shape[1], 3), int)
     display_array[array == 1] = [200, 200, 200]  # floor
     display_array[array == 'T'] = [110, 124, 154]  # tasks
@@ -219,20 +217,24 @@ def input2disp(array):
 
 
 def path2disp(array, people):
-
+    """Processes input array based on pathfinding array (people in office space without desks and tasks)"""
     display_array = input2disp(array)
 
     for person in people:
 
-        if people[person].infected:
-            display_array[people[person].current_location] = [177, 0, 30]  # red = infected
+        if people[person].contagious:
+            display_array[people[person].current_location] = [177, 0, 30]  # red = contagious
+        elif people[person].infected:
+            display_array[people[person].current_location] = [237, 71, 5] # orange = infected
         else:
             display_array[people[person].current_location] = [22, 152, 66]  # green = healthy
     return display_array
 
+
 def set_array_value(x, y, array, value):
     """Updates an array"""
     array[x][y] = value
+
 
 def start_moving(person, office):
     """Assign a task to a person and start moving"""
@@ -241,6 +243,7 @@ def start_moving(person, office):
     person.get_task(office.task_locations)
     # Begin movement along path
     update_location(person, office)
+
 
 def move_somewhere(person, office):
     """Move person somewhere adjacent to avoid blockages in narrow spaces"""
@@ -254,6 +257,7 @@ def move_somewhere(person, office):
     # Move person to an available cell
     person.current_location = avail_cells[random.randint(0, len(avail_cells) - 1)]
 
+
 def record_interactions(office, people):
     """Checks for interactions in the office and stores them to simulate transmissions"""
     interactions = []
@@ -265,26 +269,18 @@ def record_interactions(office, people):
     interactions = list(interactions for interactions, _ in itertools.groupby(interactions))
     return interactions
 
+
 def save_plot(frame, timestamp):
     """
-    Export plot as .png to ./Plots folder
-
-    Parameters
-    ----------
-    frame : 3D numpy array
-        RGB matrix containing locations and colours of people, desks, tasks and
-        walls
-    timestamp : int
-        Timestamp of current plot.
-
-    Returns
-    -------
-    None.
+    Export plot as .png to ./Plots folder. Takes inputs of a 3D numpy array for
+    each frame and an integer timestamp for that frame.
 
     """
-    # Get number of people who are infected based on number of array cells in red 
-    infected_no = np.count_nonzero(frame == 177)
-    # Add number of healthy people to infected people to get total population.
+    # Get number of people who are infected or contagious based on number of 
+    # array cells in red and orange
+    infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
+    # Add number of healthy people to infected and contagious people to get 
+    # total population.
     # This is necessary as the simulation only outputs display frames without
     # explicit infection data
     people_no = infected_no + np.count_nonzero(frame == 22)
@@ -311,6 +307,7 @@ def save_animation():
     output_path = os.path.dirname(os.path.realpath('./Plots/animation.gif'))
     print('Plots and animation saved to ' + output_path)
 
+
 def progress_setup():
     """Initiate progress bar"""
     # next_bar is first progress threshold to be met
@@ -318,6 +315,7 @@ def progress_setup():
     sys.stdout.write("Loading... \n")
     sys.stdout.write(u"\u2588" )
     return next_bar
+
 
 def progress_update(it, duration, next_bar):
     """Update progress bar when next progress threshold has been met"""
@@ -342,6 +340,7 @@ def save_outputs(display_frames):
                         for i in range(len(display_frames)))
     # Generate simulation gif
     save_animation()
+
 
 def run_simulation(params, office, people):
     """Core sequence of logic of the simulation. Formatted to record results in 'frames' for each time step.
@@ -383,6 +382,8 @@ def run_simulation(params, office, people):
         next_bar = progress_update(time, sim_duration, next_bar)
     # Print completion message
     sys.stdout.write("\nDone \n")
+    # Print track and trace tree diagram
+    track_and_trace.track_and_trace(people)
     # Save display_frames to office object
     office.display_frames = display_frames.copy()
     

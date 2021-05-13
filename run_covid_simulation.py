@@ -21,7 +21,6 @@ def main(*arguments):
         print(PROGRAM_EXPLANATION)
     elif len(arguments) == 1 and arguments[0] == '--GUI':
         # Run the simulation through the GUI interface
-        import GUI
         GUI.GUI()
     elif len(arguments) == 1 and arguments[0].endswith('txt'):
         # Read in text file input parameters and run the simulation without GUI
@@ -52,7 +51,8 @@ if __name__ == "__main__":
     import ast
 
     # Directory modules
-    import simulation
-
+    import covidsim.simulation as simulation
+    import covidsim.GUI as GUI
+    
     arguments = sys.argv[1:]
     main(*arguments)

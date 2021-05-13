@@ -88,7 +88,10 @@ class Office:
         return adj
 
     def find_interactions(self, matrix, person_loc):
-        """Return a list of interactions that includes the people interacting and the distance between them"""
+        """Return a list of interactions that includes the people interacting and the distance between them
+        note: this function is a modified version of a function found at: 
+        https://stackoverflow.com/questions/51657128/how-to-access-the-adjacent-cells-of-each-elements-of-matrix-in-python
+        """
         # Find person adjacent cells that are unoccupied by walls
         adj_cells = self.adj_finder(matrix, person_loc, True)
         extra_cells = []
@@ -119,5 +122,4 @@ class Office:
                 # Modifies pathfinding array to have 'walls' in cells adjacent to other people, so socially distant
                 # pathfinding keeps distant
                 social_dist_array[location] = 0
-
         return social_dist_array

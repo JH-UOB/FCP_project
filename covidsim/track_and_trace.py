@@ -23,7 +23,7 @@ def chance_of_death(people, ID):
     return death_string
 
 
-def mask_behaviour_string(people,ID):
+def mask_behaviour_string(people, ID):
     """Creates a mask string for terminal output"""
     mask_string = " - "
     if people[ID].mask:
@@ -36,10 +36,10 @@ def mask_behaviour_string(people,ID):
 def string_formatter(ID,death_string):
     """Formats the terminal output string for an infected individual"""
     string = " ID: " + str(ID) + death_string
-    return(string)
+    return string
 
 
-def draw_tree(infector_ID_tree, infected_ID_tree,people):
+def draw_tree(infector_ID_tree,infected_ID_tree,people):
     """
     This function draws the track and trace infection tree
 
@@ -115,7 +115,7 @@ def get_tree_data(people):
     # Fill the infected tree - these are individuals who were infected during the sim
     for person in people:
         # Individuals infected during the sim are not contagious so this statement can be used to find them
-        if people[person].infected is True and people[person].contagious is False:
+        if people[person].infected and not people[person].contagious:
             index = infector_ID_tree.index(people[person].infector_ID)
             infected_ID_tree[index].append(people[person].ID)
         else:

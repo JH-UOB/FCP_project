@@ -41,10 +41,10 @@ import shutil
 from joblib import Parallel, delayed
 
 # Directory modules
-from person import Person
-from office import Office
-import transmission
-import track_and_trace
+from covidsim.person import Person
+from covidsim.office import Office
+import covidsim.transmission as transmission
+import covidsim.track_and_trace as track_and_trace
 
 
 def main(parameters):
@@ -68,17 +68,17 @@ def check_inputs(parameters):
     finally:
         file.close()
 
-    # Manually check for office plan to load expected
+    # Manually check for office plan to load expected parameters
     if 'Office Plan' not in parameters.keys():
         print('Error: ', 'Office Plan', ' must be included as a variable.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
     # Load expected parameters for subsequent checks based on number of desks on floor, which must be an integer
-    if type(parameters['Office Plan']) == int:
+    if type(parameters['Office Plan']) == int and 0 <= parameters['Office Plan'] <=3:
         expected_parameters = get_expected_parameters(parameters)
     else:
-        print('Error: ', 'Office Plan', ' must be an integer.')
+        print('Error: ', 'Office Plan', ' must be an integer and between 0 and 3.')
         print('See README.txt for valid input formatting.')
         raise SystemExit
 
@@ -212,7 +212,6 @@ def input2disp(array):
     display_array[array == 1] = [200, 200, 200]  # floor
     display_array[array == 'T'] = [110, 124, 154]  # tasks
     display_array[array == 'D'] = [139, 61, 123]  # desks
-
     return display_array
 
 
@@ -304,6 +303,7 @@ def save_animation():
         for filename in files:
             image = imageio.imread(filename)
             writer.append_data(image)
+    # Print output location in command window
     output_path = os.path.dirname(os.path.realpath('./Plots/animation.gif'))
     print('Plots and animation saved to ' + output_path)
 
@@ -336,8 +336,7 @@ def save_outputs(display_frames):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
     # Save plots in parallel using number of cpu cores - 2
-    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) 
-                        for i in range(len(display_frames)))
+    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) for i in range(len(display_frames)))
     # Generate simulation gif
     save_animation()
 
@@ -374,7 +373,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  
 
-        transmission.step_transmission(people, people[person], office.interactions,params['Virality'])  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, office.interactions, params['Virality'])  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
         # record people locations in office as numpy array
         display_frames.append(display_frame.copy())  
@@ -386,5 +385,4 @@ def run_simulation(params, office, people):
     track_and_trace.track_and_trace(people)
     # Save display_frames to office object
     office.display_frames = display_frames.copy()
-    
     return display_frames

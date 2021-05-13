@@ -17,7 +17,7 @@ import random
 def get_type(boolean_array):
     """Determine the 'type' of individual --> further explanation within get_contagious_interactions"""
     if boolean_array[0] == boolean_array[1]:
-        if boolean_array[0] is True:
+        if boolean_array[0]:
             person_type = 1
         else:
             person_type = 3
@@ -75,7 +75,7 @@ def get_transmission_chance(interaction, people, virality):
     person_2_number = interaction[1]
     distance = interaction[2]
 
-    if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
+    if people[person_1_number].mask and people[person_2_number].mask:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
     elif people[person_1_number].mask != people[person_2_number].mask:  # XOR GATE (1 MASK)
         mask_transmission_chance = 0.75
@@ -134,7 +134,7 @@ def determine_infection(contagious_interactions, people,virality):
     return infection_occurred_step
 
 
-def step_transmission(people, person, interactions,virality):
+def step_transmission(people, interactions, virality):
     """step_transmission checks if interactions have happened in the given step --> equiv to main"""
     if len(interactions) > 0:  # Checking if any general interactions have happened in the step
         contagious_interactions = get_contagious_interactions(people, interactions)

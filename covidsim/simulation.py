@@ -212,7 +212,6 @@ def input2disp(array):
     display_array[array == 1] = [200, 200, 200]  # floor
     display_array[array == 'T'] = [110, 124, 154]  # tasks
     display_array[array == 'D'] = [139, 61, 123]  # desks
-
     return display_array
 
 
@@ -304,6 +303,7 @@ def save_animation():
         for filename in files:
             image = imageio.imread(filename)
             writer.append_data(image)
+    # Print output location in command window
     output_path = os.path.dirname(os.path.realpath('./Plots/animation.gif'))
     print('Plots and animation saved to ' + output_path)
 
@@ -385,5 +385,4 @@ def run_simulation(params, office, people):
     track_and_trace.track_and_trace(people)
     # Save display_frames to office object
     office.display_frames = display_frames.copy()
-    
     return display_frames

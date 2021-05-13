@@ -77,9 +77,9 @@ def GUI():
         max_age_label['text'] = "Maximum age: " + str(max_age) + " years old"  # Update max age label
         parameters.update({"Maximum Age": max_age})  # Update max age within parameters
         if min_age > max_age:
-            switch_off_begin_Sim_button_state()  # disable begin sim button
+            switch_off_begin_sim_button_state()  # disable begin sim button
         else:
-            switch_on_begin_Sim_button_state()  # enable begin sim button
+            switch_on_begin_sim_button_state()  # enable begin sim button
 
     def update_lbl_min_age(min_age):
         """Update the Min Age label and check that max age exceeds min age.
@@ -89,23 +89,23 @@ def GUI():
         min_age_label['text'] = "Minimum age: " + str(min_age) + " years old"  # Update min age label
         parameters.update({"Minimum Age": min_age})  # Update min age within parameters
         if min_age > max_age:
-            switch_off_begin_Sim_button_state()
+            switch_off_begin_sim_button_state()
         else:
-            switch_on_begin_Sim_button_state()
+            switch_on_begin_sim_button_state()
 
-    def update_lbl_MA(mask_adh):
+    def update_lbl_ma(mask_adh):
         """Update the Mask Adherence label"""
         mask_adh = int(float((mask_adh)))  # Convert from Tkinter IntVar() to Int
         ma_label['text'] = "Mask adherence: " + str(mask_adh) + "%"  # Update mask adherence label
         parameters.update({"Mask Adherence": mask_adh})  # Update mask adherence within parameters
 
-    def update_lbl_SD(soc_dist):
+    def update_lbl_sd(soc_dist):
         """Update the Social Distancing label"""
         soc_dist = int(float((soc_dist)))  # Convert from Tkinter IntVar() to Int
         sd_label['text'] = "Social distancing adherence: " + str(soc_dist) + "%"  # Update social distancing label
         parameters.update({"Social Distancing Adherence": soc_dist})  # Update social distancing within parameters
 
-    def update_lbl_SimDur(sim_dur):
+    def update_lbl_sim_dur(sim_dur):
         """Update the Simulation Duration label"""
         sim_dur = int(float((sim_dur)))  # Convert from Tkinter IntVar() to Int
         sim_dur_label['text'] = "Simulation duration: " + str(
@@ -236,26 +236,26 @@ def GUI():
         parameters.update({"Number of Infected": infected_people_val})  # Update the number of infected in parameters
         num_people.config(from_=infected_people_val)  # Set the minimum value of the 'number of people' spinbox
 
-    def update_lbl_V(virality):
+    def update_lbl_v(virality):
         """Update virality  label"""
         virality = int(float((virality)))
         v_label['text'] = "Virality: " + str(virality) + "%"  # Update virality label
         parameters.update({"Virality": virality})  # Update virality in parameters
 
-    def switch_on_begin_Sim_button_state():
+    def switch_on_begin_sim_button_state():
         """Switch on the begin button state (such that it can be pressed)"""
-        begin_Sim_button.state(['!disabled'])
+        begin_sim_button.state(['!disabled'])
 
-    def switch_off_begin_Sim_button_state():
+    def switch_off_begin_sim_button_state():
         """Switch off the begin button state (such that it cannot be pressed)"""
-        if begin_Sim_button.instate(['!disabled']):
-            begin_Sim_button.state(['disabled'])
+        if begin_sim_button.instate(['!disabled']):
+            begin_sim_button.state(['disabled'])
         else:
-            begin_Sim_button.state(['disabled'])
+            begin_sim_button.state(['disabled'])
 
-    def begin_Sim():
+    def begin_sim():
         """Begin the simulation upon button press """
-        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        begin_sim_button.state(['disabled'])  # Disable the begin simulation button
         save_sim_button.state(['disabled'])  # Disable the save simulation button
         replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         display_frames = simulation.main(parameters)
@@ -270,11 +270,11 @@ def GUI():
 
         save_sim_button.state(['!disabled'])  # Reenable the save simulation button
         replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
+        begin_sim_button.state(['!disabled']) # Reenable the begin simulation button
 
     def replay_animation():
         """Replay animation of simulation that has just been run"""
-        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        begin_sim_button.state(['disabled'])  # Disable the begin simulation button
         save_sim_button.state(['disabled'])  # Disable the save simulation button
         replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         # Load in frames
@@ -289,12 +289,12 @@ def GUI():
 
         save_sim_button.state(['!disabled'])  # Reenable the save simulation button
         replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
+        begin_sim_button.state(['!disabled']) # Reenable the begin simulation button
 
 
     def save_sim():
         """Save the simulation as a GIF upon button press"""
-        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        begin_sim_button.state(['disabled'])  # Disable the begin simulation button
         save_sim_button.state(['disabled'])  # Disable the save simulation button
         replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         # Load in frames
@@ -304,7 +304,7 @@ def GUI():
         simulation.save_outputs(display_frames)
         save_sim_button.state(['!disabled'])  # Reenable the save simulation button
         replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
+        begin_sim_button.state(['!disabled']) # Reenable the begin simulation button
 
     def quit_sim():
         """Quit the GUI upon button press"""
@@ -410,8 +410,8 @@ def GUI():
     # (5) Setup of widgets
 
     # Begin simulation button
-    begin_Sim_button = ttk.Button(mainframe, text='Begin Simulation', command=begin_Sim)
-    begin_Sim_button.grid(column=0, row=19, sticky='we')
+    begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=begin_sim)
+    begin_sim_button.grid(column=0, row=19, sticky='we')
 
     # Save simulation button
     save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
@@ -455,20 +455,20 @@ def GUI():
 
     # Mask adherence slider
     mask_adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=mask_adh,
-                                command=update_lbl_MA)  # 'command' used as a callback when slider value changes
+                                command=update_lbl_ma)  # 'command' used as a callback when slider value changes
     mask_adh_Slider.grid(column=0, row=10, sticky='we')  # Position slider
     mask_adh_Slider.set(parameters['Mask Adherence'])  # Set slider to correct initial value
 
     # Social distancing slider
     soc_dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=soc_dist,
-                                command=update_lbl_SD)  # 'command' used as a callback when slider value changes
+                                command=update_lbl_sd)  # 'command' used as a callback when slider value changes
     soc_dist_Slider.grid(column=0, row=12, sticky='we')  # Position slider
     soc_dist_Slider.set(parameters['Social Distancing Adherence'])  # Set slider to correct initial value
 
     # virality slider
     viral = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
     viral_slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=viral,
-                             command=update_lbl_V)  # 'command' used as a callback when slider value changes
+                             command=update_lbl_v)  # 'command' used as a callback when slider value changes
     viral_slider.grid(column=0, row=14, sticky='we')  # Position slider
     viral_slider.set(parameters['Virality'])  # Set slider to correct initial value
 
@@ -482,7 +482,7 @@ def GUI():
     # Simulation Duration slider
     sim_dur = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
     sim_dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=sim_dur,
-                               command=update_lbl_SimDur)  # 'command' used as a callback when slider value changes
+                               command=update_lbl_sim_dur)  # 'command' used as a callback when slider value changes
     sim_dur_Slider.grid(column=0, row=18, sticky='we')  # Position listbox
     sim_dur_Slider.set(parameters['Simulation Duration'])  # Set slider to correct initial value
 
@@ -500,7 +500,6 @@ def GUI():
         child.grid_configure(padx=5, pady=5)
     for child in figframe.winfo_children():
         child.grid_configure(padx=5, pady=5)
-
 
 
     root.mainloop()  # This tells tkinter to loop continuously checking for button clicks or key presses

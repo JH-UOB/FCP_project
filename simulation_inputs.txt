@@ -2,7 +2,7 @@
  'Minimum Age': 20,
  'Mask Adherence': 75,
  'Social Distancing Adherence': 70,
- 'Office Plan': 0,
+ 'Office Plan': 5,
  'Virality': 30,
  'Number of People': 15,
  'Number of Infected': 2,

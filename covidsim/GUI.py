@@ -256,9 +256,10 @@ def GUI():
 
     def begin_sim():
         """Begin the simulation upon button press """
-        gc.collect()  # remove previous simulations from RAM        
+        gc.collect()  # remove previous simulations from RAM     
         save_sim_button.state(['disabled'])  # Disable the save simulation button
-        replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        save_sim_button.state(['disabled'])  # Disable the save simulation button
+        replay_animation_button.state(['disabled'])  # Disable the save simulation button
         display_frames = simulation.main(parameters)
         with open('./gui_files/frames.p', "wb") as f:
             pickle.dump(display_frames, f)

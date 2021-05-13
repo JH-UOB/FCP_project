@@ -1,4 +1,4 @@
-# FCP_project James Hawke, Adam Honnywill, James Irvin, Alex Straw
+# FCP_project: James Hawke, Adam Honnywill, James Irvin, Alex Straw
 
 This script runs simulations of coronavirus transmission in an office to investigate the effects of various
 parameters, such as wearing a mask or social distancing. The script may be used to:
@@ -70,8 +70,3 @@ sys
 time
 tkinter
 xlrd
-
-
-
-
-

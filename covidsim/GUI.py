@@ -503,7 +503,6 @@ def GUI():
     for child in figframe.winfo_children():
         child.grid_configure(padx=5, pady=5)
 
-
     root.mainloop()  # This tells tkinter to loop continuously checking for button clicks or key presses
 
 

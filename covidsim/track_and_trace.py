@@ -23,7 +23,7 @@ def chance_of_death(people, ID):
     return death_string
 
 
-def mask_behaviour_string(people,ID):
+def mask_behaviour_string(people, ID):
     """Creates a mask string for terminal output"""
     mask_string = " - "
     if people[ID].mask:
@@ -36,10 +36,10 @@ def mask_behaviour_string(people,ID):
 def string_formatter(ID,death_string):
     """Formats the terminal output string for an infected individual"""
     string = " ID: " + str(ID) + death_string
-    return(string)
+    return string
 
 
-def draw_tree(infector_ID_tree, infected_ID_tree,people):
+def draw_tree(infector_ID_tree,infected_ID_tree,people):
     """
     This function draws the track and trace infection tree
 

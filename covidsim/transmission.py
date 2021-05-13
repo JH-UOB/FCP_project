@@ -14,10 +14,10 @@ Description:
 import random
 
 
-def get_type(boolean_array):
+def get_type(person_status):
     """Determine the 'type' of individual --> further explanation within get_contagious_interactions"""
-    if boolean_array[0] == boolean_array[1]:
-        if boolean_array[0]:
+    if person_status[0] == person_status[1]:
+        if person_status[0]:
             person_type = 1
         else:
             person_type = 3
@@ -76,7 +76,7 @@ def get_transmission_chance(interaction, people, virality):
     distance = interaction[2]
 
     if people[person_1_number].mask and people[person_2_number].mask:  # AND GATE (2 MASKS)
-        mask_transmission_chance = 0.2
+        mask_transmission_chance = 0.1
     elif people[person_1_number].mask != people[person_2_number].mask:  # XOR GATE (1 MASK)
         mask_transmission_chance = 0.5
     else:  # (0 MASKS)

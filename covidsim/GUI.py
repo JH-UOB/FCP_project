@@ -24,6 +24,7 @@ from PIL import ImageTk, Image
 # Directory modules
 from covidsim.office import Office
 import covidsim.simulation as simulation
+import gc
 
 
 # Main body
@@ -255,7 +256,7 @@ def GUI():
 
     def begin_sim():
         """Begin the simulation upon button press """
-        begin_sim_button.state(['disabled'])  # Disable the begin simulation button
+        gc.collect()  # remove previous simulations from RAM        
         save_sim_button.state(['disabled'])  # Disable the save simulation button
         replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         display_frames = simulation.main(parameters)

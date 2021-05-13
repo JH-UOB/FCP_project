@@ -21,7 +21,6 @@ import pickle
 import os
 import time
 from PIL import ImageTk, Image
-import win32con, win32api
 # Directory modules
 from covidsim.office import Office
 import covidsim.simulation as simulation
@@ -41,7 +40,7 @@ def GUI():
             "Maximum Age" - Maximum possible age of people in the office [slider]
             "Minimum Age" - Minimum possible age of people in the office [slider]
             "Mask Adherence" - Percentage of people who wear a face mask [slider]
-            "Virality" - Percentage of virality [slider]
+            "virality" - Percentage of virality [slider]
             "Social Distancing Adherence" - Percentage of people who adhere to social distancing measures [slider]
             "Office Plan" - Which floor of the office is simulated from the 4 choices [Listbox]
             "Simulation duration" - Number of movement interactions to model simulation over [slider]
@@ -65,79 +64,79 @@ def GUI():
 
     # (1) Functions which handle callbacks
 
-    def update_lbl_MaxAge(Max_Age):
+    def update_lbl_max_age(max_age):
         """Update the Max Age label and check that max age exceeds min age.
         If this is not true then the begin simulation button is disabled"""
         try:
-            Min_Age = int(float((Min_Age_Slider.get())))  # Get the current value of min age
+            min_age = int(float((min_age_slider.get())))  # Get the current value of min age
         except:
             # This is required as the max age slider is initialised before the min slider - this means for the first...
             # loop the min age slider doesnt exist so in this instance min age is defined from parameters.
-            Min_Age = parameters['Minimum Age']
-        Max_Age = int(float((Max_Age)))  # Convert from Tkinter IntVar() to Int
-        Max_Age_label['text'] = "Maximum age: " + str(Max_Age) + " years old"  # Update max age label
-        parameters.update({"Maximum Age": Max_Age})  # Update max age within parameters
-        if Min_Age > Max_Age:
-            switch_off_Begin_sim_button_state()  # disable begin sim button
+            min_age = parameters['Minimum Age']
+        max_age = int(float((max_age)))  # Convert from Tkinter IntVar() to Int
+        max_age_label['text'] = "Maximum age: " + str(max_age) + " years old"  # Update max age label
+        parameters.update({"Maximum Age": max_age})  # Update max age within parameters
+        if min_age > max_age:
+            switch_off_begin_Sim_button_state()  # disable begin sim button
         else:
-            switch_on_Begin_sim_button_state()  # enable begin sim button
+            switch_on_begin_Sim_button_state()  # enable begin sim button
 
-    def update_lbl_MinAge(Min_Age):
+    def update_lbl_min_age(min_age):
         """Update the Min Age label and check that max age exceeds min age.
                 If this is not true then the begin simulation button is disabled"""
-        Min_Age = int(float((Min_Age)))  # Convert from Tkinter IntVar() to Int
-        Max_Age = int(float((Max_Age_Slider.get())))  # Get the current value of max age
-        Min_Age_label['text'] = "Minimum age: " + str(Min_Age) + " years old"  # Update min age label
-        parameters.update({"Minimum Age": Min_Age})  # Update min age within parameters
-        if Min_Age > Max_Age:
-            switch_off_Begin_sim_button_state()
+        min_age = int(float((min_age)))  # Convert from Tkinter IntVar() to Int
+        max_age = int(float((max_age_slider.get())))  # Get the current value of max age
+        min_age_label['text'] = "Minimum age: " + str(min_age) + " years old"  # Update min age label
+        parameters.update({"Minimum Age": min_age})  # Update min age within parameters
+        if min_age > max_age:
+            switch_off_begin_Sim_button_state()
         else:
-            switch_on_Begin_sim_button_state()
+            switch_on_begin_Sim_button_state()
 
-    def update_lbl_MA(Mask_Adh):
+    def update_lbl_MA(mask_adh):
         """Update the Mask Adherence label"""
-        Mask_Adh = int(float((Mask_Adh)))  # Convert from Tkinter IntVar() to Int
-        MA_label['text'] = "Mask adherence: " + str(Mask_Adh) + "%"  # Update mask adherence label
-        parameters.update({"Mask Adherence": Mask_Adh})  # Update mask adherence within parameters
+        mask_adh = int(float((mask_adh)))  # Convert from Tkinter IntVar() to Int
+        ma_label['text'] = "Mask adherence: " + str(mask_adh) + "%"  # Update mask adherence label
+        parameters.update({"Mask Adherence": mask_adh})  # Update mask adherence within parameters
 
-    def update_lbl_SD(Soc_Dist):
+    def update_lbl_SD(soc_dist):
         """Update the Social Distancing label"""
-        Soc_Dist = int(float((Soc_Dist)))  # Convert from Tkinter IntVar() to Int
-        SD_label['text'] = "Social distancing adherence: " + str(Soc_Dist) + "%"  # Update social distancing label
-        parameters.update({"Social Distancing Adherence": Soc_Dist})  # Update social distancing within parameters
+        soc_dist = int(float((soc_dist)))  # Convert from Tkinter IntVar() to Int
+        sd_label['text'] = "Social distancing adherence: " + str(soc_dist) + "%"  # Update social distancing label
+        parameters.update({"Social Distancing Adherence": soc_dist})  # Update social distancing within parameters
 
-    def update_lbl_SimDur(Sim_Dur):
+    def update_lbl_SimDur(sim_dur):
         """Update the Simulation Duration label"""
-        Sim_Dur = int(float((Sim_Dur)))  # Convert from Tkinter IntVar() to Int
-        Sim_Dur_label['text'] = "Simulation duration: " + str(
-            Sim_Dur) + " iterations"  # Update simulation duration label
-        parameters.update({"Simulation Duration": Sim_Dur})  # Update simulation duration within parameters
+        sim_dur = int(float((sim_dur)))  # Convert from Tkinter IntVar() to Int
+        sim_dur_label['text'] = "Simulation duration: " + str(
+            sim_dur) + " iterations"  # Update simulation duration label
+        parameters.update({"Simulation Duration": sim_dur})  # Update simulation duration within parameters
 
     def update_lb_office_plans():
         """Update the Office Plans selection and check that the number of people and number of infected are valid for
         that office.If there are too many people then reset the select box value to the number desks (maximum allowed
         for that office)"""
-        office_plans_var = Office_Plans_Listbox.curselection()  # Fetch current office floor selection
+        office_plans_var = office_plans_listbox.curselection()  # Fetch current office floor selection
         # This is a get-around to issue where listbox lamba function is called on both selection and deselection - in
         # the case where nothing is selected "()" we do not  want the value of office plan to be reassigned
         if office_plans_var != ():
             parameters.update({"Office Plan": office_plans_var[0]})  # Update office plan within parameters
             desk_no = simulation.get_desk_no(parameters)  # Get number of desks from simulation.py
-            People_Val = int(Num_People.get())  # Get Number of people
-            Infected_People_Val = int(Inf_People.get())  # Get Number of infected people
+            people_val = int(num_people.get())  # Get Number of people
+            infected_people_val = int(inf_people.get())  # Get Number of infected people
             # If the number of people exceeds the number of desks for that office selection set the number of people
             # to the number of desks
-            if People_Val > desk_no:
-                Num_People.set(desk_no)
+            if people_val > desk_no:
+                num_people.set(desk_no)
                 parameters.update({"Number of People": desk_no})
             # If the number of infected people exceeds the number of desks for that office selection set the number of
             # people to the number of desks
-            if Infected_People_Val > desk_no:
-                Inf_People.set(desk_no)
+            if infected_people_val > desk_no:
+                inf_people.set(desk_no)
                 parameters.update({"Number of Infected": desk_no})
 
-            Num_People.config(to=desk_no)  # Limit max number of people based on number of desks for new office
-            Inf_People.config(to=Num_People.get())  # Limit max number of infected based on number of people
+            num_people.config(to=desk_no)  # Limit max number of people based on number of desks for new office
+            inf_people.config(to=num_people.get())  # Limit max number of infected based on number of people
             office = Office(parameters['Office Plan']) # Update office plan in parameters
             display_array = simulation.input2disp(office.input_array)  # Fetch new office layout
             update_plot(display_array, 0)  # Update figure in Tkinter window
@@ -146,46 +145,46 @@ def GUI():
         """Increase the number of people label if applicable and check that it doesnt exceed the number of desks"""
         # If the number of people parameter is empty (can sometimes occur as an error when the GUI is initialised) then
         # set it from parameters
-        if Num_People.get() == '':
-            Num_People.set(parameters['Number of People'])
+        if num_people.get() == '':
+            num_people.set(parameters['Number of People'])
 
-        People_Val = int(float(Num_People.get()))  # Get Number of people
+        people_val = int(float(num_people.get()))  # Get Number of people
         desk_no = simulation.get_desk_no(parameters)  # Get number of desks from simulation.py
         # If the number of people is greater than or equal to the number of desks set the number of people to the number
         # of desks (This is only required when the Office Plan is changed)
 
-        if People_Val >= desk_no:
-            Num_People.set(desk_no)
+        if people_val >= desk_no:
+            num_people.set(desk_no)
         # If the number of people is less than the the number of desks increase the number of people
-        if People_Val < desk_no:
-            People_Val = People_Val + 1
+        if people_val < desk_no:
+            people_val = people_val + 1
 
-        parameters.update({"Number of People": int(People_Val)})  # Update the number of people in parameters
-        Inf_People.config(to=People_Val)  # Set the maximum value of the 'number of infected' slider
+        parameters.update({"Number of People": int(people_val)})  # Update the number of people in parameters
+        inf_people.config(to=people_val)  # Set the maximum value of the 'number of infected' slider
 
     def dec_lb_num_people():
         """Decrease the number of people label if applicable and check that it doesnt result in the number of infected
         exceeding the number of people"""
         # If the number of people parameter is empty (can sometimes occur as an error when the GUI is initialised)
         # then set it from parameters
-        if Num_People.get() == '':
-            Num_People.set(parameters['Number of People'])
+        if num_people.get() == '':
+            num_people.set(parameters['Number of People'])
 
-        People_Val = int(float(Num_People.get()))  # Get Number of people
-        Infected_People_Val = int(Inf_People.get())  # Get Number of infected people
+        people_val = int(float(num_people.get()))  # Get Number of people
+        infected_people_val = int(inf_people.get())  # Get Number of infected people
         # Decrease the number of people as long as it wouldn't result in the number of infected exceeding the number of
         # people
-        if People_Val != Infected_People_Val:
-            People_Val = People_Val - 1
-        parameters.update({"Number of People": People_Val})  # Update the number of people in parameters
-        Inf_People.config(to=People_Val)  # Set the maximum value of the 'number of infected' spinbox
+        if people_val != infected_people_val:
+            people_val = people_val - 1
+        parameters.update({"Number of People": people_val})  # Update the number of people in parameters
+        inf_people.config(to=people_val)  # Set the maximum value of the 'number of infected' spinbox
 
     def update_plot(frame, timestamp):
         """Update the GUI office plot"""
-        # Get number of people who are infected or contagious based on number of 
+        # Get number of people who are infected or contagious based on number of
         # array cells in red and orange
         infected_no = np.count_nonzero(frame == 177) + np.count_nonzero(frame == 237)
-        # Add number of healthy people to infected and contagious people to get 
+        # Add number of healthy people to infected and contagious people to get
         # total population.
         # This is necessary as the simulation only outputs display frames without
         # explicit infection data
@@ -206,59 +205,59 @@ def GUI():
         newcanvas.draw_idle()
         figframe.update()
 
-    def inc_lb_Inf_People():
+    def inc_lb_inf_people():
         """Increase the number of infected label if applicable and check that it doesnt exceed the number of people or
         the number of desks"""
         # If the number of people parameter is empty (can sometimes occur as an error when the GUI is initialised) then
         # set it from parameters
-        if Inf_People.get() == '':
-            Inf_People.set(parameters['Number of Infected'])
+        if inf_people.get() == '':
+            inf_people.set(parameters['Number of Infected'])
 
         desk_no = simulation.get_desk_no(parameters)  # Get number of desks from simulation.py
-        People_Val = int(float(Num_People.get()))  # Get Number of people
-        Infected_People_Val = int(float(Inf_People.get()))  # Get Number of infected people
+        people_val = int(float(num_people.get()))  # Get Number of people
+        infected_people_val = int(float(inf_people.get()))  # Get Number of infected people
         # Increase the number of infected people as long as it wouldn't exceed the number of desks
 
         # Increase the number of infected people as long as it wouldn't exceed the number of people
-        if Infected_People_Val < People_Val:
-            Infected_People_Val = Infected_People_Val + 1
-        parameters.update({"Number of Infected": Infected_People_Val})
-        Num_People.config(from_=Infected_People_Val)
+        if infected_people_val < people_val:
+            infected_people_val = infected_people_val + 1
+        parameters.update({"Number of Infected": infected_people_val})
+        num_people.config(from_=infected_people_val)
 
-    def dec_lb_Inf_People():
+    def dec_lb_inf_people():
         """Decrease the number of infected label if applicable"""
         # If the number of infected parameter is empty (can sometimes occur as an error when the GUI is initialised)
         # then set it from parameters
-        if Inf_People.get() == '':
-            Inf_People.set(parameters['Number of Infected'])
-        Infected_People_Val = int(float(Inf_People.get()))  # Fetch Number of infected people
-        if Infected_People_Val > 1:
-            Infected_People_Val = Infected_People_Val - 1  # Decrease the number of infected people
-        parameters.update({"Number of Infected": Infected_People_Val})  # Update the number of infected in parameters
-        Num_People.config(from_=Infected_People_Val)  # Set the minimum value of the 'number of people' spinbox
+        if inf_people.get() == '':
+            inf_people.set(parameters['Number of Infected'])
+        infected_people_val = int(float(inf_people.get()))  # Fetch Number of infected people
+        if infected_people_val > 1:
+            infected_people_val = infected_people_val - 1  # Decrease the number of infected people
+        parameters.update({"Number of Infected": infected_people_val})  # Update the number of infected in parameters
+        num_people.config(from_=infected_people_val)  # Set the minimum value of the 'number of people' spinbox
 
-    def update_lbl_V(Virality):
+    def update_lbl_V(virality):
         """Update virality  label"""
-        Virality = int(float((Virality)))
-        V_label['text'] = "Virality: " + str(Virality) + "%"  # Update virality label
-        parameters.update({"Virality": Virality})  # Update virality in parameters
+        virality = int(float((virality)))
+        v_label['text'] = "Virality: " + str(virality) + "%"  # Update virality label
+        parameters.update({"Virality": virality})  # Update virality in parameters
 
-    def switch_on_Begin_sim_button_state():
+    def switch_on_begin_Sim_button_state():
         """Switch on the begin button state (such that it can be pressed)"""
-        Begin_sim_button.state(['!disabled'])
+        begin_Sim_button.state(['!disabled'])
 
-    def switch_off_Begin_sim_button_state():
+    def switch_off_begin_Sim_button_state():
         """Switch off the begin button state (such that it cannot be pressed)"""
-        if Begin_sim_button.instate(['!disabled']):
-            Begin_sim_button.state(['disabled'])
+        if begin_Sim_button.instate(['!disabled']):
+            begin_Sim_button.state(['disabled'])
         else:
-            Begin_sim_button.state(['disabled'])
+            begin_Sim_button.state(['disabled'])
 
-    def Begin_Sim():
+    def begin_Sim():
         """Begin the simulation upon button press """
-        Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
-        Save_sim_button.state(['disabled'])  # Disable the save simulation button
-        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        save_sim_button.state(['disabled'])  # Disable the save simulation button
+        replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         display_frames = simulation.main(parameters)
         with open('./gui_files/frames.p', "wb") as f:
             pickle.dump(display_frames, f)
@@ -269,15 +268,15 @@ def GUI():
             time.sleep(1 / 30)
             timestamp += 1
 
-        Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
-        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button
+        save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
 
     def replay_animation():
         """Replay animation of simulation that has just been run"""
-        Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
-        Save_sim_button.state(['disabled'])  # Disable the save simulation button
-        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        save_sim_button.state(['disabled'])  # Disable the save simulation button
+        replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         # Load in frames
         with open('./gui_files/frames.p', "rb") as f:
             display_frames = pickle.load(f)
@@ -288,24 +287,24 @@ def GUI():
             time.sleep(1 / 30)
             timestamp += 1
 
-        Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
-        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button        
+        save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
 
 
     def save_sim():
         """Save the simulation as a GIF upon button press"""
-        Begin_sim_button.state(['disabled'])  # Disable the begin simulation button
-        Save_sim_button.state(['disabled'])  # Disable the save simulation button
-        Replay_animation_button.state(['disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['disabled'])  # Disable the begin simulation button
+        save_sim_button.state(['disabled'])  # Disable the save simulation button
+        replay_animation_button.state(['disabled'])  # Reenable the save simulation button
         # Load in frames
         with open('./gui_files/frames.p', "rb") as f:
             display_frames = pickle.load(f)
         # Save frames
         simulation.save_outputs(display_frames)
-        Save_sim_button.state(['!disabled'])  # Reenable the save simulation button
-        Replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
-        Begin_sim_button.state(['!disabled']) # Reenable the begin simulation button 
+        save_sim_button.state(['!disabled'])  # Reenable the save simulation button
+        replay_animation_button.state(['!disabled'])  # Reenable the save simulation button
+        begin_Sim_button.state(['!disabled']) # Reenable the begin simulation button
 
     def quit_sim():
         """Quit the GUI upon button press"""
@@ -372,129 +371,129 @@ def GUI():
                                                                                                   sticky='we')
 
     # People label
-    People_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
+    people_label = ttk.Label(mainframe, text='Number of people:').grid(column=0, row=1, sticky='we')
 
 
     ## Infected People label
-    Infected_label = ttk.Label(mainframe, text='Number of Infected people:').grid(column=0, row=3, sticky='we')
+    infected_label = ttk.Label(mainframe, text='Number of Infected people:').grid(column=0, row=3, sticky='we')
 
     # Max age label
-    Max_Age_label = ttk.Label(mainframe)
-    Max_Age_label.grid(column=0, row=5, sticky='we')
+    max_age_label = ttk.Label(mainframe)
+    max_age_label.grid(column=0, row=5, sticky='we')
 
     # Min age label
-    Min_Age_label = ttk.Label(mainframe)
-    Min_Age_label.grid(column=0, row=7, sticky='we')
+    min_age_label = ttk.Label(mainframe)
+    min_age_label.grid(column=0, row=7, sticky='we')
 
     # Mask adherence label
-    Mask_Adh = IntVar()
-    MA_label = ttk.Label(mainframe)
-    MA_label.grid(column=0, row=9, sticky='we')
+    mask_adh = IntVar()
+    ma_label = ttk.Label(mainframe)
+    ma_label.grid(column=0, row=9, sticky='we')
 
     # Social distancing label
-    Soc_Dist = IntVar()
-    SD_label = ttk.Label(mainframe)
-    SD_label.grid(column=0, row=11, sticky='we')
+    soc_dist = IntVar()
+    sd_label = ttk.Label(mainframe)
+    sd_label.grid(column=0, row=11, sticky='we')
 
-    # Virality label
-    V_label = ttk.Label(mainframe, text='Virality:')
-    V_label.grid(column=0, row=13, sticky='we')
+    # virality label
+    v_label = ttk.Label(mainframe, text='Virality:')
+    v_label.grid(column=0, row=13, sticky='we')
 
     # Office floor plans label
-    Office_Plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=14, sticky='we')
+    office_plans_label = ttk.Label(mainframe, text='Office plan:').grid(column=0, row=14, sticky='we')
 
     # Simulation Duration label
-    Sim_Dur_label = ttk.Label(mainframe)
-    Sim_Dur_label.grid(column=0, row=17, sticky='we')
+    sim_dur_label = ttk.Label(mainframe)
+    sim_dur_label.grid(column=0, row=17, sticky='we')
 
 
     # (5) Setup of widgets
 
     # Begin simulation button
-    Begin_sim_button = ttk.Button(mainframe, text='Begin Simulation', command=Begin_Sim)
-    Begin_sim_button.grid(column=0, row=19, sticky='we')
+    begin_Sim_button = ttk.Button(mainframe, text='Begin Simulation', command=begin_Sim)
+    begin_Sim_button.grid(column=0, row=19, sticky='we')
 
     # Save simulation button
-    Save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
-    Save_sim_button.grid(column=0, row=21, sticky='we')
-    Save_sim_button.state(['disabled'])
+    save_sim_button = ttk.Button(mainframe, text='Save Animaiton', command=save_sim)
+    save_sim_button.grid(column=0, row=21, sticky='we')
+    save_sim_button.state(['disabled'])
 
     # Number of people spin box
     desk_no = simulation.get_desk_no(parameters)  # Get the number of desks from simulation.py
-    People_Val = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the spinbox
-    People_Val.set(parameters['Number of People'])  # set box to correct default value
-    Num_People = ttk.Spinbox(mainframe, from_=parameters['Number of Infected'], to=desk_no, textvariable=People_Val)
-    Num_People.grid(column=0, row=2, sticky=W)  # Position spinbox
-    Num_People.state(['readonly'])  # Set the spinbox such that users cannot enter their own inputs as text
+    people_val = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the spinbox
+    people_val.set(parameters['Number of People'])  # set box to correct default value
+    num_people = ttk.Spinbox(mainframe, from_=parameters['Number of Infected'], to=desk_no, textvariable=people_val)
+    num_people.grid(column=0, row=2, sticky=W)  # Position spinbox
+    num_people.state(['readonly'])  # Set the spinbox such that users cannot enter their own inputs as text
     # lambda used to create autonomous functions - If spin box value is changed the label will automatically be updated
-    Num_People.bind("<<Increment>>", lambda e: inc_lb_num_people())
-    Num_People.bind("<<Decrement>>", lambda e: dec_lb_num_people())
+    num_people.bind("<<Increment>>", lambda e: inc_lb_num_people())
+    num_people.bind("<<Decrement>>", lambda e: dec_lb_num_people())
 
     # Number of people infected spin box
-    Infected_People_Val = IntVar() # Setup Tkinter IntVar() value which reflects the current value in the spinbox
-    Infected_People_Val.set(parameters['Number of Infected'])  # set box to correct default value
-    Inf_People = ttk.Spinbox(mainframe, from_=1.0, to=parameters['Number of People'], textvariable=Infected_People_Val)
-    Inf_People.grid(column=0, row=4, sticky=W)
-    Inf_People.state(['readonly'])
+    infected_people_val = IntVar() # Setup Tkinter IntVar() value which reflects the current value in the spinbox
+    infected_people_val.set(parameters['Number of Infected'])  # set box to correct default value
+    inf_people = ttk.Spinbox(mainframe, from_=1.0, to=parameters['Number of People'], textvariable=infected_people_val)
+    inf_people.grid(column=0, row=4, sticky=W)
+    inf_people.state(['readonly'])
     # lambda used to create autonomous functions - If spin box value is changed the label will automatically be updated
-    Inf_People.bind("<<Increment>>", lambda e: inc_lb_Inf_People())
-    Inf_People.bind("<<Decrement>>", lambda e: dec_lb_Inf_People())
+    inf_people.bind("<<Increment>>", lambda e: inc_lb_inf_people())
+    inf_people.bind("<<Decrement>>", lambda e: dec_lb_inf_people())
 
     # Max age slider
-    Max_Age = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
-    Max_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Max_Age,
-                               command=update_lbl_MaxAge)  # 'command' used as a callback when slider value changes
-    Max_Age_Slider.grid(column=0, row=6, sticky='we')  # Position slider
-    Max_Age_Slider.set(parameters['Maximum Age'])  # Set slider to correct initial value
+    max_age = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
+    max_age_slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=max_age,
+                               command=update_lbl_max_age)  # 'command' used as a callback when slider value changes
+    max_age_slider.grid(column=0, row=6, sticky='we')  # Position slider
+    max_age_slider.set(parameters['Maximum Age'])  # Set slider to correct initial value
 
     # Min age slider
-    Min_Age = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
-    Min_Age_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=Min_Age,
-                               command=update_lbl_MinAge)  # 'command' used as a callback when slider value changes
-    Min_Age_Slider.grid(column=0, row=8, sticky='we')  # Position slider
-    Min_Age_Slider.set(parameters['Minimum Age'])  # Set slider to correct initial value
+    min_age = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
+    min_age_slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=16.0, to=120.0, variable=min_age,
+                               command=update_lbl_min_age)  # 'command' used as a callback when slider value changes
+    min_age_slider.grid(column=0, row=8, sticky='we')  # Position slider
+    min_age_slider.set(parameters['Minimum Age'])  # Set slider to correct initial value
 
     # Mask adherence slider
-    Mask_Adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Mask_Adh,
+    mask_adh_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=mask_adh,
                                 command=update_lbl_MA)  # 'command' used as a callback when slider value changes
-    Mask_Adh_Slider.grid(column=0, row=10, sticky='we')  # Position slider
-    Mask_Adh_Slider.set(parameters['Mask Adherence'])  # Set slider to correct initial value
+    mask_adh_Slider.grid(column=0, row=10, sticky='we')  # Position slider
+    mask_adh_Slider.set(parameters['Mask Adherence'])  # Set slider to correct initial value
 
     # Social distancing slider
-    Soc_Dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Soc_Dist,
+    soc_dist_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=soc_dist,
                                 command=update_lbl_SD)  # 'command' used as a callback when slider value changes
-    Soc_Dist_Slider.grid(column=0, row=12, sticky='we')  # Position slider
-    Soc_Dist_Slider.set(parameters['Social Distancing Adherence'])  # Set slider to correct initial value
+    soc_dist_Slider.grid(column=0, row=12, sticky='we')  # Position slider
+    soc_dist_Slider.set(parameters['Social Distancing Adherence'])  # Set slider to correct initial value
 
-    # Virality slider
-    Viral = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
-    Viral_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=Viral,
+    # virality slider
+    viral = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
+    viral_slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=0.0, to=100.0, variable=viral,
                              command=update_lbl_V)  # 'command' used as a callback when slider value changes
-    Viral_Slider.grid(column=0, row=14, sticky='we')  # Position slider
-    Viral_Slider.set(parameters['Virality'])  # Set slider to correct initial value
+    viral_slider.grid(column=0, row=14, sticky='we')  # Position slider
+    viral_slider.set(parameters['Virality'])  # Set slider to correct initial value
 
     # Office plan listbox
-    Office_Plans = ["Floor 1", "Floor 2", "Floor 3", "Floor 4"]
-    office_plans_var = StringVar(value=Office_Plans)  # Setup Tkinter StringVar() value
-    Office_Plans_Listbox = Listbox(mainframe, listvariable=office_plans_var, height=4)  # Create listbox
-    Office_Plans_Listbox.grid(column=0, row=16, sticky='we')  # Position listbox
-    Office_Plans_Listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans())  # Automatically update upon
+    office_plans = ["Floor 1", "Floor 2", "Floor 3", "Floor 4"]
+    office_plans_var = StringVar(value=office_plans)  # Setup Tkinter StringVar() value
+    office_plans_listbox = Listbox(mainframe, listvariable=office_plans_var, height=4)  # Create listbox
+    office_plans_listbox.grid(column=0, row=16, sticky='we')  # Position listbox
+    office_plans_listbox.bind("<<ListboxSelect>>", lambda e: update_lb_office_plans())  # Automatically update upon
 
     # Simulation Duration slider
-    Sim_Dur = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
-    Sim_Dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=Sim_Dur,
+    sim_dur = IntVar()  # Setup Tkinter IntVar() value which reflects the current value in the slider
+    sim_dur_Slider = ttk.Scale(mainframe, orient='horizontal', length=200, from_=10.0, to=500.0, variable=sim_dur,
                                command=update_lbl_SimDur)  # 'command' used as a callback when slider value changes
-    Sim_Dur_Slider.grid(column=0, row=18, sticky='we')  # Position listbox
-    Sim_Dur_Slider.set(parameters['Simulation Duration'])  # Set slider to correct initial value
+    sim_dur_Slider.grid(column=0, row=18, sticky='we')  # Position listbox
+    sim_dur_Slider.set(parameters['Simulation Duration'])  # Set slider to correct initial value
 
     # Replay animation button
-    Replay_animation_button = ttk.Button(master=mainframe, text="Replay Animaiton", command=replay_animation)
-    Replay_animation_button.grid(column=0, row=20, sticky='we')
-    Replay_animation_button.state(['disabled'])
-    
+    replay_animation_button = ttk.Button(master=mainframe, text="Replay Animaiton", command=replay_animation)
+    replay_animation_button.grid(column=0, row=20, sticky='we')
+    replay_animation_button.state(['disabled'])
+
     # Quit application button
-    Quit_app_button = ttk.Button(master=mainframe, text="Quit App", command=quit_sim)
-    Quit_app_button.grid(column=0, row=22, sticky='we')
+    quit_app_button = ttk.Button(master=mainframe, text="Quit App", command=quit_sim)
+    quit_app_button.grid(column=0, row=22, sticky='we')
 
     # Scalling to add space around widgets
     for child in mainframe.winfo_children():

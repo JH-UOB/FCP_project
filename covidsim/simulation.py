@@ -41,10 +41,10 @@ import shutil
 from joblib import Parallel, delayed
 
 # Directory modules
-from person import Person
-from office import Office
-import transmission
-import track_and_trace
+from covidsim.person import Person
+from covidsim.office import Office
+import covidsim.transmission as transmission
+import covidsim.track_and_trace as track_and_trace
 
 
 def main(parameters):
@@ -336,8 +336,7 @@ def save_outputs(display_frames):
         shutil.rmtree('./Plots')
     os.mkdir('./Plots')
     # Save plots in parallel using number of cpu cores - 2
-    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) 
-                        for i in range(len(display_frames)))
+    Parallel(n_jobs=os.cpu_count() - 2)(delayed(save_plot)(display_frames[i], i) for i in range(len(display_frames)))
     # Generate simulation gif
     save_animation()
 
@@ -374,7 +373,7 @@ def run_simulation(params, office, people):
         office.interactions = record_interactions(office, people)
         office.interaction_frames.append(office.interactions)  
 
-        transmission.step_transmission(people, people[person], office.interactions,params['Virality'])  # TRANSMISSION - ALEX
+        transmission.step_transmission(people, office.interactions, params['Virality'])  # TRANSMISSION - ALEX
         display_frame = path2disp(office.input_array.copy(), people)
         # record people locations in office as numpy array
         display_frames.append(display_frame.copy())  

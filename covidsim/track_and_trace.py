@@ -27,9 +27,9 @@ def mask_behaviour_string(people,ID):
     """Creates a mask string for terminal output"""
     mask_string = " - "
     if people[ID].mask:
-        mask_string += "Mask: Yes, "
+        mask_string += "Mask: Yes"
     else:
-        mask_string += "Mask: No, "
+        mask_string += "Mask: No"
     return mask_string
 
 
@@ -115,7 +115,7 @@ def get_tree_data(people):
     # Fill the infected tree - these are individuals who were infected during the sim
     for person in people:
         # Individuals infected during the sim are not contagious so this statement can be used to find them
-        if people[person].infected is True and people[person].contagious is False:
+        if people[person].infected and not people[person].contagious:
             index = infector_ID_tree.index(people[person].infector_ID)
             infected_ID_tree[index].append(people[person].ID)
         else:

@@ -13,14 +13,11 @@ Description:
 
 import random
 
-# TO DO
-# Tree diagram showing infection from one individual to the end
-# Modify how we access the class --> i.e Jane.age is better than people[number].age
-
 
 def get_type(boolean_array):
+    """Determine the 'type' of individual --> further explanation within get_contagious_interactions"""
     if boolean_array[0] == boolean_array[1]:
-        if boolean_array[0] is True:
+        if boolean_array[0]:
             person_type = 1
         else:
             person_type = 3
@@ -30,7 +27,11 @@ def get_type(boolean_array):
     return person_type
 
 
-def get_contagious_interactions(people, person, interactions):
+def get_contagious_interactions(people, interactions):
+    """
+    This function determines contagious interactions from the full list of interactions
+    (plural) for a step
+    """
     contagious_interactions = []
 
     for i in range(0, len(interactions)):
@@ -60,15 +61,21 @@ def get_contagious_interactions(people, person, interactions):
     return contagious_interactions
 
 
-"""     determine_infection calculates whether an infection has taken place and updates the people class   """
+def get_transmission_chance(interaction, people, virality):
+    """
+    get_transmission_chance calculates the transmission chance for an interaction (singular)
+    based on: mask adherence and the distance between two individuals.
 
-
-def get_transmission_chance(interaction, people,virality):
+    :param interaction: An array of IDs for two individuals involved in an interaction
+    :param people: People is the full list of individuals in the simulation (Person Class)
+    :param virality: A factor associated with the 'contagiousness' of the virus (set in GUI)
+    :return: returns A transmission chance --> this is a number between 0 and 1.
+    """
     person_1_number = interaction[0]
     person_2_number = interaction[1]
     distance = interaction[2]
 
-    if people[person_1_number].mask is True and people[person_2_number].mask is True:  # AND GATE (2 MASKS)
+    if people[person_1_number].mask and people[person_2_number].mask:  # AND GATE (2 MASKS)
         mask_transmission_chance = 0.5
     elif people[person_1_number].mask != people[person_2_number].mask:  # XOR GATE (1 MASK)
         mask_transmission_chance = 0.75
@@ -89,10 +96,8 @@ def get_transmission_chance(interaction, people,virality):
     return transmission_chance
 
 
-"""     get_total_infected is used to loop through the people class and find the number of infected   """
-
-
 def get_total_infected(people):
+    """"Iterate through people (person objects) and calculate total number of infected people"""
     infected = 0
     for person in people:
         if people[person].infected:
@@ -103,6 +108,7 @@ def get_total_infected(people):
 
 
 def get_total_contagious(people):
+    """"Iterate through people (person objects) and calculate total number of contagious people"""
     contagious = 0
     for person in people:
         if people[person].contagious:
@@ -113,6 +119,7 @@ def get_total_contagious(people):
 
 
 def determine_infection(contagious_interactions, people,virality):
+    """determine_infection calculates whether an infection has taken place and updates the people class"""
     infection_occurred_step = False
     for n in range(0, len(contagious_interactions)):
         transmission_random_number = random.uniform(0, 1)
@@ -127,12 +134,10 @@ def determine_infection(contagious_interactions, people,virality):
     return infection_occurred_step
 
 
-"""     step_transmission checks if interactions have happened in the given step --> equiv to main   """
-
-
-def step_transmission(people, person, interactions,virality):
+def step_transmission(people, interactions, virality):
+    """step_transmission checks if interactions have happened in the given step --> equiv to main"""
     if len(interactions) > 0:  # Checking if any general interactions have happened in the step
-        contagious_interactions = get_contagious_interactions(people, person, interactions)
+        contagious_interactions = get_contagious_interactions(people, interactions)
         if len(contagious_interactions) > 0:  # Checking if any contagious interactions have happened in the step
             infection_occurred_step = determine_infection(contagious_interactions, people,virality)
 

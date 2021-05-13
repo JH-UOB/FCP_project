@@ -1,4 +1,4 @@
-{'Maximum Age': 65,
+{'Maximum Age':60,
  'Minimum Age': 20,
  'Mask Adherence': 75,
  'Social Distancing Adherence': 70,

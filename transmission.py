@@ -134,7 +134,7 @@ def determine_infection(contagious_interactions, people,virality):
     return infection_occurred_step
 
 
-def step_transmission(people, person, interactions,virality):
+def step_transmission(people, interactions, virality):
     """step_transmission checks if interactions have happened in the given step --> equiv to main"""
     if len(interactions) > 0:  # Checking if any general interactions have happened in the step
         contagious_interactions = get_contagious_interactions(people, interactions)

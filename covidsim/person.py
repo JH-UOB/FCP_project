@@ -30,10 +30,6 @@ class Person:
         # Personal properties
         self.ID = ID
         self.age = random.randint(params['Minimum Age'], params['Maximum Age'])
-        if random.random() > 0.5:
-            self.gender = 'Male'
-        else:
-            self.gender = 'Female'
         if random.random() < params['Mask Adherence']/100:
             self.mask = True
         else:

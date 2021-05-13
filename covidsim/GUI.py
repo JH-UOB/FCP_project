@@ -257,7 +257,7 @@ def GUI():
     def begin_sim():
         """Begin the simulation upon button press """
         gc.collect()  # remove previous simulations from RAM     
-        save_sim_button.state(['disabled'])  # Disable the save simulation button
+        begin_sim_button.state(['disabled'])  # Disable the save simulation button
         save_sim_button.state(['disabled'])  # Disable the save simulation button
         replay_animation_button.state(['disabled'])  # Disable the save simulation button
         display_frames = simulation.main(parameters)

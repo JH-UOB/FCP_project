@@ -14,10 +14,10 @@ Description:
 import random
 
 
-def get_type(boolean_array):
+def get_type(person_status):
     """Determine the 'type' of individual --> further explanation within get_contagious_interactions"""
-    if boolean_array[0] == boolean_array[1]:
-        if boolean_array[0]:
+    if person_status[0] == person_status[1]:
+        if person_status[0]:
             person_type = 1
         else:
             person_type = 3

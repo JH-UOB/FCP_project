@@ -30,10 +30,6 @@ class Person:
         # Personal properties
         self.ID = ID
         self.age = random.randint(params['Minimum Age'], params['Maximum Age'])
-        if random.random() > 0.5:
-            self.gender = 'Male'
-        else:
-            self.gender = 'Female'
         if random.random() < params['Mask Adherence']/100:
             self.mask = True
         else:
@@ -42,7 +38,6 @@ class Person:
             self.social_distancing = True
         else:
             self.social_distancing = False
-        # if random.random() < 0.4:  # should be parameterised
         self.infected = False
         self.infected_time = 0
         self.contagious = False
@@ -51,14 +46,13 @@ class Person:
         self.infector_ID = ""
 
         # Position properties
-        self.desk_location = desks[ID-1]  # assign desk coordinates by ID COULD RANDOMISE MOVE TO SIMULATION
+        self.desk_location = desks[ID-1]  # assign desk coordinates by ID
         self.task_location = self.desk_location  # Initialise person at their desk
         self.current_location = self.desk_location
 
         # Task properties
         self.task_duration = random.randint(1, 50) # How long person should stay at desk initially
         self.task_progress = 0
-        # self.doing_task = True  # unused
 
     def get_task(self, locations):
         """Assign a random task location and task duration. Possible task 
